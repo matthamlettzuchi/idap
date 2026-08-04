@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { nav } from "@/lib/data";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/logo";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,18 +21,13 @@ export function Nav() {
       <div
         className={`border-b transition-all duration-300 ${
           scrolled
-            ? "border-[var(--panel-border)] bg-void/80 backdrop-blur-xl"
+            ? "border-[var(--panel-border)] bg-void/85 backdrop-blur-xl"
             : "border-transparent bg-transparent"
         }`}
       >
         <div className="container-x flex h-[72px] items-center justify-between">
-          <a href="#" className="flex items-center gap-3">
-            <span className="relative flex h-8 w-8 items-center justify-center rounded-md border border-[var(--panel-border)] bg-panel">
-              <span className="h-2.5 w-2.5 rounded-sm bg-[image:var(--grad-signal)]" />
-            </span>
-            <span className="font-display text-[17px] font-semibold tracking-tight">
-              Intidata
-            </span>
+          <a href="#" className="flex items-center">
+            <Logo className="h-9 w-32" />
           </a>
 
           <nav className="hidden items-center gap-9 md:flex">

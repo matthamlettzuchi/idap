@@ -13,12 +13,12 @@ export function Contact() {
       <div className="grid-texture pointer-events-none absolute inset-0" />
       <motion.div
         aria-hidden
-        animate={{ opacity: [0.25, 0.45, 0.25] }}
+        animate={{ opacity: [0.12, 0.25, 0.12] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         className="pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]"
         style={{
           background:
-            "radial-gradient(circle, rgba(47,224,194,.25), transparent 65%)",
+            "radial-gradient(circle, rgba(14,148,136,.22), transparent 65%)",
         }}
       />
 
@@ -31,11 +31,15 @@ export function Contact() {
             percakapan.
           </h2>
           <p className="mt-7 max-w-sm text-[15.5px] leading-relaxed text-ink-1">
-            Kami siap menghadirkan teknologi yang sesuai dan mampu
-            meningkatkan kinerja bisnis Anda.
+            Kami siap menghadirkan teknologi yang sesuai dan mampu meningkatkan
+            kinerja bisnis Anda.
           </p>
           <Button asChild size="default" className="mt-9">
-            <a href={contact.whatsapp} target="_blank" rel="noopener noreferrer">
+            <a
+              href={contact.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <MessageCircle size={16} /> Hubungi via WhatsApp
             </a>
           </Button>

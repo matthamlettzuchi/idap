@@ -33,7 +33,7 @@ export function NetworkCanvas() {
     if (!ctx) return;
 
     const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
+      "(prefers-reduced-motion: reduce)",
     ).matches;
 
     let width = 0;
@@ -64,15 +64,14 @@ export function NetworkCanvas() {
 
     const packets = edges.map((e, i) => ({
       edge: e,
-      t: (i / edges.length),
+      t: i / edges.length,
       speed: 0.09 + Math.random() * 0.05,
     }));
 
     function draw(time: number) {
       ctx!.clearRect(0, 0, width, height);
 
-      // ambient field
-      ctx!.fillStyle = "rgba(238,241,247,0.28)";
+      ctx!.fillStyle = "rgba(17,24,39,0.18)";
       ambient.forEach((p) => {
         if (!reduced) {
           p.x += p.vx;
@@ -120,7 +119,7 @@ export function NetworkCanvas() {
           const glow = Math.sin(p.t * Math.PI);
           ctx!.beginPath();
           ctx!.arc(x * width, y * height, 2 + glow * 1.6, 0, Math.PI * 2);
-          ctx!.fillStyle = "rgba(232,255,250,0.95)";
+          ctx!.fillStyle = "rgba(47,75,208,0.95)";
           ctx!.shadowColor = "#2fe0c2";
           ctx!.shadowBlur = 10;
           ctx!.fill();

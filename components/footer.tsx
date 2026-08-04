@@ -1,41 +1,35 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Linkedin, Instagram, Facebook } from "lucide-react";
+import { FaLinkedinIn, FaInstagram, FaFacebook } from "react-icons/fa";
 import { contact, nav, products } from "@/lib/data";
+import { Logo } from "@/components/logo";
 
 const year = new Date().getFullYear();
 
 const socials = [
-  { icon: Facebook, label: "Facebook", href: "#" },
-  { icon: Instagram, label: "Instagram", href: "#" },
-  { icon: Linkedin, label: "LinkedIn", href: "#" },
+  { icon: FaFacebook, label: "Facebook", href: "#" },
+  { icon: FaInstagram, label: "Instagram", href: "#" },
+  { icon: FaLinkedinIn, label: "LinkedIn", href: "#" },
 ];
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-[var(--panel-border)] bg-[#040609] pb-10 pt-24">
+    <footer className="relative overflow-hidden border-t border-[var(--panel-border)] bg-surface pb-10 pt-24">
       <motion.div
         aria-hidden
         animate={{ x: ["-10%", "10%", "-10%"] }}
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute -top-24 left-1/4 h-[420px] w-[420px] rounded-full opacity-20 blur-[110px]"
+        className="pointer-events-none absolute -top-24 left-1/4 h-[420px] w-[420px] rounded-full opacity-10 blur-[110px]"
         style={{
-          background: "radial-gradient(circle, #4b64ff, transparent 65%)",
+          background: "radial-gradient(circle, var(--signal-blue), transparent 65%)",
         }}
       />
 
       <div className="container-x relative">
         <div className="grid grid-cols-1 gap-14 border-b border-[var(--panel-border)] pb-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-3">
-              <span className="relative flex h-8 w-8 items-center justify-center rounded-md border border-[var(--panel-border)] bg-panel">
-                <span className="h-2.5 w-2.5 rounded-sm bg-[image:var(--grad-signal)]" />
-              </span>
-              <span className="font-display text-[17px] font-semibold">
-                Intidata
-              </span>
-            </div>
+            <Logo className="h-9 w-36" />
             <p className="mt-5 max-w-[280px] text-[14px] leading-relaxed text-ink-1">
               PT Intidata Anugrah Pratama — solusi konsultasi IT terintegrasi
               bagi sektor korporasi maupun publik.

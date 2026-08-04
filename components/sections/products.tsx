@@ -15,7 +15,7 @@ function Schematic({ seed }: { seed: number }) {
   const path = paths[seed % paths.length];
   return (
     <svg viewBox="0 0 390 150" className="h-full w-full" fill="none">
-      <path d={path} stroke="rgba(238,241,247,0.1)" strokeWidth="1.5" />
+      <path d={path} stroke="rgba(17,24,39,0.12)" strokeWidth="1.5" />{" "}
       <motion.path
         key={seed}
         d={path}
