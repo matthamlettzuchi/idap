@@ -6,6 +6,7 @@ import { ArrowRight, ArrowDownRight } from "lucide-react";
 import { heroStats } from "@/lib/data";
 import { Counter } from "@/components/ui/counter";
 import { Button } from "@/components/ui/button";
+import { HeroDashboardVisual } from "./dashboard-visual";
 
 const HeroWaveBackground = dynamic(
   () => import("./wave-background").then((m) => m.HeroWaveBackground),
@@ -16,7 +17,7 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden bg-void pb-28 lg:pb-12 pt-40 lg:pt-35">
       <div className="absolute inset-0">
-        <HeroWaveBackground />
+        <HeroDashboardVisual />
       </div>
       <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-void/10 via-void/40 to-void" />
       <div className="halftone-texture pointer-events-none absolute inset-0 h-225" />

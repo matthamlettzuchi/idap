@@ -6,13 +6,20 @@ import {
 } from "@/components/ui/accordion";
 import { faqs } from "@/lib/data";
 import { Reveal } from "@/components/ui/reveal";
+import Image from "next/image";
 
 export function Faq() {
   return (
-    <section id="faq" className="relative bg-surface py-32">
-      <div className="container-x grid grid-cols-1 gap-16 lg:grid-cols-[0.7fr_1.3fr]">
+    <section id="faq" className="relative bg-surface pb-32 pt-16">
+      <div className="container-x grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
         <Reveal>
-          <span className="mono-label">FAQ</span>
+          <Image
+            src="/faq.svg"
+            alt="Ilustrasi FAQ"
+            width="400"
+            height="400"
+            className="mb-10"
+          />
           <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
             Pertanyaan yang
             <br />
