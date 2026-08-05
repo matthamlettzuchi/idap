@@ -5,6 +5,8 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { testimonials } from "@/lib/data";
 import { Reveal } from "@/components/ui/reveal";
+import { GridGlobe } from "../ui/grid-globe";
+import { ClusterPin, ClusterPerson } from "@/components/ui/doodle";
 
 export function Testimonials() {
   const [index, setIndex] = useState(0);
@@ -23,7 +25,7 @@ export function Testimonials() {
       <div className="grid-texture pointer-events-none absolute inset-0" />
 
       <div className="container-x relative">
-        <Reveal className="mx-auto max-w-xl text-center">
+        <Reveal className="relative mx-auto max-w-xl text-center">
           <span className="mono-label">Testimoni</span>
           <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
             Kata mereka tentang Intidata.
@@ -32,6 +34,11 @@ export function Testimonials() {
             Dengarkan langsung dari klien kami tentang bagaimana sistem kami
             membantu operasional mereka.
           </p>
+          <GridGlobe />
+          <ClusterPin className="pointer-events-none absolute -left-[260px] top-4 hidden h-[150px] w-[230px] opacity-70 lg:block" />
+          <div className="pointer-events-none absolute -right-[260px] top-4 hidden h-[150px] w-[230px] scale-x-[-1] opacity-70 lg:block">
+            <ClusterPerson className="h-full w-full" />
+          </div>
         </Reveal>
 
         <Reveal delay={0.1} className="mt-16">
@@ -41,7 +48,11 @@ export function Testimonials() {
               <motion.div
                 aria-hidden
                 animate={{ opacity: [0.25, 0.4, 0.25] }}
-                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
                 className="pointer-events-none absolute -left-10 -top-10 h-[220px] w-[220px] rounded-full blur-[90px]"
                 style={{
                   background:
@@ -87,7 +98,6 @@ export function Testimonials() {
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
-
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -104,16 +114,28 @@ export function Testimonials() {
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <span className="inline-flex rounded-full border border-[var(--panel-border)] bg-signal-blue-dim px-3.5 py-1.5 text-[12.5px] font-medium text-signal-blue">
-                    {active.category}
-                  </span>
-
-                  <Quote size={28} className="mt-6 text-ink-3" strokeWidth={1.5} />
+                  <Quote
+                    size={28}
+                    className="mt-6 text-ink-3"
+                    strokeWidth={1.5}
+                  />
                   <p className="mt-4 text-[19px] font-medium leading-relaxed text-ink-0 sm:text-[21px]">
                     &ldquo;{active.quote}&rdquo;
                   </p>
+                </motion.div>
+              </AnimatePresence>
 
-                  <div className="mt-8 flex items-center gap-3">
+              {/* nama + role — posisi FIXED, nempel dekat nav controls, tidak ikut geser oleh panjang quote */}
+              <div className="absolute inset-x-0 bottom-20 flex items-center gap-3 sm:bottom-24">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={active.id + "-author"}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-center gap-3"
+                  >
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[image:var(--grad-signal)] font-display text-[14px] font-semibold text-white">
                       {active.initials}
                     </span>
@@ -125,9 +147,9 @@ export function Testimonials() {
                         {active.role}, {active.company}
                       </div>
                     </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
               {/* nav controls — posisi tetap, tidak ikut animasi konten */}
               <div className="absolute inset-x-0 bottom-0 flex items-center gap-4">
