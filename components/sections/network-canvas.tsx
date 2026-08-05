@@ -32,6 +32,14 @@ export function NetworkCanvas() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const styles = getComputedStyle(canvas.parentElement ?? canvas);
+    const inkColor = styles.getPropertyValue("--ink-2").trim() || "#868da0";
+    const lineColor =
+      styles.getPropertyValue("--panel-border-strong").trim() ||
+      "rgba(75,100,255,0.22)";
+
+    // ...
+
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -71,7 +79,7 @@ export function NetworkCanvas() {
     function draw(time: number) {
       ctx!.clearRect(0, 0, width, height);
 
-      ctx!.fillStyle = "rgba(17,24,39,0.18)";
+      ctx!.fillStyle = inkColor;
       ambient.forEach((p) => {
         if (!reduced) {
           p.x += p.vx;
@@ -91,7 +99,7 @@ export function NetworkCanvas() {
         ctx!.beginPath();
         ctx!.moveTo(pa.x * width, pa.y * height);
         ctx!.lineTo(pb.x * width, pb.y * height);
-        ctx!.strokeStyle = "rgba(75,100,255,0.22)";
+        ctx!.strokeStyle = lineColor;
         ctx!.lineWidth = 1;
         ctx!.stroke();
       });
@@ -101,8 +109,8 @@ export function NetworkCanvas() {
         const r = i === 0 ? 5 : 3.4;
         ctx!.beginPath();
         ctx!.arc(a.x * width, a.y * height, r, 0, Math.PI * 2);
-        ctx!.fillStyle = i === 0 ? "#2fe0c2" : "#4b64ff";
-        ctx!.shadowColor = i === 0 ? "#2fe0c2" : "#4b64ff";
+        ctx!.fillStyle = i === 0 ? "#7fa6ff" : "#4b64ff";
+        ctx!.shadowColor = i === 0 ? "#7fa6ff" : "#4b64ff";
         ctx!.shadowBlur = i === 0 ? 16 : 8;
         ctx!.fill();
         ctx!.shadowBlur = 0;
@@ -120,7 +128,7 @@ export function NetworkCanvas() {
           ctx!.beginPath();
           ctx!.arc(x * width, y * height, 2 + glow * 1.6, 0, Math.PI * 2);
           ctx!.fillStyle = "rgba(47,75,208,0.95)";
-          ctx!.shadowColor = "#2fe0c2";
+          ctx!.shadowColor = "#7fa6ff";
           ctx!.shadowBlur = 10;
           ctx!.fill();
           ctx!.shadowBlur = 0;

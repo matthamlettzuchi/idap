@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { FaLinkedinIn, FaInstagram, FaFacebook } from "react-icons/fa";
 import { contact, nav, products } from "@/lib/data";
 import { Logo } from "@/components/logo";
+import { sectionTones } from "@/lib/section-tones";
 
 const year = new Date().getFullYear();
 
@@ -15,7 +16,7 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-[var(--panel-border)] bg-surface pb-10 pt-24">
+    <footer style={sectionTones.dark} className="relative overflow-hidden border-t border-[var(--panel-border)] bg-surface pb-10 pt-24">
       <motion.div
         aria-hidden
         animate={{ x: ["-10%", "10%", "-10%"] }}

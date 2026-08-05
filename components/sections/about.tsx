@@ -1,26 +1,31 @@
+// components/sections/about.tsx
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { Compass, Code2, Link2, ShieldCheck } from "lucide-react";
 import { Reveal } from "@/components/ui/reveal";
+import { sectionTones } from "@/lib/section-tones";
 
 const capabilities = [
   {
+    icon: Compass,
     tag: "Konsultasi",
     detail:
       "Memetakan proses operasional Anda saat ini sebelum satu baris kode pun ditulis.",
   },
   {
+    icon: Code2,
     tag: "Pengembangan",
     detail:
       "Membangun sistem inti yang modular, sehingga tumbuh bersama skala bisnis Anda.",
   },
   {
+    icon: Link2,
     tag: "Integrasi",
     detail:
       "Menghubungkan sistem internal Anda dengan pelaporan regulator secara langsung.",
   },
   {
+    icon: ShieldCheck,
     tag: "Perawatan",
     detail:
       "Menjaga kinerja sistem tetap stabil, jauh setelah proyek dinyatakan selesai.",
@@ -28,17 +33,8 @@ const capabilities = [
 ];
 
 export function About() {
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setActive((v) => (v + 1) % capabilities.length);
-    }, 3200);
-    return () => clearInterval(id);
-  }, []);
-
   return (
-    <section id="tentang" className="relative bg-void py-32">
+    <section id="tentang" style={sectionTones.dark} className="relative bg-void py-32">
       <div className="container-x grid grid-cols-1 gap-16 lg:grid-cols-[0.85fr_1.15fr]">
         <Reveal>
           <span className="mono-label">Tentang Kami</span>
@@ -52,51 +48,56 @@ export function About() {
             kreativitas dan kecerdasan untuk memahami kebutuhan, tantangan,
             dan sasaran bisnis setiap mitra kami.
           </p>
+
+          {/* aksen stat kecil biar kolom kiri gak kosong */}
+          <div className="mt-10 flex gap-10 border-t border-[var(--panel-border)] pt-8">
+            <div>
+              <div className="font-display text-[26px] font-semibold text-signal-teal">
+                25+
+              </div>
+              <div className="mt-1 text-[12.5px] text-ink-2">
+                Tahun pengalaman
+              </div>
+            </div>
+            <div>
+              <div className="font-display text-[26px] font-semibold text-signal-teal">
+                17+
+              </div>
+              <div className="mt-1 text-[12.5px] text-ink-2">
+                Klien aktif
+              </div>
+            </div>
+          </div>
         </Reveal>
 
         <Reveal delay={0.1}>
           <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius)] border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2">
             {capabilities.map((c, i) => (
-              <button
+              <div
                 key={c.tag}
-                onMouseEnter={() => setActive(i)}
-                onFocus={() => setActive(i)}
-                className={`group relative flex min-h-[168px] flex-col justify-between bg-panel p-7 text-left transition-colors duration-300 ${
-                  active === i ? "bg-panel-2" : ""
-                }`}
+                className="group relative flex flex-col justify-between bg-panel p-7 transition-colors duration-300 hover:bg-panel-2"
               >
-                <span
-                  className={`font-mono text-[12px] tracking-wide transition-colors ${
-                    active === i ? "text-signal-teal" : "text-ink-2"
-                  }`}
-                >
-                  0{i + 1}
-                </span>
-                <span className="font-display text-[19px] font-medium">
-                  {c.tag}
-                </span>
-                <div
-                  className={`h-px w-full origin-left bg-[image:var(--grad-signal)] transition-transform duration-500 ${
-                    active === i ? "scale-x-100" : "scale-x-0"
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
+                <div className="flex items-start justify-between">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                    <c.icon size={19} strokeWidth={1.75} />
+                  </span>
+                  <span className="font-mono text-[12px] tracking-wide text-ink-2">
+                    0{i + 1}
+                  </span>
+                </div>
 
-          <div className="relative mt-px min-h-[92px] overflow-hidden rounded-b-[var(--radius)] border border-t-0 border-[var(--panel-border)] bg-surface p-7">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={active}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="max-w-lg text-[15px] leading-relaxed text-ink-1"
-              >
-                {capabilities[active].detail}
-              </motion.p>
-            </AnimatePresence>
+                <div className="mt-8">
+                  <div className="font-display text-[19px] font-medium text-ink-0">
+                    {c.tag}
+                  </div>
+                  <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-2">
+                    {c.detail}
+                  </p>
+                </div>
+
+                <div className="mt-6 h-px w-full origin-left scale-x-0 bg-[image:var(--grad-signal)] transition-transform duration-500 group-hover:scale-x-100" />
+              </div>
+            ))}
           </div>
         </Reveal>
       </div>

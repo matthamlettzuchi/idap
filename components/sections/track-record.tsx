@@ -4,6 +4,14 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { principles, products } from "@/lib/data";
 import { Reveal } from "@/components/ui/reveal";
+import {
+  Landmark,
+  Receipt,
+  BookOpenCheck,
+  Trees,
+  FileCheck2,
+  Activity,
+} from "lucide-react";
 
 const stages = [
   { label: "Discovery", detail: "Memetakan proses dan titik gesekan operasional Anda." },
@@ -12,31 +20,142 @@ const stages = [
   { label: "Operasikan", detail: "Merawat kinerja sistem secara berkelanjutan pasca-peluncuran." },
 ];
 
-function ModuleChart() {
+const productIcons = [Landmark, Receipt, BookOpenCheck, Trees, FileCheck2];
+
+const activityLog = [
+  { label: "FIS-MF · Rekonsiliasi kas selesai", time: "2 menit lalu" },
+  { label: "SLK-SR · Laporan terkirim ke OJK", time: "14 menit lalu" },
+  { label: "PLN · Sinkronisasi data produksi", time: "26 menit lalu" },
+  { label: "FIS-AC · Penutupan periode berjalan", time: "1 jam lalu" },
+];
+
+function ModuleChart({ active }: { active: boolean }) {
+  const [hovered, setHovered] = useState<number | null>(null);
   const max = Math.max(...products.map((p) => p.modules.length));
+
   return (
-    <div className="flex h-[220px] items-end gap-4 sm:gap-6">
-      {products.map((p, i) => (
-        <div key={p.id} className="flex flex-1 flex-col items-center gap-3">
-          <div className="relative flex h-full w-full items-end justify-center">
-            <motion.div
-              initial={{ height: 0 }}
-              whileInView={{ height: `${(p.modules.length / max) * 100}%` }}
-              viewport={{ once: true, margin: "-10% 0px" }}
-              transition={{ duration: 0.9, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-[38px] rounded-t-[6px]"
-              style={{
-                background:
-                  "linear-gradient(180deg, #2fe0c2, #4b64ff)",
-                opacity: 0.9,
-              }}
-            />
-          </div>
-          <span className="mono-label !text-[10px] text-center leading-tight">
-            {p.code}
-          </span>
-        </div>
-      ))}
+    <div className="relative">
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex h-[200px] flex-col justify-between">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="h-px w-full bg-[var(--panel-border)]" />
+        ))}
+      </div>
+
+      <div className="relative flex h-[200px] items-end gap-4 sm:gap-6">
+        {products.map((p, i) => {
+          const Icon = productIcons[i % productIcons.length];
+          return (
+            <div
+              key={p.id}
+              className="flex flex-1 flex-col items-center gap-3"
+              onMouseEnter={() => setHovered(i)}
+              onMouseLeave={() => setHovered(null)}
+            >
+              <div className="relative flex h-full w-full items-end justify-center">
+                <motion.span
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={active ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+                  transition={{ delay: 0.5 + i * 0.08, duration: 0.4 }}
+                  className="absolute -top-1 rounded-full border border-[var(--panel-border)] bg-panel px-2 py-0.5 font-mono text-[10px] text-ink-1"
+                >
+                  {p.modules.length} modul
+                </motion.span>
+
+                <motion.div
+                  initial={{ height: 0 }}
+                  animate={
+                    active
+                      ? { height: `${(p.modules.length / max) * 100}%` }
+                      : { height: 0 }
+                  }
+                  transition={{
+                    duration: 0.9,
+                    delay: i * 0.08,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="relative w-full max-w-[44px] overflow-hidden rounded-t-[8px]"
+                  style={{
+                    background: "linear-gradient(180deg, #2fe0c2, #4b64ff)",
+                    opacity: hovered === null || hovered === i ? 0.95 : 0.35,
+                  }}
+                >
+                  <motion.div
+                    aria-hidden
+                    animate={{ opacity: hovered === i ? 0.25 : 0 }}
+                    className="absolute inset-0 bg-white"
+                  />
+                </motion.div>
+
+                {hovered === i && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute -top-1 left-1/2 z-10 w-44 -translate-x-1/2 -translate-y-full rounded-xl border border-[var(--panel-border)] bg-panel p-3 shadow-[0_16px_40px_-16px_rgba(17,24,39,0.35)]"
+                  >
+                    <div className="mb-2 flex items-center gap-1.5">
+                      <Icon size={13} className="text-signal-teal" />
+                      <span className="text-[11.5px] font-medium text-ink-0">
+                        {p.name}
+                      </span>
+                    </div>
+                    <ul className="space-y-1">
+                      {p.modules.map((m) => (
+                        <li key={m} className="text-[11px] text-ink-2">
+                          · {m}
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+              </div>
+
+              <Icon
+                size={15}
+                className={`transition-colors ${
+                  hovered === i ? "text-signal-teal" : "text-ink-3"
+                }`}
+              />
+              <span className="mono-label !text-[10px] text-center leading-tight">
+                {p.code}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function ActivityFeed({ active }: { active: boolean }) {
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-[var(--panel-border)] bg-panel-2 p-4">
+      <div className="mb-3 flex items-center gap-2">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal-teal opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-signal-teal" />
+        </span>
+        <span className="mono-label !text-[10px]">Aktivitas Sistem</span>
+      </div>
+      <div className="space-y-2.5">
+        {activityLog.map((a, i) => (
+          <motion.div
+            key={a.label}
+            initial={{ opacity: 0, x: -8 }}
+            animate={active ? { opacity: 1, x: 0 } : { opacity: 0, x: -8 }}
+            transition={{ delay: 0.7 + i * 0.1, duration: 0.4 }}
+            className="flex items-center justify-between gap-3 border-b border-[var(--panel-border)] pb-2.5 last:border-b-0 last:pb-0"
+          >
+            <span className="flex items-center gap-2 text-[12px] text-ink-1">
+              <Activity size={12} className="shrink-0 text-signal-teal" />
+              {a.label}
+            </span>
+            <span className="shrink-0 font-mono text-[10px] text-ink-3">
+              {a.time}
+            </span>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -80,6 +199,7 @@ function ProcessTimeline() {
 
 export function TrackRecord() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [panelActive, setPanelActive] = useState(false);
 
   return (
     <section id="rekam-jejak" className="relative bg-surface py-32">
@@ -101,7 +221,7 @@ export function TrackRecord() {
           </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_0.9fr]">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_0.9fr] lg:items-stretch">
           <Reveal>
             <ul>
               {principles.map((p, i) => (
@@ -139,13 +259,30 @@ export function TrackRecord() {
             </ul>
           </Reveal>
 
-          <Reveal delay={0.1}>
-            <div className="panel p-8">
-              <span className="mono-label">Modul per sistem</span>
-              <div className="mt-8">
-                <ModuleChart />
+          <Reveal delay={0.1} className="h-full">
+            <motion.div
+              onViewportEnter={() => setPanelActive(true)}
+              viewport={{ once: true, margin: "-10% 0px" }}
+              className="halftone-texture relative flex h-full flex-col overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] bg-panel p-8"
+            >
+              <div className="relative mb-2 flex items-center justify-between">
+                <span className="mono-label">Modul per Sistem</span>
+                <span className="rounded-full bg-signal-teal/10 px-2.5 py-1 font-mono text-[10px] text-signal-teal">
+                  {products.length} sistem aktif
+                </span>
               </div>
-            </div>
+              <p className="relative mb-8 text-[12.5px] text-ink-2">
+                Arahkan kursor ke batang untuk melihat rincian modul.
+              </p>
+
+              <div className="relative">
+                <ModuleChart active={panelActive} />
+              </div>
+
+              <div className="relative mt-auto pt-8">
+                <ActivityFeed active={panelActive} />
+              </div>
+            </motion.div>
           </Reveal>
         </div>
 

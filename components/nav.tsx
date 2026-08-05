@@ -27,15 +27,14 @@ export function Nav() {
       >
         <div className="container-x flex h-[72px] items-center justify-between">
           <a href="#" className="flex items-center">
-            <Logo className="h-9 w-32" />
+            <Logo className="h-12 w-32" />
           </a>
-
           <nav className="hidden items-center gap-9 md:flex">
             {nav.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
-                className="mono-label !text-[11px] text-ink-1 transition-colors hover:text-ink-0"
+                className="text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0"
               >
                 {item.label}
               </a>

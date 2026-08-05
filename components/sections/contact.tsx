@@ -6,10 +6,11 @@ import type { ReactNode } from "react";
 import { contact } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import { sectionTones } from "@/lib/section-tones";
 
 export function Contact() {
   return (
-    <section id="kontak" className="relative overflow-hidden bg-void py-32">
+    <section id="kontak" style={sectionTones.dark} className="relative overflow-hidden bg-void py-32">
       <div className="grid-texture pointer-events-none absolute inset-0" />
       <motion.div
         aria-hidden

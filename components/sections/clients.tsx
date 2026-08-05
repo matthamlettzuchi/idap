@@ -1,13 +1,14 @@
 import { clients } from "@/lib/data";
 import { Marquee } from "@/components/marquee";
 import { Reveal } from "@/components/ui/reveal";
+import { sectionTones } from "@/lib/section-tones";
 
 const rowA = clients.filter((_, i) => i % 2 === 0);
 const rowB = clients.filter((_, i) => i % 2 === 1);
 
 export function Clients() {
   return (
-    <section id="klien" className="relative overflow-hidden bg-void py-32">
+    <section id="klien" style={sectionTones.dark} className="relative overflow-hidden bg-void py-32">
       <div className="container-x mb-16">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
           <Reveal>
@@ -28,8 +29,8 @@ export function Clients() {
       </div>
 
       <div className="flex flex-col gap-6 border-y border-[var(--panel-border)] py-10">
-        <Marquee items={rowA} duration={38} />
-        <Marquee items={rowB} reverse duration={44} />
+        <Marquee items={rowA} duration={38} variant="logo" />
+        <Marquee items={rowB} reverse duration={44} variant="logo" />
       </div>
     </section>
   );

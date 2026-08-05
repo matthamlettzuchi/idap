@@ -1,9 +1,10 @@
+import { sectionTones } from "@/lib/section-tones";
 import { NetworkCanvas } from "./network-canvas";
 import { Reveal } from "@/components/ui/reveal";
 
 export function Technology() {
   return (
-    <section id="teknologi" className="relative bg-void py-32">
+    <section id="teknologi" style={sectionTones.dark} className="relative bg-void py-32">
       <div className="container-x grid grid-cols-1 gap-16 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <Reveal>
           <span className="mono-label">Teknologi</span>

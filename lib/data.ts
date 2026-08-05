@@ -2,8 +2,154 @@ export const nav = [
   { label: "Produk", href: "#produk" },
   { label: "Tentang Kami", href: "#tentang" },
   { label: "Teknologi", href: "#teknologi" },
-  { label: "Rekam Jejak", href: "#rekam-jejak" },
+  { label: "Testimoni", href: "#testimoni" },
   { label: "Kontak", href: "#kontak" },
+];
+
+export type Testimonial = {
+  id: string;
+  category: string;
+  quote: string;
+  name: string;
+  role: string;
+  company: string;
+  initials: string;
+  videoId: string;
+};
+
+export const testimonials: Testimonial[] = [
+  {
+    id: "t1",
+    category: "Multifinance",
+    quote:
+      "Selama kurang lebih satu tahun menggunakan Fiscus, validasi yang sudah sesuai ketentuan OJK membantu kami menjaga kualitas data, meminimalkan human error, dan didukung oleh tim Intidata yang selalu responsif, bahkan di luar jam kerja.",
+    name: "Berlianto",
+    role: "IT",
+    company: "PT Dana Kini Finance",
+    initials: "B",
+    videoId: "j0VmrBxTSAA",
+  },
+  {
+    id: "t2",
+    category: "Multifinance",
+    quote:
+      "Fiscus membuat proses pembukuan dan rekonsiliasi menjadi lebih rapi, mempercepat penyusunan laporan OJK melalui XBRL, serta didukung tim Intidata yang selalu responsif.",
+    name: "Jeffy Eugene Aggrianto",
+    role: "Finance Professional",
+    company: "PT Dana Kini Finance",
+    initials: "JEA",
+    videoId: "kR93hit3vIQ",
+  },
+  {
+    id: "t3",
+    category: "Multifinance",
+    quote:
+      "Dengan Fiscus, proses penginputan data menjadi lebih mudah, laporan lebih lengkap dan akurat, serta setiap kendala dapat ditangani dengan cepat.",
+    name: "Cornellia",
+    role: "Credit Risk Management",
+    company: "PT Karunia Multifinance",
+    initials: "C",
+    videoId: "UN8U34JTWo4",
+  },
+  {
+    id: "t4",
+    category: "Multifinance",
+    quote:
+      "Fiscus membantu kami mengurangi proses manual melalui validasi otomatis dan pelaporan yang cepat, sehingga data menjadi lebih akurat dan efisien.",
+    name: "Angel",
+    role: "Accounting",
+    company: "PT Karunia Multifinance",
+    initials: "A",
+    videoId: "JMNggkFX6dE",
+  },
+  {
+    id: "t5",
+    category: "Multifinance",
+    quote:
+      "Dengan Fiscus, proses penyusunan laporan menjadi jauh lebih cepat dan efisien. Validasi sistem membantu meminimalkan kesalahan, sementara hasil perhitungannya yang akurat memudahkan kami memenuhi kebutuhan pelaporan dengan lebih percaya diri.",
+    name: "Felicia",
+    role: "Marketing",
+    company: "PT Karunia Multifinance",
+    initials: "F",
+    videoId: "GbRUQ8Y2Jpo",
+  },
+  {
+    id: "t6",
+    category: "Multifinance",
+    quote:
+      "Fiscus membantu kami beralih dari banyak proses manual ke sistem yang lebih terintegrasi dan efisien. Ditambah lagi, tim after-sales selalu responsif sehingga kami merasa didukung dalam setiap kebutuhan operasional.",
+    name: "Hendri Pradana",
+    role: "IT",
+    company: "PT Karunia Multifinance",
+    initials: "HP",
+    videoId: "kazrpKR7c2A",
+  },
+  {
+    id: "t7",
+    category: "Multifinance",
+    quote:
+      "Sejak menggunakan Fiscus, pengelolaan data menjadi lebih terstruktur dan efisien. Selain sistem yang andal, tim support juga selalu cepat merespons dan membantu kami menemukan solusi terbaik untuk setiap kebutuhan.",
+    name: "Emil Zanovandi Furkon",
+    role: "Alliance & Business Development Manager",
+    company: "PT Karunia Multifinance",
+    initials: "EZF",
+    videoId: "z8r6QLKgccw",
+  },
+  {
+    id: "t8",
+    category: "Multifinance",
+    quote:
+      "Fiscus membantu kami mengotomatiskan proses jurnal dan mempercepat rekonsiliasi data. Ketika ada kebutuhan baru, tim Intidata juga sangat responsif dengan memberikan solusi yang benar-benar sesuai dengan operasional kami.",
+    name: "Sherlin",
+    role: "Finance Operation",
+    company: "PT Dana Kini Finance",
+    initials: "S",
+    videoId: "auLTPsmgPdo",
+  },
+  {
+    id: "t9",
+    category: "Multifinance",
+    quote:
+      "Fiscus mempermudah proses jurnal melalui sistem yang terintegrasi, sehingga pekerjaan menjadi lebih cepat dan efisien. Tim Inti Data juga selalu memberikan respons yang cepat ketika kami membutuhkan bantuan.",
+    name: "Cindy",
+    role: "Finance Operation",
+    company: "PT Dana Kini Finance",
+    initials: "C",
+    videoId: "xmcqBkYJhzg",
+  },
+  {
+    id: "t10",
+    category: "Multifinance",
+    quote:
+      "Fiscus memudahkan kami mengakses data dan menghasilkan laporan yang dapat disesuaikan dengan kebutuhan. Selain sistem yang user-friendly, layanan dari tim Inti Data juga selalu responsif dan memuaskan.",
+    name: "Agnes",
+    role: "Supervisor",
+    company: "PT Datindo Entrycom",
+    initials: "A",
+    videoId: "zZkk6b_8QKA",
+  },
+  {
+    id: "t11",
+    category: "Multifinance",
+    quote:
+      "Fiscus mampu menangani volume penerbitan lebih dari seribu invoice setiap bulan dengan lancar. Antarmukanya intuitif, mudah dipelajari, dan cukup andal untuk mendukung operasional harian kami tanpa menghambat produktivitas.",
+    name: "H. Hasibuhan",
+    role: "Finance & Accounting Manager",
+    company: "PT NTT DATA Indonesia",
+    initials: "HH",
+    videoId: "XSwnruH9p04",
+  },
+  {
+    id: "t12",
+    category: "Multifinance",
+    quote:
+      "Kemudahan dalam menelusuri outstanding tagihan, didukung antarmuka yang intuitif dan proses pelaporan yang cepat, menjadikan Fiscus solusi yang kami andalkan untuk mendukung operasional harian.",
+    name: "Imam Adiansyah",
+    role: "Staff Accounting & Finance",
+    company: "PT Datindo Entrycom",
+    initials: "IA",
+    videoId: "mbfatIU2RJg",
+  },
 ];
 
 export const heroStats = [
@@ -13,14 +159,14 @@ export const heroStats = [
 ];
 
 export const clientLogos = [
-  "NTT",
-  "NEC",
-  "Karunia Multifinance",
-  "RSM AAJ",
-  "Moores Rowland",
-  "Sumitomo Mitsui Trust",
-  "Resona",
-  "Ventura Investasi Utama",
+  { name: "ntt", logo: "/nttnew.png" },
+  { name: "NEC", logo: "/NEC.webp" },
+  { name: "KMF", logo: "/kmf.webp" },
+  { name: "RSMAAJ", logo: "/RSMAAJ.webp" },
+  { name: "Moores Rowland", logo: "/Moores Rowland.webp" },
+  { name: "Sumitomo", logo: "/Sumitomo.webp" },
+  { name: "Resona", logo: "/resona.webp" },
+  { name: "Ventura", logo: "/ventura.webp" },
 ];
 
 export const clients = [
@@ -65,7 +211,12 @@ export const products: Product[] = [
       { label: "Siklus kontrak", value: "Real-time" },
       { label: "Rekonsiliasi", value: "Otomatis" },
     ],
-    modules: ["Origination", "Penjadwalan Angsuran", "Penagihan", "Rekonsiliasi Kas"],
+    modules: [
+      "Origination",
+      "Penjadwalan Angsuran",
+      "Penagihan",
+      "Rekonsiliasi Kas",
+    ],
   },
   {
     id: "fiscus-factoring",
@@ -78,7 +229,12 @@ export const products: Product[] = [
       { label: "Verifikasi faktur", value: "Berlapis" },
       { label: "Pelacakan risiko", value: "Per debitur" },
     ],
-    modules: ["Verifikasi Faktur", "Pencairan Dana", "Manajemen Risiko", "Pelaporan Piutang"],
+    modules: [
+      "Verifikasi Faktur",
+      "Pencairan Dana",
+      "Manajemen Risiko",
+      "Pelaporan Piutang",
+    ],
   },
   {
     id: "fiscus-accounting",
@@ -104,7 +260,12 @@ export const products: Product[] = [
       { label: "Cakupan", value: "Estates + Mills" },
       { label: "Data produksi", value: "Harian" },
     ],
-    modules: ["Manajemen Kebun", "Logistik TBS", "Produksi Pabrik", "Kendali Mutu"],
+    modules: [
+      "Manajemen Kebun",
+      "Logistik TBS",
+      "Produksi Pabrik",
+      "Kendali Mutu",
+    ],
   },
   {
     id: "slik-silaras",
@@ -117,7 +278,12 @@ export const products: Product[] = [
       { label: "Validasi format", value: "Sebelum kirim" },
       { label: "Tenggat OJK", value: "Terjaga" },
     ],
-    modules: ["Ekstraksi Data", "Validasi Format", "Pengiriman Terjadwal", "Jejak Audit"],
+    modules: [
+      "Ekstraksi Data",
+      "Validasi Format",
+      "Pengiriman Terjadwal",
+      "Jejak Audit",
+    ],
   },
 ];
 
@@ -172,7 +338,8 @@ export const faqs = [
 ];
 
 export const contact = {
-  address: "Kompleks Taman Palem Lestari Blok H/61, Outer Ringroad, Jakarta 11730, Indonesia",
+  address:
+    "Kompleks Taman Palem Lestari Blok H/61, Outer Ringroad, Jakarta 11730, Indonesia",
   email: "admin@intidatasolution.com",
   phones: ["+6221-55952979", "+6221-55958058"],
   whatsapp: "https://wa.me/622155958058",
