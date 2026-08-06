@@ -1,15 +1,157 @@
+// components/navbar.tsx
 "use client";
 
-import { motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
-import { nav } from "@/lib/data";
+import * as React from "react";
+import Link from "next/link";
+import { motion, AnimatePresence, useMotionValueEvent, useScroll } from "framer-motion";
+import {
+  ChevronDown,
+  Menu,
+  X,
+  Code2,
+  Globe,
+  Layers,
+  Smartphone,
+  Wrench,
+  Palette,
+  Rocket,
+  Server,
+  ShieldCheck,
+  Cloud,
+  Network,
+  Building2,
+  TrendingUp,
+  Calculator,
+  FileSpreadsheet,
+  Sprout,
+  ArrowRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 
+// --- DATA STRUCTURES WITH SLUGS ---
+
+const softwareDevServices = [
+  { 
+    title: "Custom Software Development", 
+    slug: "custom-software-development", 
+    icon: Code2, 
+    desc: "Sistem khusus sesuai regulasi bisnis Anda." 
+  },
+  { 
+    title: "Web Application Development", 
+    slug: "web-application-development", 
+    icon: Globe, 
+    desc: "Aplikasi web enterprise berskala besar." 
+  },
+  { 
+    title: "Full Stack Development", 
+    slug: "full-stack-development", 
+    icon: Layers, 
+    desc: "Solusi end-to-end frontend & backend." 
+  },
+  { 
+    title: "Mobile App Development", 
+    slug: "mobile-app-development", 
+    icon: Smartphone, 
+    desc: "Aplikasi iOS & Android performa tinggi." 
+  },
+  { 
+    title: "Software Maintenance & Support", 
+    slug: "software-maintenance-support", 
+    icon: Wrench, 
+    desc: "Pemeliharaan rutin & SLA terjamin." 
+  },
+  { 
+    title: "UI/UX Design Services", 
+    slug: "ui-ux-design-services", 
+    icon: Palette, 
+    desc: "Desain antarmuka intuitif untuk finansial." 
+  },
+  { 
+    title: "MVP Software Development", 
+    slug: "mvp-software-development", 
+    icon: Rocket, 
+    desc: "Validasi ide bisnis dengan time-to-market cepat." 
+  },
+];
+
+const infrastructureServices = [
+  { 
+    title: "Cloud Architecture & Hosting", 
+    slug: "cloud-architecture-hosting", 
+    icon: Cloud, 
+    desc: "Infrastruktur cloud aman & scalable." 
+  },
+  { 
+    title: "Network Security & Compliance", 
+    slug: "network-security-compliance", 
+    icon: ShieldCheck, 
+    desc: "Proteksi sistem tingkat perbankan." 
+  },
+  { 
+    title: "Server Setup & Virtualization", 
+    slug: "server-setup-virtualization", 
+    icon: Server, 
+    desc: "Manajemen server fisik & virtual." 
+  },
+  { 
+    title: "System Integration & API", 
+    slug: "system-integration-api", 
+    icon: Network, 
+    desc: "Konektivitas antar-sistem tanpa hambatan." 
+  },
+];
+
+const productList = [
+  {
+    code: "FISCUS MF",
+    name: "FISCUS Multifinance",
+    desc: "Core system pembiayaan konsumen & kendaraan.",
+    icon: Building2,
+    href: "/products/multifinance",
+  },
+  {
+    code: "FISCUS FC",
+    name: "FISCUS Factoring",
+    desc: "Manajemen anjak piutang & tagihan bisnis.",
+    icon: TrendingUp,
+    href: "/products/factoring",
+  },
+  {
+    code: "FISCUS AC",
+    name: "FISCUS Accounting",
+    desc: "Pembukuan terintegrasi standar perbankan.",
+    icon: Calculator,
+    href: "/products/accounting",
+  },
+  {
+    code: "OJK REPORT",
+    name: "SLIK / SILARAS Reporting",
+    desc: "Pelaporan otomatis sesuai regulasi OJK & BI.",
+    icon: FileSpreadsheet,
+    href: "/products/slik-silaras",
+  },
+  {
+    code: "PLANTA",
+    name: "Planta Enterprise",
+    desc: "Solusi ERP khusus sektor perkebunan & kelapa sawit.",
+    icon: Sprout,
+    href: "/products/planta",
+  },
+];
+
 export function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  
+  // Desktop Dropdown State
+  const [activeDropdown, setActiveDropdown] = React.useState<"services" | "products" | null>(null);
+  const [activeCategory, setActiveCategory] = React.useState<"sw" | "infra">("sw");
+
+  // Mobile Accordion State
+  const [mobileAccordion, setMobileAccordion] = React.useState<"services" | "products" | null>(null);
+
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -26,27 +168,221 @@ export function Nav() {
         }`}
       >
         <div className="container-x flex h-[72px] items-center justify-between">
-          <a href="#" className="flex items-center">
+          {/* Logo Brand */}
+          <Link href="/" className="flex items-center">
             <Logo className="h-12 w-32" />
-          </a>
+          </Link>
+
+          {/* Desktop Navigation */}
           <nav className="hidden items-center gap-9 md:flex">
-            {nav.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0"
-              >
-                {item.label}
-              </a>
-            ))}
+            <Link
+              href="/about"
+              className="text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0"
+            >
+              About Us
+            </Link>
+
+            {/* PRODUCTS MEGA MENU */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveDropdown("products")}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center gap-1.5 py-6 text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0">
+                Products{" "}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${
+                    activeDropdown === "products" ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {activeDropdown === "products" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute -left-20 top-full w-[680px] rounded-2xl border border-[var(--panel-border)] bg-panel p-6 shadow-2xl"
+                  >
+                    <div className="mono-label mb-4">Core Products Suite</div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {productList.map((prod) => (
+                        <Link
+                          key={prod.name}
+                          href={prod.href}
+                          className="group flex items-start gap-3.5 rounded-xl border border-transparent p-3 transition-colors hover:border-[var(--panel-border)] hover:bg-panel-2"
+                        >
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                            <prod.icon size={18} />
+                          </span>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-display text-[14px] font-medium text-ink-0 group-hover:text-signal-teal">
+                                {prod.name}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-[12px] leading-snug text-ink-2">
+                              {prod.desc}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* SERVICES MEGA MENU WITH DYNAMIC SLUGS */}
+            <div
+              className="relative"
+              onMouseEnter={() => setActiveDropdown("services")}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <button className="flex items-center gap-1.5 py-6 text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0">
+                Services{" "}
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${
+                    activeDropdown === "services" ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {activeDropdown === "services" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute -left-40 top-full flex w-[780px] overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-2xl"
+                  >
+                    {/* Left Sidebar Category Switcher */}
+                    <div className="w-64 border-r border-[var(--panel-border)] bg-panel-2 p-4">
+                      <div className="mono-label mb-3 px-3">Category</div>
+                      <button
+                        onMouseEnter={() => setActiveCategory("sw")}
+                        className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
+                          activeCategory === "sw"
+                            ? "border border-[var(--panel-border)] bg-panel text-ink-0"
+                            : "text-ink-2 hover:text-ink-0"
+                        }`}
+                      >
+                        <span className="text-[13.5px] font-medium">
+                          Software Development
+                        </span>
+                        <ArrowRight
+                          size={14}
+                          className={
+                            activeCategory === "sw" ? "text-signal-teal" : "opacity-0"
+                          }
+                        />
+                      </button>
+                      <button
+                        onMouseEnter={() => setActiveCategory("infra")}
+                        className={`mt-2 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
+                          activeCategory === "infra"
+                            ? "border border-[var(--panel-border)] bg-panel text-ink-0"
+                            : "text-ink-2 hover:text-ink-0"
+                        }`}
+                      >
+                        <span className="text-[13.5px] font-medium">
+                          Infrastructure
+                        </span>
+                        <ArrowRight
+                          size={14}
+                          className={
+                            activeCategory === "infra" ? "text-signal-teal" : "opacity-0"
+                          }
+                        />
+                      </button>
+                    </div>
+
+                    {/* Right Detail Content */}
+                    <div className="flex-1 p-6">
+                      {activeCategory === "sw" ? (
+                        <div>
+                          <div className="mono-label mb-3">
+                            Software Development Services
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            {softwareDevServices.map((item) => (
+                              <Link
+                                key={item.slug}
+                                href={`/services/${item.slug}`}
+                                className="group flex items-start gap-3 rounded-lg p-2.5 hover:bg-panel-2"
+                              >
+                                <item.icon
+                                  size={16}
+                                  className="mt-0.5 shrink-0 text-signal-teal"
+                                />
+                                <div>
+                                  <div className="text-[13px] font-medium text-ink-0 group-hover:text-signal-teal">
+                                    {item.title}
+                                  </div>
+                                  <div className="line-clamp-1 text-[11px] text-ink-2">
+                                    {item.desc}
+                                  </div>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="mono-label mb-3">
+                            Infrastructure & Security
+                          </div>
+                          <div className="grid grid-cols-1 gap-2">
+                            {infrastructureServices.map((item) => (
+                              <Link
+                                key={item.slug}
+                                href={`/services/${item.slug}`}
+                                className="group flex items-start gap-3 rounded-lg p-2.5 hover:bg-panel-2"
+                              >
+                                <item.icon
+                                  size={16}
+                                  className="mt-0.5 shrink-0 text-signal-teal"
+                                />
+                                <div>
+                                  <div className="text-[13px] font-medium text-ink-0 group-hover:text-signal-teal">
+                                    {item.title}
+                                  </div>
+                                  <div className="text-[11px] text-ink-2">
+                                    {item.desc}
+                                  </div>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <Link
+              href="/credit-simulation"
+              className="text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0"
+            >
+              Credit Simulation
+            </Link>
           </nav>
 
+          {/* Right Action CTA Button */}
           <div className="hidden items-center gap-3 md:flex">
             <Button asChild size="sm" variant="primary">
-              <a href="#kontak">Hubungi Kami</a>
+              <Link href="/contact">Hubungi Kami</Link>
             </Button>
           </div>
 
+          {/* Mobile Hamburger Toggle Button */}
           <button
             className="flex h-9 w-9 items-center justify-center text-ink-0 md:hidden"
             aria-label="Buka menu"
@@ -57,25 +393,114 @@ export function Nav() {
         </div>
       </div>
 
+      {/* Mobile Drawer Navigation Menu */}
       {open && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border-b border-[var(--panel-border)] bg-void/95 backdrop-blur-xl md:hidden"
+          exit={{ opacity: 0, y: -8 }}
+          className="max-h-[calc(100vh-72px)] overflow-y-auto border-b border-[var(--panel-border)] bg-void/95 backdrop-blur-xl md:hidden"
         >
-          <div className="container-x flex flex-col gap-5 py-8">
-            {nav.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className="font-display text-[20px] font-medium text-ink-0"
+          <div className="container-x flex flex-col gap-4 py-6">
+            <Link
+              href="/about"
+              onClick={() => setOpen(false)}
+              className="font-display text-[18px] font-medium text-ink-0"
+            >
+              About Us
+            </Link>
+
+            {/* Mobile Products Collapsible */}
+            <div>
+              <button
+                onClick={() =>
+                  setMobileAccordion(mobileAccordion === "products" ? null : "products")
+                }
+                className="flex w-full items-center justify-between font-display text-[18px] font-medium text-ink-0"
               >
-                {item.label}
-              </a>
-            ))}
-            <Button asChild variant="primary" className="mt-2">
-              <a href="#kontak">Hubungi Kami</a>
+                <span>Products</span>
+                <ChevronDown
+                  size={18}
+                  className={`transition-transform ${
+                    mobileAccordion === "products" ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {mobileAccordion === "products" && (
+                <div className="mt-3 flex flex-col gap-3 border-l border-[var(--panel-border)] pl-4">
+                  {productList.map((prod) => (
+                    <Link
+                      key={prod.name}
+                      href={prod.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
+                    >
+                      <prod.icon size={16} className="text-signal-teal" />
+                      <span>{prod.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Services Collapsible with Slugs */}
+            <div>
+              <button
+                onClick={() =>
+                  setMobileAccordion(mobileAccordion === "services" ? null : "services")
+                }
+                className="flex w-full items-center justify-between font-display text-[18px] font-medium text-ink-0"
+              >
+                <span>Services</span>
+                <ChevronDown
+                  size={18}
+                  className={`transition-transform ${
+                    mobileAccordion === "services" ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {mobileAccordion === "services" && (
+                <div className="mt-3 flex flex-col gap-3 border-l border-[var(--panel-border)] pl-4">
+                  <div className="mono-label text-[11px]">Software Development</div>
+                  {softwareDevServices.map((item) => (
+                    <Link
+                      key={item.slug}
+                      href={`/services/${item.slug}`}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
+                    >
+                      <item.icon size={16} className="text-signal-teal" />
+                      <span>{item.title}</span>
+                    </Link>
+                  ))}
+                  <div className="mono-label mt-2 text-[11px]">Infrastructure</div>
+                  {infrastructureServices.map((item) => (
+                    <Link
+                      key={item.slug}
+                      href={`/services/${item.slug}`}
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
+                    >
+                      <item.icon size={16} className="text-signal-teal" />
+                      <span>{item.title}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Link
+              href="/credit-simulation"
+              onClick={() => setOpen(false)}
+              className="font-display text-[18px] font-medium text-ink-0"
+            >
+              Credit Simulation
+            </Link>
+
+            <Button asChild variant="primary" className="mt-4 w-full">
+              <Link href="/contact" onClick={() => setOpen(false)}>
+                Hubungi Kami
+              </Link>
             </Button>
           </div>
         </motion.div>

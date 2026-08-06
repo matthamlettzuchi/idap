@@ -35,39 +35,22 @@ const capabilities = [
 
 export function About() {
   return (
-    <section
-      id="tentang"
-      style={sectionTones.dark}
-      className="relative overflow-hidden bg-void py-32"
-    >
+<section id="tentang" style={sectionTones.dark} className="relative overflow-hidden bg-void py-32">
       <motion.div
         aria-hidden
         className="pointer-events-none absolute -right-40 -top-40 h-[460px] w-[460px] rounded-full blur-[110px]"
-        style={{
-          background:
-            "radial-gradient(circle, var(--signal-blue-light), transparent 65%)",
-        }}
+        style={{ background: "radial-gradient(circle, var(--signal-blue-light), transparent 65%)" }}
         animate={{ x: [0, -40, 0], y: [0, 30, 0], opacity: [0.18, 0.3, 0.18] }}
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         aria-hidden
         className="pointer-events-none absolute -bottom-32 -left-32 h-[380px] w-[380px] rounded-full blur-[100px]"
-        style={{
-          background:
-            "radial-gradient(circle, var(--signal-blue), transparent 65%)",
-        }}
+        style={{ background: "radial-gradient(circle, var(--signal-blue), transparent 65%)" }}
         animate={{ x: [0, 30, 0], y: [0, -24, 0], opacity: [0.14, 0.24, 0.14] }}
-        transition={{
-          duration: 16,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2,
-        }}
+        transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
-      <div className="container-x relative grid grid-cols-1 gap-16 lg:grid-cols-[0.85fr_1.15fr]">
-        {" "}
-        <Reveal>
+      <div className="container-x relative grid grid-cols-1 gap-16 lg:grid-cols-[0.85fr_1.15fr]">        <Reveal>
           <span className="mono-label">About Us</span>
           <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
             More than just a
@@ -75,9 +58,9 @@ export function About() {
             software developer.
           </h2>
           <p className="mt-7 max-w-md text-[15.5px] leading-relaxed text-ink-1">
-            PT Intidata Anugrah Pratama forms a team equal in creativity and
-            intelligence to understand the needs, challenges, and business goals
-            of every partner.
+            PT Intidata Anugrah Pratama forms a team equal in creativity
+            and intelligence to understand the needs, challenges, and
+            business goals of every partner.
           </p>
 
           {/* small stat accent to keep left column filled */}
@@ -100,6 +83,7 @@ export function About() {
             </div>
           </div>
         </Reveal>
+
         <Reveal delay={0.1}>
           <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius)] border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2">
             {capabilities.map((c, i) => (
