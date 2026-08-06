@@ -4,23 +4,137 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Building2,
   Award,
   Cpu,
   Layers,
-  Users2,
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
   Code2,
-  Server,
   Sparkles,
+  Eye,
+  Compass,
+  Building2,
+  TrendingUp,
+  Calculator,
+  Sprout,
+  Landmark,
+  Search,
+  PenTool,
+  Workflow,
+  Rocket,
+  ActivitySquare,
+  Users2,
+  MapPin,
 } from "lucide-react";
 
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
-import { Button } from "@/components/ui/button";
 import { Contact } from "@/components/sections/contact";
+import { TrustedBy } from "@/components/sections/trusted-by";
+import { Reveal } from "@/components/ui/reveal";
+import { principles } from "@/lib/data";
+import { sectionTones } from "@/lib/section-tones";
+
+const whyChooseIcons = [
+  Sparkles,
+  ShieldCheck,
+  TrendingUp,
+  ActivitySquare,
+  Users2,
+  Award,
+];
+
+const journey = [
+  {
+    era: "Titik Awal",
+    title: "Fondasi sistem inti",
+    body:
+      "Intidata memulai dari kebutuhan paling mendasar bagi institusi keuangan: pencatatan yang akurat dan proses operasional yang bisa diandalkan setiap hari.",
+  },
+  {
+    era: "Spesialisasi",
+    title: "Fokus ke sektor multifinance",
+    body:
+      "Pengalaman lapangan mendalam di industri pembiayaan menjadi cetak biru lahirnya FISCUS — sistem inti yang dirancang khusus untuk siklus kontrak, angsuran, hingga penagihan.",
+  },
+  {
+    era: "Perluasan Layanan",
+    title: "Dari factoring hingga perkebunan",
+    body:
+      "Ekosistem berkembang ke Factoring, Accounting, hingga Planta — membuktikan arsitektur modular kami bisa diadaptasi lintas industri tanpa dibangun ulang dari nol.",
+  },
+  {
+    era: "Standarisasi",
+    title: "Terhubung langsung ke regulator",
+    body:
+      "Modul SLIK/SILARAS Report dibangun agar validasi format dan jadwal pelaporan ke OJK berjalan otomatis, bukan pekerjaan manual di akhir periode.",
+  },
+  {
+    era: "Hari Ini",
+    title: "Mitra skala enterprise",
+    body:
+      "Lebih dari 30 tahun kemudian, Intidata mendampingi puluhan institusi lokal dan multinasional — dari kantor cabang tunggal hingga grup korporasi besar.",
+  },
+];
+
+const missionPoints = [
+  "Merancang sistem yang mengurangi proses manual dan mempercepat siklus operasional harian.",
+  "Menjadikan kepatuhan regulasi berjalan otomatis, bukan pekerjaan tambahan di akhir bulan.",
+  "Membangun kemitraan jangka panjang dengan klien, bukan sekadar transaksi proyek.",
+  "Mendampingi pertumbuhan skala bisnis klien tanpa memaksa mereka membangun ulang sistem dari nol.",
+];
+
+const processSteps = [
+  {
+    icon: Search,
+    label: "Discovery & Konsultasi",
+    body: "Memetakan proses operasional dan tantangan spesifik klien sebelum satu baris kode pun ditulis.",
+  },
+  {
+    icon: PenTool,
+    label: "Rancang & Bangun",
+    body: "Arsitektur modular yang disesuaikan dengan alur kerja bisnis Anda, bukan template siap pakai.",
+  },
+  {
+    icon: Workflow,
+    label: "Integrasi & Pengujian",
+    body: "Menghubungkan sistem baru dengan infrastruktur yang sudah berjalan, termasuk jalur pelaporan ke OJK.",
+  },
+  {
+    icon: Rocket,
+    label: "Peluncuran & Pendampingan",
+    body: "Go-live bertahap, didampingi tim support yang responsif untuk jangka panjang.",
+  },
+];
+
+const industries = [
+  {
+    icon: Building2,
+    title: "Multifinance & Leasing",
+    body: "Core system pembiayaan konsumen dan kendaraan dari akuisisi kontrak hingga penagihan.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Factoring & Anjak Piutang",
+    body: "Pelacakan invoice, disbursement dana, dan manajemen risiko konsentrasi debitur.",
+  },
+  {
+    icon: Calculator,
+    title: "Akuntansi Korporat",
+    body: "Pembukuan terintegrasi — general ledger, AR/AP, hingga aset tetap dalam satu sumber data.",
+  },
+  {
+    icon: Sprout,
+    title: "Perkebunan & Agribisnis",
+    body: "Manajemen operasional kebun sawit, dari data lapangan hingga produksi pabrik.",
+  },
+  {
+    icon: Landmark,
+    title: "Pelaporan Regulator",
+    body: "Jembatan pelaporan langsung ke sistem OJK — SLIK dan SILARAS — yang selalu patuh format terbaru.",
+  },
+];
 
 export default function AboutPage() {
   const coreValues = [
@@ -55,7 +169,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal relative overflow-hidden">
       <Nav overlayHero />
 
-      {/* Decorative Background Glows (Framer / 21st.dev Aesthetic) */}
+      {/* Decorative Background Glows */}
       <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[600px] w-full max-w-7xl -translate-x-1/2 opacity-30 blur-[120px]">
         <div className="h-full w-full bg-gradient-to-tr from-signal-teal/30 via-signal-blue/20 to-transparent" />
       </div>
@@ -78,7 +192,6 @@ export default function AboutPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
           <div className="relative z-10 flex h-full flex-col items-center justify-end px-6 pb-60 text-center">
-
             <h1 className="max-w-4xl text-[clamp(32px,6.5vw,64px)] font-extrabold leading-[1.08] tracking-tight text-white/80">
               Membangun Fondasi
               <br />
@@ -94,9 +207,8 @@ export default function AboutPage() {
         </motion.div>
 
         <div className="container-x max-w-6xl">
-          {/* BENTO GRID SECTION — unchanged */}
+          {/* BENTO GRID SECTION */}
           <div className="mt-16 grid grid-cols-1 md:grid-cols-12 gap-6">
-            {/* Card 1: Main Highlight (30+ Years) - Span 7 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -139,7 +251,6 @@ export default function AboutPage() {
               </div>
             </motion.div>
 
-            {/* Card 2: Flagship Product FISCUS - Span 5 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -172,7 +283,6 @@ export default function AboutPage() {
               </div>
             </motion.div>
 
-            {/* Card 3: Custom Software Development - Span 5 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -193,7 +303,6 @@ export default function AboutPage() {
               </p>
             </motion.div>
 
-            {/* Card 4: Comprehensive Modules List - Span 7 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -226,32 +335,220 @@ export default function AboutPage() {
             </motion.div>
           </div>
 
+          {/* VISI & MISI */}
+          <div className="mt-24">
+            <Reveal className="text-center max-w-xl mx-auto mb-12">
+              <span className="mono-label">Visi & Misi</span>
+              <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
+                Arah yang kami tuju.
+              </h2>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <Reveal>
+                <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
+                  <div className="h-11 w-11 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
+                    <Eye size={20} />
+                  </div>
+                  <h3 className="mt-6 font-display text-[20px] font-semibold text-ink-0">
+                    Visi
+                  </h3>
+                  <p className="mt-3 text-[14.5px] leading-relaxed text-ink-1">
+                    Menjadi mitra teknologi utama bagi institusi keuangan dan
+                    korporasi di Indonesia — memungkinkan setiap keputusan
+                    bisnis dibuat di atas data yang akurat, real-time, dan
+                    patuh regulasi.
+                  </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.08}>
+                <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
+                  <div className="h-11 w-11 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
+                    <Compass size={20} />
+                  </div>
+                  <h3 className="mt-6 font-display text-[20px] font-semibold text-ink-0">
+                    Misi
+                  </h3>
+                  <ul className="mt-4 space-y-3">
+                    {missionPoints.map((point) => (
+                      <li key={point} className="flex items-start gap-2.5">
+                        <CheckCircle2
+                          size={15}
+                          className="mt-0.5 shrink-0 text-signal-teal"
+                        />
+                        <span className="text-[14px] leading-relaxed text-ink-1">
+                          {point}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+
+          {/* PERJALANAN KAMI — timeline */}
+          <div className="mt-24">
+            <Reveal className="max-w-xl mb-12">
+              <span className="mono-label">Perjalanan Kami</span>
+              <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
+                Tiga dekade, satu komitmen yang sama.
+              </h2>
+            </Reveal>
+
+            <div className="relative pl-8 sm:pl-10">
+              <div
+                aria-hidden
+                className="absolute left-[7px] top-2 bottom-2 w-px bg-[var(--panel-border-strong)] sm:left-[11px]"
+              />
+              <div className="flex flex-col gap-10">
+                {journey.map((step, i) => (
+                  <Reveal key={step.title} delay={i * 0.06} className="relative">
+                    <span
+                      aria-hidden
+                      className="absolute -left-8 top-1 h-3.5 w-3.5 rounded-full border-2 border-signal-teal bg-void sm:-left-10"
+                    />
+                    <span className="mono-label !text-signal-teal">
+                      {step.era}
+                    </span>
+                    <h3 className="mt-2 font-display text-[19px] font-medium text-ink-0">
+                      {step.title}
+                    </h3>
+                    <p className="mt-2 max-w-2xl text-[14.5px] leading-relaxed text-ink-1">
+                      {step.body}
+                    </p>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* BAGAIMANA KAMI BEKERJA */}
+          <div className="mt-24">
+            <Reveal className="max-w-xl mb-12">
+              <span className="mono-label">Cara Kerja</span>
+              <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
+                Bagaimana kami membangun sistem Anda.
+              </h2>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2 lg:grid-cols-4">
+              {processSteps.map((step, i) => (
+                <Reveal key={step.label} delay={i * 0.06}>
+                  <div className="group h-full bg-panel p-6 transition-colors duration-300 hover:bg-panel-2">
+                    <div className="flex items-center justify-between">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                        <step.icon size={17} strokeWidth={1.75} />
+                      </span>
+                      <span className="font-mono text-[11px] text-ink-2">
+                        0{i + 1}
+                      </span>
+                    </div>
+                    <div className="mt-5 font-display text-[15.5px] font-medium text-ink-0">
+                      {step.label}
+                    </div>
+                    <p className="mt-2.5 text-[13px] leading-relaxed text-ink-2">
+                      {step.body}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+
           {/* CORE VALUES SECTION */}
-          <div className="mt-20">
-            <div className="text-center max-w-xl mx-auto mb-12">
+          <div className="mt-24">
+            <Reveal className="text-center max-w-xl mx-auto mb-12">
               <span className="mono-label">Pilar Keunggulan</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
                 Nilai-Nilai Utama Kami
               </h2>
-            </div>
+            </Reveal>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {coreValues.map((val, i) => (
-                <div
-                  key={i}
-                  className="rounded-xl border border-[var(--panel-border)] bg-panel/40 p-6 backdrop-blur-sm transition-all hover:border-signal-teal/30 hover:bg-panel/70"
-                >
-                  <div className="font-mono text-xs text-signal-teal mb-3">
-                    0{i + 1}
+                <Reveal key={val.title} delay={i * 0.06}>
+                  <div className="h-full rounded-xl border border-[var(--panel-border)] bg-panel/40 p-6 backdrop-blur-sm transition-all hover:border-signal-teal/30 hover:bg-panel/70">
+                    <div className="font-mono text-xs text-signal-teal mb-3">
+                      0{i + 1}
+                    </div>
+                    <h4 className="font-bold text-ink-0 mb-2">{val.title}</h4>
+                    <p className="text-xs text-ink-2 leading-relaxed">
+                      {val.desc}
+                    </p>
                   </div>
-                  <h4 className="font-bold text-ink-0 mb-2">{val.title}</h4>
-                  <p className="text-xs text-ink-2 leading-relaxed">
-                    {val.desc}
-                  </p>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
+
+          {/* MENGAPA MEMILIH INTIDATA */}
+          <div className="mt-24">
+            <Reveal className="max-w-xl mb-12">
+              <span className="mono-label">Mengapa Memilih Kami</span>
+              <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
+                Alasan klien bertahan bersama kami.
+              </h2>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {principles.map((p, i) => {
+                const Icon = whyChooseIcons[i % whyChooseIcons.length];
+                return (
+                  <Reveal key={p.label} delay={i * 0.05}>
+                    <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-6 transition-colors hover:bg-panel-2">
+                      <div className="h-10 w-10 rounded-lg bg-signal-blue-dim flex items-center justify-center text-signal-teal">
+                        <Icon size={18} strokeWidth={1.75} />
+                      </div>
+                      <h4 className="mt-5 font-display text-[15.5px] font-medium text-ink-0">
+                        {p.label}
+                      </h4>
+                      <p className="mt-2.5 text-[13px] leading-relaxed text-ink-2">
+                        {p.body}
+                      </p>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* SEKTOR YANG KAMI LAYANI */}
+          <div className="mt-24">
+            <Reveal className="max-w-xl mb-12">
+              <span className="mono-label">Cakupan Industri</span>
+              <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
+                Sektor yang kami layani.
+              </h2>
+            </Reveal>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              {industries.map((ind, i) => (
+                <Reveal key={ind.title} delay={i * 0.05}>
+                  <div className="h-full rounded-xl border border-[var(--panel-border)] bg-panel-2/50 p-5 transition-colors hover:bg-panel">
+                    <div className="h-9 w-9 rounded-lg bg-panel flex items-center justify-center text-signal-teal border border-[var(--panel-border)]">
+                      <ind.icon size={16} strokeWidth={1.75} />
+                    </div>
+                    <h4 className="mt-4 text-[13.5px] font-semibold text-ink-0">
+                      {ind.title}
+                    </h4>
+                    <p className="mt-2 text-[12px] leading-relaxed text-ink-2">
+                      {ind.body}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* TRUSTED BY STRIP */}
+        <div className="mt-24">
+          <Reveal className="container-x max-w-6xl text-center mb-8">
+            <span className="mono-label">Dipercaya Oleh</span>
+          </Reveal>
+          <TrustedBy />
         </div>
       </main>
 

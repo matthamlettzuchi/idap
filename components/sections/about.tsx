@@ -76,7 +76,7 @@ export function About() {
           <Reveal>
             <span className="mono-label">About Us</span>
             
-            <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold leading-tight">
+            <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold leading-tight text-white">
               More than just a
               <br />
               software developer.
