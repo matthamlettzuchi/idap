@@ -119,6 +119,34 @@ body {
   mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 40%, transparent 100%);
 }
 
+.dot-grid-texture {
+  background-image: radial-gradient(var(--panel-border-strong) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.mesh-glow {
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 15%, rgba(47,75,208,0.09), transparent 62%),
+    radial-gradient(ellipse 50% 40% at 88% 12%, rgba(111,141,255,0.11), transparent 62%),
+    radial-gradient(ellipse 55% 45% at 60% 95%, rgba(47,75,208,0.07), transparent 62%);
+}
+
+.grain-texture {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+}
+
+.diagonal-lines-texture {
+  background-image: repeating-linear-gradient(
+    115deg,
+    var(--panel-border) 0px,
+    var(--panel-border) 1px,
+    transparent 1px,
+    transparent 34px
+  );
+}
+
 .noise-veil::after {
   content: "";
   position: absolute;
@@ -153,18 +181,25 @@ h1, h2, h3, h4 {
 }
 
 @keyframes accordion-down {
-  from { height: 0; }
-  to { height: var(--radix-accordion-content-height); }
+  from { height: 0; opacity: 0.3; }
+  to { height: var(--radix-accordion-content-height); opacity: 1; }
 }
 @keyframes accordion-up {
-  from { height: var(--radix-accordion-content-height); }
-  to { height: 0; }
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to { height: 0; opacity: 0.3; }
 }
 .animate-accordion-down {
-  animation: accordion-down 0.32s var(--ease-out-quart);
+  animation: accordion-down 0.45s var(--ease-out-expo);
 }
 .animate-accordion-up {
-  animation: accordion-up 0.26s var(--ease-out-quart);
+  animation: accordion-up 0.32s var(--ease-out-quart);
+}
+@keyframes fade-in-content {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-content {
+  animation: fade-in-content 0.45s var(--ease-out-expo) 0.12s both;
 }
 
 @keyframes marquee {

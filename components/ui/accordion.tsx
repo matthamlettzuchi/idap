@@ -48,7 +48,7 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-[15px] leading-relaxed text-ink-1 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("max-w-160 pb-7 pr-10", className)}>{children}</div>
+    <div className={cn("max-w-160 pb-7 pr-10 animate-fade-in-content", className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));
 AccordionContent.displayName = AccordionPrimitive.Content.displayName;

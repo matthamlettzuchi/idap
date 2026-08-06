@@ -87,7 +87,16 @@ export function Services() {
       style={sectionTones.dark}
       className="relative overflow-hidden bg-void py-32"
     >
-      <div className="container-x mb-14">
+      <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-20" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 opacity-25 blur-[120px]"
+        style={{
+          background:
+            "radial-gradient(ellipse, var(--signal-blue), transparent 65%)",
+        }}
+      />
+      <div className="container-x relative mb-14">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
           <Reveal>
             <span className="mono-label">Our Services</span>

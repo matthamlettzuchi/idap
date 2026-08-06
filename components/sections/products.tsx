@@ -47,16 +47,23 @@ function ProductMockup({
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         className="pointer-events-none absolute -right-10 -top-14 h-[280px] w-[280px] rounded-full blur-[90px]"
         style={{
-          background: "radial-gradient(circle, rgba(75,100,255,.28), transparent 65%)",
+          background:
+            "radial-gradient(circle, rgba(75,100,255,.28), transparent 65%)",
         }}
       />
       <motion.div
         aria-hidden
         animate={{ opacity: [0.25, 0.4, 0.25] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        transition={{
+          duration: 7,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1,
+        }}
         className="pointer-events-none absolute -left-8 bottom-0 h-[220px] w-[220px] rounded-full blur-[80px]"
         style={{
-          background: "radial-gradient(circle, rgba(14,148,136,.24), transparent 65%)",
+          background:
+            "radial-gradient(circle, rgba(14,148,136,.24), transparent 65%)",
         }}
       />
 
@@ -85,7 +92,9 @@ function ProductMockup({
               <span
                 key={i}
                 className={`flex h-8 w-8 items-center justify-center rounded-lg ${
-                  i === 0 ? "bg-[image:var(--grad-signal)] text-white" : "text-ink-2"
+                  i === 0
+                    ? "bg-[image:var(--grad-signal)] text-white"
+                    : "text-ink-2"
                 }`}
               >
                 <Icon size={15} />
@@ -115,7 +124,9 @@ function ProductMockup({
                   <div className="font-display text-[16px] font-semibold text-ink-0">
                     {m.value}
                   </div>
-                  <div className="mt-0.5 text-[10.5px] text-ink-2">{m.label}</div>
+                  <div className="mt-0.5 text-[10.5px] text-ink-2">
+                    {m.label}
+                  </div>
                 </div>
               ))}
             </div>
@@ -151,7 +162,10 @@ function ProductMockup({
                   transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
                   className="flex items-center gap-2 rounded-lg border border-[var(--panel-border)] bg-panel px-3 py-1.5"
                 >
-                  <CheckCircle2 size={12} className="shrink-0 text-signal-teal" />
+                  <CheckCircle2
+                    size={12}
+                    className="shrink-0 text-signal-teal"
+                  />
                   <span className="truncate text-[11.5px] text-ink-1">{m}</span>
                 </motion.div>
               ))}
@@ -169,8 +183,18 @@ export function Products() {
   const activeIndex = products.findIndex((p) => p.id === activeId);
 
   return (
-    <section id="produk" className="relative bg-surface py-32">
-      <div className="container-x">
+    <section id="produk" className="relative overflow-hidden bg-surface py-32">
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[720px] -translate-x-1/2 -translate-y-1/3 rounded-full blur-[130px]"
+        style={{
+          background:
+            "radial-gradient(ellipse, var(--signal-blue-light), transparent 68%)",
+        }}
+        animate={{ opacity: [0.08, 0.16, 0.08], scale: [1, 1.08, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <div className=" container-x relative">
         <div className="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
           <Reveal>
             <span className="mono-label">Products</span>
@@ -183,7 +207,8 @@ export function Products() {
           <Reveal delay={0.08}>
             <p className="max-w-md text-[15.5px] leading-relaxed text-ink-1 lg:justify-self-end lg:text-right">
               Select a system to view its modular scope. Each product is
-              designed to stand alone or work seamlessly with other Intidata systems.
+              designed to stand alone or work seamlessly with other Intidata
+              systems.
             </p>
           </Reveal>
         </div>

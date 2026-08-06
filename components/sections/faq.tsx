@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
@@ -10,8 +13,30 @@ import Image from "next/image";
 
 export function Faq() {
   return (
-    <section id="faq" className="relative bg-surface pb-32 pt-16">
-      <div className="container-x grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
+    <section id="faq" className="relative overflow-hidden bg-surface pb-32 pt-16">
+      {/* dekorasi background — tetap terang, cuma ditambah tekstur & glow */}
+      <div className="halftone-texture pointer-events-none absolute inset-0 opacity-50" />
+
+      <motion.div
+        aria-hidden
+        animate={{ opacity: [0.15, 0.32, 0.15], x: [0, 20, 0] }}
+        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute -right-24 -top-10 h-[420px] w-[420px] rounded-full blur-[110px]"
+        style={{
+          background: "radial-gradient(circle, var(--signal-blue-light), transparent 65%)",
+        }}
+      />
+      <motion.div
+        aria-hidden
+        animate={{ opacity: [0.1, 0.22, 0.1], x: [0, -16, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
+        className="pointer-events-none absolute -left-20 bottom-0 h-[360px] w-[360px] rounded-full blur-[100px]"
+        style={{
+          background: "radial-gradient(circle, var(--signal-blue), transparent 65%)",
+        }}
+      />
+
+      <div className="container-x relative grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <Image
             src="/faq.svg"

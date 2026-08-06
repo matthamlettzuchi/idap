@@ -171,7 +171,7 @@ export function Hero() {
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
-            className="absolute bottom-4 left-1/2 z-0 h-[280px] w-[280px] -translate-x-1/2 rounded-full sm:h-[360px] sm:w-[360px] lg:left-[38%] lg:h-[420px] lg:w-[420px]"
+            className="absolute bottom-4 left-1/2 z-0 h-[280px] w-[280px] -translate-x-[200px] rounded-full sm:h-[360px] sm:w-[360px] lg:left-[38%] lg:h-[420px] lg:w-[420px]"
             style={{
               background:
                 "radial-gradient(circle at 35% 30%, var(--signal-blue-light), var(--signal-blue) 70%)",

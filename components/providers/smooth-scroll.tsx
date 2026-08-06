@@ -23,7 +23,32 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     }
     frameId = requestAnimationFrame(raf);
 
+    // sambungin klik ke semua link "#anchor" (nav, footer, hero CTA, dll)
+    // biar scroll-nya pakai animasi Lenis, bukan teleport bawaan browser
+    function handleAnchorClick(e: MouseEvent) {
+      const target = (e.target as HTMLElement)?.closest(
+        'a[href^="#"]'
+      ) as HTMLAnchorElement | null;
+      if (!target) return;
+
+      const href = target.getAttribute("href");
+      if (!href || href === "#") return;
+
+      const el = document.querySelector(href);
+      if (!el) return;
+
+      e.preventDefault();
+      lenis.scrollTo(el as HTMLElement, {
+        offset: -80, // biar ga ketutup navbar fixed
+        duration: 1.4,
+        easing: (t: number) => 1 - Math.pow(1 - t, 3),
+      });
+    }
+
+    document.addEventListener("click", handleAnchorClick);
+
     return () => {
+      document.removeEventListener("click", handleAnchorClick);
       cancelAnimationFrame(frameId);
       lenis.destroy();
     };
