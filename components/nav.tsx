@@ -141,15 +141,12 @@ const productList = [
   },
 ];
 
-export function Nav() {
+export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  
-  // Desktop Dropdown State
+
   const [activeDropdown, setActiveDropdown] = React.useState<"services" | "products" | null>(null);
   const [activeCategory, setActiveCategory] = React.useState<"sw" | "infra">("sw");
-
-  // Mobile Accordion State
   const [mobileAccordion, setMobileAccordion] = React.useState<"services" | "products" | null>(null);
 
   const { scrollY } = useScroll();
@@ -157,6 +154,14 @@ export function Nav() {
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
   });
+
+  // when overlayHero is on and we're still at the top, links go light so
+  // they read against the photo; once scrolled, revert to normal styling
+  const isLight = overlayHero && !scrolled;
+  const linkClass = isLight
+    ? "text-white/90 transition-colors hover:text-white"
+    : "text-ink-1 transition-colors hover:text-ink-0";
+  const hamburgerClass = isLight ? "text-white" : "text-ink-0";
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
@@ -168,16 +173,14 @@ export function Nav() {
         }`}
       >
         <div className="container-x flex h-[72px] items-center justify-between">
-          {/* Logo Brand */}
           <Link href="/" className="flex items-center">
             <Logo className="h-12 w-32" />
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden items-center gap-9 md:flex">
             <Link
               href="/about"
-              className="text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0"
+              className={`text-[14.5px] font-medium ${linkClass}`}
             >
               About Us
             </Link>
@@ -188,7 +191,7 @@ export function Nav() {
               onMouseEnter={() => setActiveDropdown("products")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1.5 py-6 text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0">
+              <button className={`flex items-center gap-1.5 py-6 text-[14.5px] font-medium ${linkClass}`}>
                 Products{" "}
                 <ChevronDown
                   size={14}
@@ -236,13 +239,13 @@ export function Nav() {
               </AnimatePresence>
             </div>
 
-            {/* SERVICES MEGA MENU WITH DYNAMIC SLUGS */}
+            {/* SERVICES MEGA MENU */}
             <div
               className="relative"
               onMouseEnter={() => setActiveDropdown("services")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className="flex items-center gap-1.5 py-6 text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0">
+              <button className={`flex items-center gap-1.5 py-6 text-[14.5px] font-medium ${linkClass}`}>
                 Services{" "}
                 <ChevronDown
                   size={14}
@@ -261,7 +264,6 @@ export function Nav() {
                     transition={{ duration: 0.2 }}
                     className="absolute -left-40 top-full flex w-[780px] overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-2xl"
                   >
-                    {/* Left Sidebar Category Switcher */}
                     <div className="w-64 border-r border-[var(--panel-border)] bg-panel-2 p-4">
                       <div className="mono-label mb-3 px-3">Category</div>
                       <button
@@ -302,7 +304,6 @@ export function Nav() {
                       </button>
                     </div>
 
-                    {/* Right Detail Content */}
                     <div className="flex-1 p-6">
                       {activeCategory === "sw" ? (
                         <div>
@@ -369,22 +370,20 @@ export function Nav() {
 
             <Link
               href="/credit-simulation"
-              className="text-[14.5px] font-medium text-ink-1 transition-colors hover:text-ink-0"
+              className={`text-[14.5px] font-medium ${linkClass}`}
             >
               Credit Simulation
             </Link>
           </nav>
 
-          {/* Right Action CTA Button */}
           <div className="hidden items-center gap-3 md:flex">
             <Button asChild size="sm" variant="primary">
               <Link href="/contact">Hubungi Kami</Link>
             </Button>
           </div>
 
-          {/* Mobile Hamburger Toggle Button */}
           <button
-            className="flex h-9 w-9 items-center justify-center text-ink-0 md:hidden"
+            className={`flex h-9 w-9 items-center justify-center md:hidden ${hamburgerClass}`}
             aria-label="Buka menu"
             onClick={() => setOpen((v) => !v)}
           >

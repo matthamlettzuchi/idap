@@ -13,7 +13,7 @@ export function Technology() {
       <div className="container-x grid grid-cols-1 gap-16 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <Reveal>
           <span className="mono-label">Technology</span>
-          <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
+          <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold text-white">
             One core,
             <br />
             multiple integration points.

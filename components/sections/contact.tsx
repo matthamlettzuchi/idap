@@ -26,7 +26,7 @@ export function Contact() {
       <div className="container-x relative grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <span className="mono-label">Contact</span>
-          <h2 className="mt-6 text-[clamp(32px,4vw,48px)] font-semibold">
+          <h2 className="mt-6 text-[clamp(32px,4vw,48px)] font-semibold text-white">
             Let&apos;s start
             <br />
             a conversation.
