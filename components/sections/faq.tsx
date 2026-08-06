@@ -14,8 +14,7 @@ import Image from "next/image";
 export function Faq() {
   return (
     <section id="faq" className="relative overflow-hidden bg-surface pb-32 pt-16">
-      {/* dekorasi background — tetap terang, cuma ditambah tekstur & glow */}
-      <div className="halftone-texture pointer-events-none absolute inset-0 opacity-50" />
+      <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-90" />
 
       <motion.div
         aria-hidden

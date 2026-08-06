@@ -147,6 +147,101 @@ body {
   );
 }
 
+/* ---------- section-specific backgrounds ---------- */
+
+.ledger-lines-texture {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--panel-border) 0px,
+    var(--panel-border) 1px,
+    transparent 1px,
+    transparent 42px
+  );
+  mask-image: radial-gradient(ellipse 85% 65% at 50% 15%, black 35%, transparent 100%);
+}
+
+.circuit-texture {
+  background-image:
+    linear-gradient(var(--panel-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--panel-border) 1px, transparent 1px),
+    radial-gradient(var(--panel-border-strong) 1.5px, transparent 1.6px);
+  background-size: 58px 58px, 58px 58px, 58px 58px;
+  background-position: 0 0, 0 0, 29px 29px;
+  mask-image: radial-gradient(ellipse 75% 65% at 78% 15%, black 30%, transparent 100%);
+}
+
+.chevron-texture {
+  background-image:
+    repeating-linear-gradient(135deg, var(--panel-border) 0px, var(--panel-border) 1px, transparent 1px, transparent 27px),
+    repeating-linear-gradient(45deg, var(--panel-border) 0px, var(--panel-border) 1px, transparent 1px, transparent 27px);
+  mask-image: radial-gradient(ellipse 75% 60% at 50% 0%, black 30%, transparent 100%);
+}
+
+.wave-stream-texture {
+  background-image: repeating-linear-gradient(
+    100deg,
+    var(--panel-border) 0px,
+    var(--panel-border) 1px,
+    transparent 1px,
+    transparent 64px
+  );
+  background-size: 200% 100%;
+  animation: stream-shift 24s linear infinite;
+}
+
+@keyframes stream-shift {
+  from { background-position: 0 0; }
+  to { background-position: -640px 0; }
+}
+
+.orbit-dots-texture {
+  background-image:
+    radial-gradient(var(--panel-border-strong) 1.5px, transparent 1.6px),
+    radial-gradient(var(--panel-border) 1px, transparent 1.1px);
+  background-size: 96px 96px, 48px 48px;
+  background-position: 0 0, 24px 24px;
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
+
+.signal-ping-texture {
+  background-image:
+    radial-gradient(circle at 14% 22%, transparent 0 36px, var(--panel-border) 37px, transparent 38px),
+    radial-gradient(circle at 88% 78%, transparent 0 52px, var(--panel-border) 53px, transparent 54px),
+    radial-gradient(circle at 78% 12%, transparent 0 24px, var(--panel-border-strong) 25px, transparent 26px),
+    radial-gradient(circle at 6% 82%, transparent 0 30px, var(--panel-border) 31px, transparent 32px);
+  background-repeat: no-repeat;
+}
+
+.stack-texture {
+  background-image:
+    linear-gradient(var(--panel-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--panel-border) 1px, transparent 1px);
+  background-size: 128px 42px, 128px 42px;
+  background-position: 0 0, 64px 21px;
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+.ruled-notes-texture {
+  background-image:
+    repeating-linear-gradient(to bottom, var(--panel-border) 0px, var(--panel-border) 1px, transparent 1px, transparent 37px),
+    linear-gradient(90deg, transparent 0, transparent 63px, var(--panel-border-strong) 63px, var(--panel-border-strong) 64px, transparent 64px);
+  mask-image: radial-gradient(ellipse 82% 62% at 50% 5%, black 35%, transparent 100%);
+}
+
+.broadcast-rings-texture {
+  background-image:
+    radial-gradient(circle at 50% 45%, transparent 0 100px, var(--panel-border) 101px, transparent 102px),
+    radial-gradient(circle at 50% 45%, transparent 0 190px, var(--panel-border) 191px, transparent 192px),
+    radial-gradient(circle at 50% 45%, transparent 0 280px, var(--panel-border) 281px, transparent 282px);
+  background-repeat: no-repeat;
+}
+
+.constellation-texture {
+  background-image: radial-gradient(var(--panel-border-strong) 1px, transparent 1.4px);
+  background-size: 140px 140px;
+  background-position: 24px 34px;
+}
+
 .noise-veil::after {
   content: "";
   position: absolute;

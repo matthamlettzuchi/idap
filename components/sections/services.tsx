@@ -12,6 +12,8 @@ import {
   Network,
   ArrowRight,
   Code2,
+  Wifi,
+  Database,
 } from "lucide-react";
 import { Reveal } from "@/components/ui/reveal";
 import { sectionTones } from "@/lib/section-tones";
@@ -76,6 +78,97 @@ const serviceCategories = [
   },
 ];
 
+// badges dash out from the handshake point, then float
+const handshakeBadges = [
+  { icon: Wifi, top: "4%", left: "6%", delay: 0 },
+  { icon: ShieldCheck, top: "8%", left: "82%", delay: 0.15 },
+  { icon: Database, top: "70%", left: "4%", delay: 0.3 },
+  { icon: Wrench, top: "74%", left: "84%", delay: 0.45 },
+];
+
+// where the hands meet in the source image, in % of the container
+const HANDSHAKE_ORIGIN = { top: "62%", left: "50%" };
+
+function HandshakeVisual() {
+  const [active, setActive] = useState(false);
+
+  return (
+    <motion.div
+      onViewportEnter={() => setActive(true)}
+      viewport={{ once: true, margin: "-10% 0px" }}
+      className="relative mx-auto mt-8 aspect-[4/3] w-full max-w-md lg:mx-0 lg:ml-auto"
+    >
+      <motion.div
+        aria-hidden
+        animate={active ? { opacity: [0.2, 0.4, 0.2] } : { opacity: 0 }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[80px]"
+        style={{
+          top: HANDSHAKE_ORIGIN.top,
+          left: HANDSHAKE_ORIGIN.left,
+          background: "radial-gradient(circle, rgba(47,75,208,.4), transparent 65%)",
+        }}
+      />
+
+      <motion.img
+        src="/handshake-partnership.png"
+        alt="Jabat tangan kemitraan Intidata"
+        initial={{ opacity: 0, y: 16 }}
+        animate={active ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="absolute bottom-0 left-1/2 h-auto w-[88%] -translate-x-1/2 select-none"
+        draggable={false}
+      />
+
+      {handshakeBadges.map((b, i) => {
+        const Icon = b.icon;
+        return (
+          <motion.div
+            key={i}
+            className="absolute -translate-x-1/2 -translate-y-1/2"
+            initial={{
+              top: HANDSHAKE_ORIGIN.top,
+              left: HANDSHAKE_ORIGIN.left,
+              opacity: 0,
+              scale: 0.3,
+              filter: "blur(10px)",
+            }}
+            animate={
+              active
+                ? {
+                    top: b.top,
+                    left: b.left,
+                    opacity: 1,
+                    scale: 1,
+                    filter: "blur(0px)",
+                  }
+                : {}
+            }
+            transition={{
+              duration: 0.9,
+              delay: b.delay,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+          >
+            <motion.span
+              animate={active ? { y: [0, -7, 0] } : {}}
+              transition={{
+                duration: 3.2,
+                delay: b.delay + 0.9,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--panel-border-strong)] bg-panel text-signal-teal shadow-[0_16px_32px_-16px_rgba(75,100,255,0.45)]"
+            >
+              <Icon size={16} strokeWidth={1.75} />
+            </motion.span>
+          </motion.div>
+        );
+      })}
+    </motion.div>
+  );
+}
+
 export function Services() {
   const [activeCat, setActiveCat] = useState(serviceCategories[0].id);
   const category =
@@ -87,7 +180,7 @@ export function Services() {
       style={sectionTones.dark}
       className="relative overflow-hidden bg-void py-32"
     >
-      <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-20" />
+      <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-90" />
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[700px] -translate-x-1/2 opacity-25 blur-[120px]"
@@ -97,7 +190,7 @@ export function Services() {
         }}
       />
       <div className="container-x relative mb-14">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
           <Reveal>
             <span className="mono-label">Our Services</span>
             <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
@@ -107,11 +200,12 @@ export function Services() {
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
-            <p className="max-w-md text-[15.5px] leading-relaxed text-ink-1 lg:justify-self-end lg:text-right">
+            <p className="max-w-md text-[15.5px] leading-relaxed text-ink-1 lg:ml-auto lg:text-right">
               From core software development to supporting infrastructure —
               every service is engineered to operate independently or integrate
               seamlessly as a unified platform.
             </p>
+            <HandshakeVisual />
           </Reveal>
         </div>
       </div>

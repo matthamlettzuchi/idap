@@ -131,7 +131,7 @@ function HeroDashboardCard() {
 export function Hero() {
   return (
     <section className="relative w-full overflow-hidden bg-void pb-16 pt-40 lg:pt-36">
-      <div className="halftone-texture pointer-events-none absolute inset-0 opacity-70" />
+      <div className="ledger-lines-texture pointer-events-none absolute inset-0" />
 
       <div className="container-x relative flex flex-col lg:min-h-[72vh] lg:flex-row lg:items-stretch lg:gap-4">
         {/* left: eyebrow > floating dashboard > copy + CTA */}

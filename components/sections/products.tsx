@@ -184,17 +184,8 @@ export function Products() {
 
   return (
     <section id="produk" className="relative overflow-hidden bg-surface py-32">
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[720px] -translate-x-1/2 -translate-y-1/3 rounded-full blur-[130px]"
-        style={{
-          background:
-            "radial-gradient(ellipse, var(--signal-blue-light), transparent 68%)",
-        }}
-        animate={{ opacity: [0.08, 0.16, 0.08], scale: [1, 1.08, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <div className=" container-x relative">
+      <div className="chevron-texture pointer-events-none absolute inset-0 opacity-50" />
+      <div className="container-x relative">
         <div className="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
           <Reveal>
             <span className="mono-label">Products</span>

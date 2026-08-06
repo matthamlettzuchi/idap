@@ -17,15 +17,7 @@ const socials = [
 export function Footer() {
   return (
     <footer style={sectionTones.dark} className="relative overflow-hidden border-t border-[var(--panel-border)] bg-surface pb-10 pt-24">
-      <motion.div
-        aria-hidden
-        animate={{ x: ["-10%", "10%", "-10%"] }}
-        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute -top-24 left-1/4 h-[420px] w-[420px] rounded-full opacity-10 blur-[110px]"
-        style={{
-          background: "radial-gradient(circle, var(--signal-blue), transparent 65%)",
-        }}
-      />
+      <div className="constellation-texture pointer-events-none absolute inset-0 opacity-90" />
 
       <div className="container-x relative">
         <div className="grid grid-cols-1 gap-14 border-b border-[var(--panel-border)] pb-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
