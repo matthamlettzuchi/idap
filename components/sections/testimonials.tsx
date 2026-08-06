@@ -1,16 +1,19 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { testimonials } from "@/lib/data";
 import { Reveal } from "@/components/ui/reveal";
 import { GridGlobe } from "../ui/grid-globe";
 import { ClusterPin, ClusterPerson } from "@/components/ui/doodle";
 
+const AUTOPLAY_DELAY = 6000;
+
 export function Testimonials() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [isPaused, setIsPaused] = useState(false);
   const active = testimonials[index];
 
   const go = (dir: 1 | -1) => {
@@ -20,19 +23,46 @@ export function Testimonials() {
     );
   };
 
+  // autoplay: restarts whenever the slide changes or pause state toggles,
+  // so any manual interaction naturally resets the countdown.
+  useEffect(() => {
+    if (isPaused) return;
+
+    const reducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) return;
+
+    const timer = setTimeout(() => {
+      setDirection(1);
+      setIndex((prev) => (prev + 1) % testimonials.length);
+    }, AUTOPLAY_DELAY);
+
+    return () => clearTimeout(timer);
+  }, [index, isPaused]);
+
+  const pause = () => setIsPaused(true);
+  const resume = () => setIsPaused(false);
+
   return (
-    <section id="testimoni" className="relative overflow-hidden bg-void py-32">
+    <section
+      id="testimoni"
+      className="relative overflow-hidden bg-void py-32"
+      onFocusCapture={pause}
+      onBlurCapture={resume}
+      onTouchStart={pause}
+    >
       <div className="grid-texture pointer-events-none absolute inset-0" />
 
       <div className="container-x relative">
         <Reveal className="relative mx-auto max-w-xl text-center">
-          <span className="mono-label">Testimoni</span>
+          <span className="mono-label">Testimonials</span>
           <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
-            Kata mereka tentang Intidata.
+            What they said about Intidata.
           </h2>
           <p className="mt-6 text-[15.5px] leading-relaxed text-ink-1">
-            Dengarkan langsung dari klien kami tentang bagaimana sistem kami
-            membantu operasional mereka.
+            Listen directly from our clients on how our system helped their
+            operationals.
           </p>
           <GridGlobe />
           <ClusterPin className="pointer-events-none absolute -left-[260px] top-4 hidden h-[150px] w-[230px] opacity-70 lg:block" />
@@ -43,7 +73,7 @@ export function Testimonials() {
 
         <Reveal delay={0.1} className="mt-16">
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
-            {/* visual card — sekarang video YouTube asli */}
+            {/* visual card — video YouTube asli */}
             <div className="relative aspect-[4/3] w-full">
               <motion.div
                 aria-hidden
@@ -125,7 +155,7 @@ export function Testimonials() {
                 </motion.div>
               </AnimatePresence>
 
-              {/* nama + role — posisi FIXED, nempel dekat nav controls, tidak ikut geser oleh panjang quote */}
+              {/* nama + role — posisi FIXED, nempel dekat nav controls */}
               <div className="absolute inset-x-0 bottom-20 flex items-center gap-3 sm:bottom-24">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -151,8 +181,12 @@ export function Testimonials() {
                 </AnimatePresence>
               </div>
 
-              {/* nav controls — posisi tetap, tidak ikut animasi konten */}
-              <div className="absolute inset-x-0 bottom-0 flex items-center gap-4">
+              {/* nav controls */}
+              <div
+                className="absolute inset-x-0 bottom-0 flex items-center gap-4"
+                onMouseEnter={pause}
+                onMouseLeave={resume}
+              >
                 <button
                   aria-label="Testimoni sebelumnya"
                   onClick={() => go(-1)}
@@ -177,12 +211,25 @@ export function Testimonials() {
                         setDirection(i > index ? 1 : -1);
                         setIndex(i);
                       }}
-                      className={`h-1.5 rounded-full transition-all ${
-                        i === index
-                          ? "w-6 bg-signal-blue"
-                          : "w-1.5 bg-[var(--panel-border-strong)]"
-                      }`}
-                    />
+                      className="relative h-1.5 w-6 overflow-hidden rounded-full bg-[var(--panel-border-strong)]"
+                    >
+                      {i === index && (
+                        <motion.span
+                          key={isPaused ? `${i}-paused` : `${i}-playing`}
+                          className="absolute inset-y-0 left-0 rounded-full bg-signal-blue"
+                          initial={{ width: "0%" }}
+                          animate={{ width: isPaused ? "100%" : "100%" }}
+                          transition={
+                            isPaused
+                              ? { duration: 0 }
+                              : {
+                                  duration: AUTOPLAY_DELAY / 1000,
+                                  ease: "linear",
+                                }
+                          }
+                        />
+                      )}
+                    </button>
                   ))}
                 </div>
               </div>

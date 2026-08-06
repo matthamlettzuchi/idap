@@ -32,8 +32,8 @@ export function Footer() {
           <div>
             <Logo className="h-9 w-36" />
             <p className="mt-5 max-w-[280px] text-[14px] leading-relaxed text-ink-1">
-              PT Intidata Anugrah Pratama — solusi konsultasi IT terintegrasi
-              bagi sektor korporasi maupun publik.
+              PT Intidata Anugrah Pratama — integrated IT consulting solutions
+              for corporate and public sectors.
             </p>
             <p className="mt-4 max-w-[280px] text-[12.5px] leading-relaxed text-ink-2">
               {contact.address}
@@ -41,7 +41,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h5 className="mono-label">Navigasi</h5>
+            <h5 className="mono-label">Navigation</h5>
             <ul className="mt-5 space-y-3.5">
               {nav.map((n) => (
                 <li key={n.href}>
@@ -57,7 +57,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h5 className="mono-label">Produk</h5>
+            <h5 className="mono-label">Products</h5>
             <ul className="mt-5 space-y-3.5">
               {products.map((p) => (
                 <li key={p.id}>
@@ -73,7 +73,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h5 className="mono-label">Kontak</h5>
+            <h5 className="mono-label">Contact</h5>
             <ul className="mt-5 space-y-3.5">
               {contact.phones.map((p) => (
                 <li key={p}>
@@ -99,7 +99,7 @@ export function Footer() {
 
         <div className="flex flex-wrap items-center justify-between gap-6 pt-8">
           <p className="text-[12.5px] text-ink-2">
-            © {year} Intidata Anugrah Pratama. Seluruh hak cipta dilindungi.
+            © {year} Intidata Anugrah Pratama. All rights reserved.
           </p>
           <div className="flex gap-3">
             {socials.map((s) => (

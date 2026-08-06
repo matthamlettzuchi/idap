@@ -1,9 +1,9 @@
 export const nav = [
-  { label: "Produk", href: "#produk" },
-  { label: "Tentang Kami", href: "#tentang" },
-  { label: "Teknologi", href: "#teknologi" },
-  { label: "Testimoni", href: "#testimoni" },
-  { label: "Kontak", href: "#kontak" },
+  { label: "About Us", href: "#tentang" },
+  { label: "Products", href: "#produk" },
+  { label: "Services", href: "#service" },
+  { label: "Credit Simulation", href: "#simulasi" },
+  { label: "Contact", href: "#kontak" },
 ];
 
 export type Testimonial = {
@@ -22,7 +22,7 @@ export const testimonials: Testimonial[] = [
     id: "t1",
     category: "Multifinance",
     quote:
-      "Selama kurang lebih satu tahun menggunakan Fiscus, validasi yang sudah sesuai ketentuan OJK membantu kami menjaga kualitas data, meminimalkan human error, dan didukung oleh tim Intidata yang selalu responsif, bahkan di luar jam kerja.",
+      "For approximately one year using Fiscus, validations compliant with OJK regulations have helped us maintain data quality, minimize human error, and were supported by the Intidata team, who is always responsive—even outside working hours.",
     name: "Berlianto",
     role: "IT",
     company: "PT Dana Kini Finance",
@@ -33,7 +33,7 @@ export const testimonials: Testimonial[] = [
     id: "t2",
     category: "Multifinance",
     quote:
-      "Fiscus membuat proses pembukuan dan rekonsiliasi menjadi lebih rapi, mempercepat penyusunan laporan OJK melalui XBRL, serta didukung tim Intidata yang selalu responsif.",
+      "Fiscus makes the bookkeeping and reconciliation process neater, accelerates the preparation of OJK reports through XBRL, and is supported by an ever-responsive Intidata team.",
     name: "Jeffy Eugene Aggrianto",
     role: "Finance Professional",
     company: "PT Dana Kini Finance",
@@ -44,7 +44,7 @@ export const testimonials: Testimonial[] = [
     id: "t3",
     category: "Multifinance",
     quote:
-      "Dengan Fiscus, proses penginputan data menjadi lebih mudah, laporan lebih lengkap dan akurat, serta setiap kendala dapat ditangani dengan cepat.",
+      "With Fiscus, the data entry process becomes easier, reports are more complete and accurate, and any issues are handled quickly.",
     name: "Cornellia",
     role: "Credit Risk Management",
     company: "PT Karunia Multifinance",
@@ -55,7 +55,7 @@ export const testimonials: Testimonial[] = [
     id: "t4",
     category: "Multifinance",
     quote:
-      "Fiscus membantu kami mengurangi proses manual melalui validasi otomatis dan pelaporan yang cepat, sehingga data menjadi lebih akurat dan efisien.",
+      "Fiscus helps us reduce manual processes through automated validation and fast reporting, making data more accurate and efficient.",
     name: "Angel",
     role: "Accounting",
     company: "PT Karunia Multifinance",
@@ -66,7 +66,7 @@ export const testimonials: Testimonial[] = [
     id: "t5",
     category: "Multifinance",
     quote:
-      "Dengan Fiscus, proses penyusunan laporan menjadi jauh lebih cepat dan efisien. Validasi sistem membantu meminimalkan kesalahan, sementara hasil perhitungannya yang akurat memudahkan kami memenuhi kebutuhan pelaporan dengan lebih percaya diri.",
+      "With Fiscus, the report generation process has become much faster and more efficient. System validations help minimize errors, while accurate calculation results make it easier for us to meet reporting needs with greater confidence.",
     name: "Felicia",
     role: "Marketing",
     company: "PT Karunia Multifinance",
@@ -77,7 +77,7 @@ export const testimonials: Testimonial[] = [
     id: "t6",
     category: "Multifinance",
     quote:
-      "Fiscus membantu kami beralih dari banyak proses manual ke sistem yang lebih terintegrasi dan efisien. Ditambah lagi, tim after-sales selalu responsif sehingga kami merasa didukung dalam setiap kebutuhan operasional.",
+      "Fiscus helped us transition from numerous manual processes to a more integrated and efficient system. On top of that, the after-sales team is always responsive, making us feel supported in every operational need.",
     name: "Hendri Pradana",
     role: "IT",
     company: "PT Karunia Multifinance",
@@ -88,7 +88,7 @@ export const testimonials: Testimonial[] = [
     id: "t7",
     category: "Multifinance",
     quote:
-      "Sejak menggunakan Fiscus, pengelolaan data menjadi lebih terstruktur dan efisien. Selain sistem yang andal, tim support juga selalu cepat merespons dan membantu kami menemukan solusi terbaik untuk setiap kebutuhan.",
+      "Since using Fiscus, data management has become more structured and efficient. In addition to a reliable system, the support team is always quick to respond and helps us find the best solution for every need.",
     name: "Emil Zanovandi Furkon",
     role: "Alliance & Business Development Manager",
     company: "PT Karunia Multifinance",
@@ -99,7 +99,7 @@ export const testimonials: Testimonial[] = [
     id: "t8",
     category: "Multifinance",
     quote:
-      "Fiscus membantu kami mengotomatiskan proses jurnal dan mempercepat rekonsiliasi data. Ketika ada kebutuhan baru, tim Intidata juga sangat responsif dengan memberikan solusi yang benar-benar sesuai dengan operasional kami.",
+      "Fiscus helps us automate journaling processes and speed up data reconciliation. When new requirements arise, the Intidata team is also extremely responsive, providing solutions tailored to our operations.",
     name: "Sherlin",
     role: "Finance Operation",
     company: "PT Dana Kini Finance",
@@ -110,7 +110,7 @@ export const testimonials: Testimonial[] = [
     id: "t9",
     category: "Multifinance",
     quote:
-      "Fiscus mempermudah proses jurnal melalui sistem yang terintegrasi, sehingga pekerjaan menjadi lebih cepat dan efisien. Tim Inti Data juga selalu memberikan respons yang cepat ketika kami membutuhkan bantuan.",
+      "Fiscus simplifies journaling through an integrated system, making work faster and more efficient. The Intidata team also consistently provides prompt responses whenever we need assistance.",
     name: "Cindy",
     role: "Finance Operation",
     company: "PT Dana Kini Finance",
@@ -121,7 +121,7 @@ export const testimonials: Testimonial[] = [
     id: "t10",
     category: "Multifinance",
     quote:
-      "Fiscus memudahkan kami mengakses data dan menghasilkan laporan yang dapat disesuaikan dengan kebutuhan. Selain sistem yang user-friendly, layanan dari tim Inti Data juga selalu responsif dan memuaskan.",
+      "Fiscus makes it easy for us to access data and generate reports customizable to our needs. Besides being a user-friendly system, the service from the Intidata team is always responsive and satisfying.",
     name: "Agnes",
     role: "Supervisor",
     company: "PT Datindo Entrycom",
@@ -132,7 +132,7 @@ export const testimonials: Testimonial[] = [
     id: "t11",
     category: "Multifinance",
     quote:
-      "Fiscus mampu menangani volume penerbitan lebih dari seribu invoice setiap bulan dengan lancar. Antarmukanya intuitif, mudah dipelajari, dan cukup andal untuk mendukung operasional harian kami tanpa menghambat produktivitas.",
+      "Fiscus is capable of seamlessly handling the issuance volume of over a thousand invoices each month. The interface is intuitive, easy to learn, and reliable enough to support our daily operations without hindering productivity.",
     name: "H. Hasibuhan",
     role: "Finance & Accounting Manager",
     company: "PT NTT DATA Indonesia",
@@ -143,7 +143,7 @@ export const testimonials: Testimonial[] = [
     id: "t12",
     category: "Multifinance",
     quote:
-      "Kemudahan dalam menelusuri outstanding tagihan, didukung antarmuka yang intuitif dan proses pelaporan yang cepat, menjadikan Fiscus solusi yang kami andalkan untuk mendukung operasional harian.",
+      "The ease of tracking outstanding invoices, supported by an intuitive interface and fast reporting processes, makes Fiscus a solution we rely on for daily operations.",
     name: "Imam Adiansyah",
     role: "Staff Accounting & Finance",
     company: "PT Datindo Entrycom",
@@ -153,9 +153,9 @@ export const testimonials: Testimonial[] = [
 ];
 
 export const heroStats = [
-  { value: 25, suffix: "+", label: "Tahun pengalaman praktik" },
-  { value: 17, suffix: "+", label: "Klien korporasi aktif" },
-  { value: 5, suffix: "", label: "Sistem inti yang dioperasikan" },
+  { value: 25, suffix: "+", label: "Years of practical experience" },
+  { value: 17, suffix: "+", label: "Active corporate clients" },
+  { value: 5, suffix: "", label: "Core systems operated" },
 ];
 
 export const clientLogos = [
@@ -183,7 +183,7 @@ export const clients = [
   "PT. Aditi Mitra Lestari",
   "Daytona",
   "Resona",
-  "Biro Administrasi Efek",
+  "Securities Administration Bureau",
   "PT Putra Bangka Mandiri",
   "Danakini",
   "Sany Indonesia Finance",
@@ -204,142 +204,142 @@ export const products: Product[] = [
     id: "fiscus-multifinance",
     code: "FIS-MF",
     name: "FISCUS Multifinance",
-    summary: "Pembiayaan dan pembayaran pelanggan dalam satu sistem inti.",
+    summary: "Customer financing and payments within a single core system.",
     description:
-      "Solusi terintegrasi untuk seluruh siklus pembiayaan konsumen — dari akuisisi kontrak, penjadwalan angsuran, hingga penagihan. FISCUS Multifinance mengambil alih beban operasional harian sehingga tim Anda dapat fokus pada pertumbuhan portofolio.",
+      "An integrated solution for the entire consumer finance lifecycle—from contract acquisition and installment scheduling to collections. FISCUS Multifinance takes over the daily operational workload so your team can focus on portfolio growth.",
     metrics: [
-      { label: "Siklus kontrak", value: "Real-time" },
-      { label: "Rekonsiliasi", value: "Otomatis" },
+      { label: "Contract cycle", value: "Real-time" },
+      { label: "Reconciliation", value: "Automated" },
     ],
     modules: [
       "Origination",
-      "Penjadwalan Angsuran",
-      "Penagihan",
-      "Rekonsiliasi Kas",
+      "Installment Scheduling",
+      "Collections",
+      "Cash Reconciliation",
     ],
   },
   {
     id: "fiscus-factoring",
     code: "FIS-FC",
     name: "FISCUS Factoring",
-    summary: "Anjak piutang dengan jaminan faktur, terlacak penuh.",
+    summary: "Factoring with invoice backing, fully tracked.",
     description:
-      "Sistem yang menyediakan solusi pembiayaan dengan jaminan piutang atau faktur — melacak setiap dokumen dari verifikasi hingga pencairan, dengan visibilitas penuh atas risiko konsentrasi debitur.",
+      "A system providing financing solutions backed by accounts receivable or invoices—tracking every document from verification to disbursement, with complete visibility into debtor concentration risk.",
     metrics: [
-      { label: "Verifikasi faktur", value: "Berlapis" },
-      { label: "Pelacakan risiko", value: "Per debitur" },
+      { label: "Invoice verification", value: "Multi-layered" },
+      { label: "Risk tracking", value: "Per debtor" },
     ],
     modules: [
-      "Verifikasi Faktur",
-      "Pencairan Dana",
-      "Manajemen Risiko",
-      "Pelaporan Piutang",
+      "Invoice Verification",
+      "Fund Disbursement",
+      "Risk Management",
+      "Receivables Reporting",
     ],
   },
   {
     id: "fiscus-accounting",
     code: "FIS-AC",
     name: "FISCUS Accounting",
-    summary: "Pembukuan korporasi tanpa celah antar buku besar.",
+    summary: "Corporate bookkeeping with no gaps across general ledgers.",
     description:
-      "Sistem informasi akuntansi yang mengoptimalkan pengelolaan pembukuan menyeluruh: piutang usaha, utang usaha, buku besar, aset tetap, hingga buku besar khusus — seluruhnya terhubung dalam satu sumber kebenaran.",
+      "An accounting information system optimizing comprehensive bookkeeping: accounts receivable, accounts payable, general ledger, fixed assets, to special ledgers—all connected in a single source of truth.",
     metrics: [
-      { label: "Buku besar", value: "Terpadu" },
-      { label: "Penutupan periode", value: "Terjadwal" },
+      { label: "General ledger", value: "Unified" },
+      { label: "Period closing", value: "Scheduled" },
     ],
-    modules: ["Piutang Usaha", "Utang Usaha", "Buku Besar", "Aset Tetap"],
+    modules: ["Accounts Receivable", "Accounts Payable", "General Ledger", "Fixed Assets"],
   },
   {
     id: "planta",
     code: "PLN",
     name: "Planta",
-    summary: "Operasional perkebunan sawit, dari kebun ke pabrik.",
+    summary: "Palm oil plantation operations, from field to mill.",
     description:
-      "Sistem terpadu untuk mengelola perkebunan kelapa sawit — mencakup Estates (produksi dan logistik kebun) maupun Mills (pengolahan pabrik) dalam satu rantai data operasional.",
+      "An integrated system to manage palm oil plantations—covering both Estates (field production and logistics) and Mills (processing plant) within a single operational data chain.",
     metrics: [
-      { label: "Cakupan", value: "Estates + Mills" },
-      { label: "Data produksi", value: "Harian" },
+      { label: "Coverage", value: "Estates + Mills" },
+      { label: "Production data", value: "Daily" },
     ],
     modules: [
-      "Manajemen Kebun",
-      "Logistik TBS",
-      "Produksi Pabrik",
-      "Kendali Mutu",
+      "Field Management",
+      "FFB Logistics",
+      "Mill Production",
+      "Quality Control",
     ],
   },
   {
     id: "slik-silaras",
     code: "SLK-SR",
     name: "SLIK / SILARAS Report",
-    summary: "Jembatan pelaporan langsung ke sistem regulator.",
+    summary: "Direct reporting bridge to regulatory systems.",
     description:
-      "Menghubungkan sistem keuangan perusahaan Anda langsung dengan sistem pelaporan OJK — SLIK dan SILARAS — memastikan format, tenggat, dan validasi data terpenuhi setiap siklus pelaporan.",
+      "Connects your company's financial systems directly with OJK reporting systems—SLIK and SILARAS—ensuring data format, deadlines, and validation compliance every reporting cycle.",
     metrics: [
-      { label: "Validasi format", value: "Sebelum kirim" },
-      { label: "Tenggat OJK", value: "Terjaga" },
+      { label: "Format validation", value: "Pre-submission" },
+      { label: "OJK deadline", value: "Maintained" },
     ],
     modules: [
-      "Ekstraksi Data",
-      "Validasi Format",
-      "Pengiriman Terjadwal",
-      "Jejak Audit",
+      "Data Extraction",
+      "Format Validation",
+      "Scheduled Submission",
+      "Audit Trail",
     ],
   },
 ];
 
 export const principles = [
   {
-    label: "Inovasi Terdepan",
-    body: "Mengadopsi teknologi terbaru secara selektif — hanya yang benar-benar meningkatkan relevansi dan efektivitas sistem Anda.",
+    label: "Cutting-Edge Innovation",
+    body: "Selectively adopting the latest technology—only what truly enhances the relevance and effectiveness of your system.",
   },
   {
-    label: "Maintenance Berkelanjutan",
-    body: "Melindungi dan mengelola aset digital Anda, menyelesaikan kendala dengan cepat, serta menjaga kinerja sistem tetap optimal.",
+    label: "Sustainable Maintenance",
+    body: "Protecting and managing your digital assets, resolving issues quickly, and keeping system performance optimal.",
   },
   {
-    label: "Skalabilitas Teruji",
-    body: "Sistem dirancang untuk tumbuh bersama kebutuhan Anda, tanpa mengorbankan kinerja saat volume transaksi meningkat.",
+    label: "Proven Scalability",
+    body: "Systems designed to grow alongside your needs, without sacrificing performance as transaction volumes increase.",
   },
   {
-    label: "Reliability Operasional",
-    body: "Kinerja sistem yang stabil meminimalkan gangguan, menjaga integritas proses, dan mempertahankan kepercayaan pengguna.",
+    label: "Operational Reliability",
+    body: "Stable system performance minimizes disruption, preserves process integrity, and maintains user trust.",
   },
   {
-    label: "Dukungan Ahli",
-    body: "Tenaga ahli berkompeten siap menyelesaikan kendala secara efisien, menjaga pengalaman pengguna tetap tanpa hambatan.",
+    label: "Expert Support",
+    body: "Competent experts ready to resolve issues efficiently, keeping the user experience seamless.",
   },
   {
-    label: "Rekam Jejak Terbukti",
-    body: "Sejarah kinerja yang konsisten membangun kepercayaan melalui komitmen pada kualitas dan keunggulan layanan.",
+    label: "Proven Track Record",
+    body: "A history of consistent performance builds trust through a commitment to quality and service excellence.",
   },
 ];
 
 export const faqs = [
   {
-    q: "Solusi IT apa yang Anda tawarkan?",
-    a: "Kami menghadirkan solusi IT terintegrasi yang meliputi layanan cloud, keamanan siber, pengembangan aplikasi, dan integrasi sistem untuk mendukung kebutuhan bisnis Anda secara menyeluruh — dari FISCUS untuk sektor multifinance hingga Planta untuk operasional perkebunan.",
+    q: "What IT solutions do you offer?",
+    a: "We provide integrated IT solutions covering cloud services, cybersecurity, application development, and system integration to support your overall business needs—from FISCUS for the multifinance sector to Planta for plantation operations.",
   },
   {
-    q: "Bagaimana solusi IT Anda dapat menguntungkan bisnis saya?",
-    a: "Setiap implementasi dimulai dengan memetakan proses operasional Anda saat ini, lalu kami rancang sistem yang menghilangkan pekerjaan manual berulang dan memberi visibilitas data secara real-time kepada pengambil keputusan.",
+    q: "How can your IT solutions benefit my business?",
+    a: "Every implementation begins by mapping your current operational processes, after which we design a system that eliminates repetitive manual tasks and gives decision-makers real-time data visibility.",
   },
   {
-    q: "Apa bidang industri yang menjadi fokus Anda?",
-    a: "Fokus utama kami adalah lembaga jasa keuangan — multifinance, factoring, dan sekuritas — serta perusahaan perkebunan kelapa sawit. Lihat daftar klien kami untuk gambaran lintas industri yang telah kami layani.",
+    q: "What industry sectors do you focus on?",
+    a: "Our primary focus is financial services institutions—multifinance, factoring, and securities—as well as palm oil plantation companies. View our client list for an overview of the cross-industry sectors we have served.",
   },
   {
-    q: "Seberapa fleksibel sistem Anda menghadapi pertumbuhan bisnis?",
-    a: "Arsitektur sistem kami dirancang modular sejak awal, sehingga penambahan cabang, lini produk, atau volume transaksi tidak memerlukan perombakan sistem dari nol.",
+    q: "How flexible is your system in accommodating business growth?",
+    a: "Our system architecture is designed modularly from the ground up, so adding branches, product lines, or transaction volumes does not require rebuilding the system from scratch.",
   },
   {
-    q: "Bagaimana proses integrasi dengan sistem pelaporan OJK?",
-    a: "Modul SLIK/SILARAS Report kami memvalidasi format data sebelum pengiriman dan menjaga jejak audit penuh, sehingga tim kepatuhan Anda dapat memverifikasi setiap siklus pelaporan dengan percaya diri.",
+    q: "How does the integration process with OJK reporting systems work?",
+    a: "Our SLIK/SILARAS Report module validates data formats prior to submission and maintains a full audit trail, enabling your compliance team to verify every reporting cycle with confidence.",
   },
 ];
 
 export const contact = {
   address:
-    "Kompleks Taman Palem Lestari Blok H/61, Outer Ringroad, Jakarta 11730, Indonesia",
+    "Taman Palem Lestari Complex Block H/61, Outer Ringroad, Jakarta 11730, Indonesia",
   email: "admin@intidatasolution.com",
   phones: ["+6221-55952979", "+6221-55958058"],
   whatsapp: "https://wa.me/622155958058",

@@ -8,27 +8,27 @@ import { sectionTones } from "@/lib/section-tones";
 const capabilities = [
   {
     icon: Compass,
-    tag: "Konsultasi",
+    tag: "Consulting",
     detail:
-      "Memetakan proses operasional Anda saat ini sebelum satu baris kode pun ditulis.",
+      "Mapping your current operational processes before a single line of code is written.",
   },
   {
     icon: Code2,
-    tag: "Pengembangan",
+    tag: "Development",
     detail:
-      "Membangun sistem inti yang modular, sehingga tumbuh bersama skala bisnis Anda.",
+      "Building modular core systems that grow alongside your business scale.",
   },
   {
     icon: Link2,
-    tag: "Integrasi",
+    tag: "Integration",
     detail:
-      "Menghubungkan sistem internal Anda dengan pelaporan regulator secara langsung.",
+      "Directly connecting your internal systems with regulatory reporting systems.",
   },
   {
     icon: ShieldCheck,
-    tag: "Perawatan",
+    tag: "Maintenance",
     detail:
-      "Menjaga kinerja sistem tetap stabil, jauh setelah proyek dinyatakan selesai.",
+      "Keeping system performance stable long after the project is declared complete.",
   },
 ];
 
@@ -37,26 +37,26 @@ export function About() {
     <section id="tentang" style={sectionTones.dark} className="relative bg-void py-32">
       <div className="container-x grid grid-cols-1 gap-16 lg:grid-cols-[0.85fr_1.15fr]">
         <Reveal>
-          <span className="mono-label">Tentang Kami</span>
+          <span className="mono-label">About Us</span>
           <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
-            Lebih dari sekadar
+            More than just a
             <br />
-            pengembang perangkat lunak.
+            software developer.
           </h2>
           <p className="mt-7 max-w-md text-[15.5px] leading-relaxed text-ink-1">
-            PT Intidata Anugrah Pratama membentuk tim yang setara dalam
-            kreativitas dan kecerdasan untuk memahami kebutuhan, tantangan,
-            dan sasaran bisnis setiap mitra kami.
+            PT Intidata Anugrah Pratama forms a team equal in creativity
+            and intelligence to understand the needs, challenges, and
+            business goals of every partner.
           </p>
 
-          {/* aksen stat kecil biar kolom kiri gak kosong */}
+          {/* small stat accent to keep left column filled */}
           <div className="mt-10 flex gap-10 border-t border-[var(--panel-border)] pt-8">
             <div>
               <div className="font-display text-[26px] font-semibold text-signal-teal">
                 25+
               </div>
               <div className="mt-1 text-[12.5px] text-ink-2">
-                Tahun pengalaman
+                Years of experience
               </div>
             </div>
             <div>
@@ -64,7 +64,7 @@ export function About() {
                 17+
               </div>
               <div className="mt-1 text-[12.5px] text-ink-2">
-                Klien aktif
+                Active clients
               </div>
             </div>
           </div>

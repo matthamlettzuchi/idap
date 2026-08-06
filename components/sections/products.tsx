@@ -39,7 +39,6 @@ function ProductMockup({
   const bars = barSeeds[seed % barSeeds.length];
 
   return (
-    
     <div className="relative">
       {/* glow blobs */}
       <motion.div
@@ -174,18 +173,17 @@ export function Products() {
       <div className="container-x">
         <div className="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
           <Reveal>
-            <span className="mono-label">Produk</span>
+            <span className="mono-label">Products</span>
             <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
-              Lima sistem, satu
+              Five systems, one
               <br />
-              rantai kebenaran data.
+              single source of truth.
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
             <p className="max-w-md text-[15.5px] leading-relaxed text-ink-1 lg:justify-self-end lg:text-right">
-              Pilih satu sistem untuk melihat cakupan modulnya. Setiap produk
-              dirancang untuk berdiri sendiri, atau bekerja bersama sistem
-              Intidata lainnya.
+              Select a system to view its modular scope. Each product is
+              designed to stand alone or work seamlessly with other Intidata systems.
             </p>
           </Reveal>
         </div>

@@ -25,15 +25,14 @@ export function Contact() {
 
       <div className="container-x relative grid grid-cols-1 gap-16 lg:grid-cols-2 lg:items-center">
         <Reveal>
-          <span className="mono-label">Kontak</span>
+          <span className="mono-label">Contact</span>
           <h2 className="mt-6 text-[clamp(32px,4vw,48px)] font-semibold">
-            Mari mulai
+            Let&apos;s start
             <br />
-            percakapan.
+            a conversation.
           </h2>
           <p className="mt-7 max-w-sm text-[15.5px] leading-relaxed text-ink-1">
-            Kami siap menghadirkan teknologi yang sesuai dan mampu meningkatkan
-            kinerja bisnis Anda.
+            We are ready to deliver tailored technology designed to boost your enterprise operations and business growth.
           </p>
           <Button asChild size="default" className="mt-9">
             <a
@@ -41,14 +40,14 @@ export function Contact() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <MessageCircle size={16} /> Hubungi via WhatsApp
+              <MessageCircle size={16} /> Contact via WhatsApp
             </a>
           </Button>
         </Reveal>
 
         <Reveal delay={0.1}>
           <div className="panel divide-y divide-[var(--panel-border)] p-2">
-            <ContactRow icon={<MapPin size={17} />} label="Lokasi">
+            <ContactRow icon={<MapPin size={17} />} label="Location">
               <p className="text-[15px] font-medium leading-snug text-ink-0">
                 {contact.address}
               </p>
@@ -61,7 +60,7 @@ export function Contact() {
                 {contact.email}
               </a>
             </ContactRow>
-            <ContactRow icon={<Phone size={17} />} label="Telepon">
+            <ContactRow icon={<Phone size={17} />} label="Phone">
               <div className="flex flex-col gap-1">
                 {contact.phones.map((p) => (
                   <a

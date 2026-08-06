@@ -6,6 +6,7 @@ import { Products } from "@/components/sections/products";
 import { Technology } from "@/components/sections/technology";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Clients } from "@/components/sections/clients";
+import { Services } from "@/components/sections/services";
 import { Faq } from "@/components/sections/faq";
 import { Contact } from "@/components/sections/contact";
 import { Footer } from "@/components/footer";
@@ -22,7 +23,7 @@ export default function Home() {
         <Products />
         <Technology />
         <Testimonials />
-        <Clients />
+        <Services />
         <Faq />
         <Contact />
       </main>

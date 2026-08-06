@@ -21,13 +21,12 @@ export function Faq() {
             className="mb-10"
           />
           <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold">
-            Pertanyaan yang
+            Questions that
             <br />
-            sering diajukan.
+            were asked frequently.
           </h2>
           <p className="mt-7 max-w-xs text-[15px] leading-relaxed text-ink-1">
-            Tidak menemukan jawaban yang Anda cari? Tim kami siap membantu
-            secara langsung.
+            Didn&apos;t find the answer you&apos;re looking for?<br></br>Our team is ready to help.
           </p>
         </Reveal>
 
