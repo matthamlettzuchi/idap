@@ -148,9 +148,9 @@ export function ProductDetailView({
               />
 
               {[
-                { top: "4%", left: "50%" },
-                { top: "42%", left: "-4%" },
-                { top: "34%", left: "104%" },
+                { top: "4%", left: "48%" },
+                { top: "56%", left: "2%" },
+                { top: "38%", left: "92%" },
               ].map((pos, i) => {
                 const fact = product.quickFacts[i];
                 if (!fact) return null;
@@ -164,7 +164,7 @@ export function ProductDetailView({
                       ease: "easeInOut",
                       delay: i * 0.3,
                     }}
-                    className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-white/20 bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[13px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(0,0,0,0.5)] sm:flex"
+                    className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-white/20 bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[16px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(0,0,0,0.5)] sm:flex"
                     style={pos}
                   >
                     {fact}
@@ -176,7 +176,10 @@ export function ProductDetailView({
 
           {/* konten teks — kiri, center vertikal */}
           <motion.div
-            style={{ opacity: contentOpacity }}
+            style={{
+              opacity: contentOpacity,
+              paddingTop: "clamp(60px, 8vh, 120px)",
+            }}
             className="relative z-10 flex h-full items-center justify-start px-6 sm:px-10 lg:px-[clamp(40px,5vw,64px)]"
           >
             <div className="w-full max-w-lg text-left lg:w-[46%]">

@@ -99,7 +99,7 @@ export const productDetails: Record<string, ProductDetail> = {
       "Ubah piutang usaha menjadi arus kas — dikelola dalam satu sistem yang terpadu.",
     accent: "#0e9488",
     icon: "TrendingUp",
-    personImage: "/people/analyst-factoring.png",
+    personImage: "/factoring.png",
     quickFacts: ["Invoice Financing", "Dashboard Real-time", "Modul FISCUS"],
     overview: [
       "FISCUS Factoring System merupakan sistem transaksi keuangan di mana sebuah perusahaan menjual piutang usahanya (seperti faktur atau tagihan pelanggan yang belum dibayar) kepada pihak ketiga yang disebut factor. Pihak factor — yang umumnya merupakan lembaga keuangan atau perusahaan pembiayaan khusus — membeli piutang tersebut dengan harga diskon dan memberikan dana tunai secara langsung kepada perusahaan penjual. Setelah transaksi dilakukan, factor bertanggung jawab untuk menagih pembayaran dari pelanggan yang memiliki kewajiban atas piutang tersebut.",
@@ -147,7 +147,7 @@ export const productDetails: Record<string, ProductDetail> = {
       "Mitra keuangan presisi tinggi untuk pencatatan, pelaporan, dan pengambilan keputusan yang akurat.",
     accent: "#7c3aed",
     icon: "Calculator",
-    personImage: "/people/accountant-lead.png",
+    personImage: "/accountant.png",
     quickFacts: ["General Ledger", "Multi-User", "Real-time Sync"],
     overview: [
       "FISCUS Accounting System adalah platform digital yang memudahkan pencatatan, pengelolaan, dan pelaporan transaksi keuangan secara efisien dan aman melalui antarmuka berbasis web. Dirancang untuk memenuhi kebutuhan akuntansi perusahaan yang beroperasi di lingkungan daring, sistem ini menyediakan berbagai fitur, termasuk buku besar digital, jurnal transaksi, pelaporan keuangan online, serta integrasi dengan layanan keuangan lainnya.",
@@ -194,7 +194,7 @@ export const productDetails: Record<string, ProductDetail> = {
       "Jembatan pelaporan otomatis ke regulator — akurat, patuh, dan siap analisis.",
     accent: "#b45309",
     icon: "FileSpreadsheet",
-    personImage: "/people/compliance-slik.png",
+    personImage: "/report.png",
     quickFacts: ["OJK Compliant", "Multi Database", "Export PDF/Excel/CSV"],
     overview: [
       "FISCUS SLIK/SILARAS Report merupakan sistem analisis data inovatif yang dirancang secara cermat untuk memproses dan menganalisis data secara efektif, serta menghasilkan laporan yang informatif dan akurat. Didukung oleh platform FISCUS, sistem ini menawarkan kemampuan yang kuat dalam analisis data dan pembuatan laporan, membantu perusahaan memperoleh wawasan berharga untuk mendukung pengambilan keputusan yang tepat dan strategis.",
@@ -238,7 +238,7 @@ export const productDetails: Record<string, ProductDetail> = {
       "Sistem informasi terintegrasi untuk perkebunan kelapa sawit — dari kebun hingga pabrik.",
     accent: "#15803d",
     icon: "Sprout",
-    personImage: "/people/field-planta.png",
+    personImage: "/planta.png",
     quickFacts: ["Estate + Mill", "VRA Tracking", "Akses 24/7"],
     overview: [
       "Planta merupakan solusi sistem informasi terintegrasi yang dirancang untuk mengoptimalkan pengelolaan perkebunan kelapa sawit, mencakup manajemen perkebunan, manajemen aset, pemeliharaan lapangan, pengendalian dan pemeliharaan biaya, serta pengelolaan keuangan dan biaya operasional. Planta dikembangkan bersama para ahli perkebunan untuk menghasilkan informasi yang akurat, menekan biaya operasional, meningkatkan efisiensi, serta mendorong produktivitas perkebunan secara keseluruhan.",
