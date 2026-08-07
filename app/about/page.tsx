@@ -1,8 +1,9 @@
 // app/about/page.tsx
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useRef } from "react";
+import { EcosystemVisual } from "@/components/ui/ecosystem-visual";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Award,
   Cpu,
@@ -49,32 +50,27 @@ const journey = [
   {
     era: "Titik Awal",
     title: "Fondasi sistem inti",
-    body:
-      "Intidata memulai dari kebutuhan paling mendasar bagi institusi keuangan: pencatatan yang akurat dan proses operasional yang bisa diandalkan setiap hari.",
+    body: "Intidata memulai dari kebutuhan paling mendasar bagi institusi keuangan: pencatatan yang akurat dan proses operasional yang bisa diandalkan setiap hari.",
   },
   {
     era: "Spesialisasi",
     title: "Fokus ke sektor multifinance",
-    body:
-      "Pengalaman lapangan mendalam di industri pembiayaan menjadi cetak biru lahirnya FISCUS — sistem inti yang dirancang khusus untuk siklus kontrak, angsuran, hingga penagihan.",
+    body: "Pengalaman lapangan mendalam di industri pembiayaan menjadi cetak biru lahirnya FISCUS — sistem inti yang dirancang khusus untuk siklus kontrak, angsuran, hingga penagihan.",
   },
   {
     era: "Perluasan Layanan",
     title: "Dari factoring hingga perkebunan",
-    body:
-      "Ekosistem berkembang ke Factoring, Accounting, hingga Planta — membuktikan arsitektur modular kami bisa diadaptasi lintas industri tanpa dibangun ulang dari nol.",
+    body: "Ekosistem berkembang ke Factoring, Accounting, hingga Planta — membuktikan arsitektur modular kami bisa diadaptasi lintas industri tanpa dibangun ulang dari nol.",
   },
   {
     era: "Standarisasi",
     title: "Terhubung langsung ke regulator",
-    body:
-      "Modul SLIK/SILARAS Report dibangun agar validasi format dan jadwal pelaporan ke OJK berjalan otomatis, bukan pekerjaan manual di akhir periode.",
+    body: "Modul SLIK/SILARAS Report dibangun agar validasi format dan jadwal pelaporan ke OJK berjalan otomatis, bukan pekerjaan manual di akhir periode.",
   },
   {
     era: "Hari Ini",
     title: "Mitra skala enterprise",
-    body:
-      "Lebih dari 30 tahun kemudian, Intidata mendampingi puluhan institusi lokal dan multinasional — dari kantor cabang tunggal hingga grup korporasi besar.",
+    body: "Lebih dari 30 tahun kemudian, Intidata mendampingi puluhan institusi lokal dan multinasional — dari kantor cabang tunggal hingga grup korporasi besar.",
   },
 ];
 
@@ -137,6 +133,41 @@ const industries = [
 ];
 
 export default function AboutPage() {
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: heroScrollProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  const heroImageY = useTransform(heroScrollProgress, [0, 1], ["0%", "18%"]);
+  const heroImageScale = useTransform(heroScrollProgress, [0, 1], [1, 1.15]);
+  const heroOverlayOpacity = useTransform(
+    heroScrollProgress,
+    [0, 1],
+    [0.55, 0.85],
+  );
+  const heroContentY = useTransform(heroScrollProgress, [0, 1], ["0%", "25%"]);
+  const heroContentOpacity = useTransform(heroScrollProgress, [0, 0.7], [1, 0]);
+
+  // headline dipecah per kata biar bisa muncul staggered
+  const headlineLine1 = "Membangun Fondasi".split(" ");
+  const headlineLine2 = "Digital Enterprise Sejak 30+ Tahun.".split(" ");
+
+  const headlineContainer = {
+    hidden: {},
+    show: { transition: { staggerChildren: 0.06, delayChildren: 0.3 } },
+  };
+
+  const wordVariants = {
+    hidden: { opacity: 0, y: 32, filter: "blur(6px)" },
+    show: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
   const coreValues = [
     {
       title: "Kerja Keras & Dedikasi",
@@ -177,34 +208,111 @@ export default function AboutPage() {
 
       <main className="pt-28 pb-24">
         {/* HERO SECTION — full-bleed, sits behind the transparent nav */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
+        {/* HERO SECTION — full-bleed, sits behind the transparent nav */}
+        <div
+          ref={heroRef}
           className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen overflow-hidden"
         >
-          <img
-            src="/table.png"
-            alt="Tim Intidata berdiskusi"
-            className="absolute inset-0 h-full w-full object-cover"
+          {/* layer foto: parallax + Ken Burns zoom saat pertama masuk */}
+          <motion.div
+            className="absolute inset-0"
+            style={{ y: heroImageY, scale: heroImageScale }}
+          >
+            <motion.img
+              src="/table.png"
+              alt="Tim Intidata berdiskusi"
+              initial={{ scale: 1.18, opacity: 0, filter: "blur(10px)" }}
+              animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+              transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </motion.div>
+
+          <motion.div
+            className="absolute inset-0 bg-black/55"
+            style={{ opacity: heroOverlayOpacity }}
           />
-          <div className="absolute inset-0 bg-black/55" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-          <div className="relative z-10 flex h-full flex-col items-center justify-end px-6 pb-60 text-center">
-            <h1 className="max-w-4xl text-[clamp(32px,6.5vw,64px)] font-extrabold leading-[1.08] tracking-tight text-white/80">
-              Membangun Fondasi
-              <br />
-              Digital Enterprise Sejak 30+ Tahun.
-            </h1>
+          {/* light sweep tipis lewat foto sekali di awal */}
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            initial={{ x: "-20%" }}
+            animate={{ x: "260%" }}
+            transition={{ duration: 2.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          />
 
-            <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/80 md:text-base">
+          <motion.div
+            style={{ y: heroContentY, opacity: heroContentOpacity }}
+            className="relative z-10 flex h-full flex-col items-center justify-end px-6 pb-60 text-center"
+          >
+            <motion.h1
+              variants={headlineContainer}
+              initial="hidden"
+              animate="show"
+              className="max-w-4xl text-[clamp(32px,6.5vw,64px)] font-extrabold leading-[1.08] tracking-tight text-white/80"
+            >
+              <span className="block">
+                {headlineLine1.map((word, i) => (
+                  <motion.span
+                    key={`l1-${i}`}
+                    variants={wordVariants}
+                    className="mr-[0.28em] inline-block"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+              <span className="block">
+                {headlineLine2.map((word, i) => (
+                  <motion.span
+                    key={`l2-${i}`}
+                    variants={wordVariants}
+                    className="mr-[0.28em] inline-block"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.7,
+                delay: 0.9,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/80 md:text-base"
+            >
               Penyedia solusi terpadu rekayasa perangkat lunak, otomatisasi
               infrastruktur IT, dan pengembangan platform keuangan teregistrasi
               yang tepercaya di Indonesia.
-            </p>
-          </div>
-        </motion.div>
+            </motion.p>
+
+            {/* scroll cue */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 1.4 }}
+              className="pointer-events-none absolute bottom-10 left-1/2 -translate-x-1/2"
+            >
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{
+                  duration: 1.8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="flex h-9 w-6 items-start justify-center rounded-full border border-white/30 p-1.5"
+              >
+                <span className="h-1.5 w-1 rounded-full bg-white/70" />
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
 
         <div className="container-x max-w-6xl">
           {/* BENTO GRID SECTION */}
@@ -275,9 +383,12 @@ export default function AboutPage() {
                   otomatisasi alur pembiayaan, sistem akuntansi, hingga tata
                   kelola enterprise skala kecil hingga besar.
                 </p>
+
+                {/* animasi ekosistem — pengganti ruang kosong */}
+                <EcosystemVisual />
               </div>
 
-              <div className="mt-6 flex items-center gap-2 font-mono text-[12.5px] text-signal-teal font-semibold">
+              <div className="mt-6 flex items-center gap-2 border-t border-[var(--panel-border)] pt-5 font-mono text-[12px] text-signal-teal font-semibold">
                 <span>Solusi Terintegrasi</span>
                 <ArrowRight size={14} />
               </div>
@@ -356,8 +467,8 @@ export default function AboutPage() {
                   <p className="mt-3 text-[14.5px] leading-relaxed text-ink-1">
                     Menjadi mitra teknologi utama bagi institusi keuangan dan
                     korporasi di Indonesia — memungkinkan setiap keputusan
-                    bisnis dibuat di atas data yang akurat, real-time, dan
-                    patuh regulasi.
+                    bisnis dibuat di atas data yang akurat, real-time, dan patuh
+                    regulasi.
                   </p>
                 </div>
               </Reveal>
@@ -404,7 +515,11 @@ export default function AboutPage() {
               />
               <div className="flex flex-col gap-10">
                 {journey.map((step, i) => (
-                  <Reveal key={step.title} delay={i * 0.06} className="relative">
+                  <Reveal
+                    key={step.title}
+                    delay={i * 0.06}
+                    className="relative"
+                  >
                     <span
                       aria-hidden
                       className="absolute -left-8 top-1 h-3.5 w-3.5 rounded-full border-2 border-signal-teal bg-void sm:-left-10"

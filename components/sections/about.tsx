@@ -71,7 +71,6 @@ export function About() {
       {/* Grid Utama Diubah Menjadi 2 Kolom (5 kolom kiri, 7 kolom kanan) */}
       <div className="container-x relative grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center">
         
-        {/* KOLOM KIRI (Teks + Slot Ilustrasi/SVG + Stats) */}
         <div className="lg:col-span-5">
           <Reveal>
             <span className="mono-label">About Us</span>
@@ -82,7 +81,6 @@ export function About() {
               software developer.
             </h2>
 
-            {/* SLOT ANIMASI / SVG (Berada di antara Judul dan Deskripsi) */}
             <div
               id="about-animation-slot"
               aria-hidden="true"
