@@ -177,48 +177,42 @@ export function ProductDetailView({
               </motion.div>
             </div>
 
-            {/* SIGNATURE GLYPH */}
+            {/* SIGNATURE PHOTO */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, scale: 0.92, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{
                 duration: 0.7,
                 delay: 0.15,
                 ease: [0.16, 1, 0.3, 1],
               }}
-              className="relative mx-auto flex h-[280px] w-[280px] items-center justify-center sm:h-[340px] sm:w-[340px]"
+              className="relative mx-auto flex h-[320px] w-[280px] items-end justify-center sm:h-[400px] sm:w-[340px]"
             >
-              {[0, 1, 2].map((ring) => (
-                <motion.span
-                  key={ring}
-                  aria-hidden
-                  animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.15, 0.5] }}
-                  transition={{
-                    duration: 4 + ring,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: ring * 0.4,
-                  }}
-                  className="absolute rounded-full border"
-                  style={{
-                    inset: ring * 34,
-                    borderColor: hexToRgba(accent, 0.3),
-                  }}
-                />
-              ))}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute bottom-6 left-1/2 h-[220px] w-[220px] -translate-x-1/2 rounded-full blur-[90px]"
+                style={{
+                  background: `radial-gradient(circle, ${hexToRgba(accent, 0.35)}, transparent 70%)`,
+                }}
+              />
 
-              <span
-                className="flex h-28 w-28 items-center justify-center rounded-full text-white shadow-[0_30px_60px_-20px_rgba(0,0,0,0.35)] sm:h-32 sm:w-32"
-                style={{ background: accent }}
-              >
-                <Icon size={44} strokeWidth={1.5} />
-              </span>
+              <img
+                src={product.personImage}
+                alt={`Tim ${product.name}`}
+                className="relative z-10 h-full w-auto select-none object-contain object-bottom grayscale"
+                draggable={false}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = `https://placehold.co/360x560/e2e8f0/64748b?text=${encodeURIComponent(product.code)}`;
+                }}
+              />
 
               {product.quickFacts.slice(0, 3).map((fact, i) => {
                 const angle = (i / 3) * Math.PI * 2 - Math.PI / 2;
-                const radius = 148;
+                const radius = 160;
                 const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
+                const y = Math.sin(angle) * radius * 0.7 - 40;
                 return (
                   <motion.span
                     key={fact}
@@ -229,10 +223,10 @@ export function ProductDetailView({
                       ease: "easeInOut",
                       delay: i * 0.3,
                     }}
-                    className="absolute hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-[var(--panel-border)] bg-panel px-3 py-1.5 text-[11px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.35)] sm:flex"
+                    className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-[var(--panel-border)] bg-panel px-3 py-1.5 text-[11px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.35)] sm:flex"
                     style={{
                       left: `calc(50% + ${x}px)`,
-                      top: `calc(50% + ${y}px)`,
+                      top: `calc(35% + ${y}px)`,
                     }}
                   >
                     {fact}
@@ -245,7 +239,7 @@ export function ProductDetailView({
 
         {/* OVERVIEW */}
         <section className="relative border-t border-[var(--panel-border)] py-20">
-          <div className="container-x grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="container-x grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <Reveal>
               <span className="mono-label" style={{ color: accent }}>
                 Overview
@@ -259,7 +253,37 @@ export function ProductDetailView({
               </div>
             </Reveal>
 
-            <Reveal delay={0.1}>
+            <Reveal delay={0.1} className="relative">
+              {/* aksen orbit yang dipindah dari hero */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-6 -top-10 hidden h-[120px] w-[120px] items-center justify-center lg:flex"
+              >
+                {[0, 1, 2].map((ring) => (
+                  <motion.span
+                    key={ring}
+                    animate={{ scale: [1, 1.12, 1], opacity: [0.5, 0.15, 0.5] }}
+                    transition={{
+                      duration: 4 + ring,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: ring * 0.4,
+                    }}
+                    className="absolute rounded-full border"
+                    style={{
+                      inset: ring * 14,
+                      borderColor: hexToRgba(accent, 0.3),
+                    }}
+                  />
+                ))}
+                <span
+                  className="flex h-11 w-11 items-center justify-center rounded-full text-white shadow-[0_20px_40px_-16px_rgba(0,0,0,0.35)]"
+                  style={{ background: accent }}
+                >
+                  <Icon size={18} strokeWidth={1.75} />
+                </span>
+              </div>
+
               <div className="rounded-2xl border border-[var(--panel-border)] bg-panel p-7">
                 <div className="mono-label">Ringkasan Sistem</div>
                 <ul className="mt-5 space-y-4">
