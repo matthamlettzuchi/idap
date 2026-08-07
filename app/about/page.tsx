@@ -404,7 +404,7 @@ export default function AboutPage() {
                   src="/animat.lottie"
                   autoplay
                   loop
-                  className="h-full w-full max-h-[320px] object-contain"
+                  className="h-auto w-auto max-h-[320px] object-contain"
                 />
               </motion.div>
 
@@ -502,7 +502,7 @@ export default function AboutPage() {
           />
 
           {/* karakter — pojok kiri atas */}
-          <CarryingPersonIllustration className="pointer-events-none absolute top-5 left-4 z-20 hidden h-[280px] w-[280px] lg:block" />
+          <CarryingPersonIllustration className="pointer-events-none absolute top-21 left-4 z-20 hidden h-[280px] w-[280px] lg:block" />
 
           {/* compass/radar — pojok kanan atas, nyambung tema "arah" */}
           <DirectionCompass className="pointer-events-none absolute top-15 right-20 z-20 hidden h-[170px] w-[170px] lg:block" />
@@ -605,7 +605,11 @@ export default function AboutPage() {
               </h2>
             </Reveal>
 
-<div className="relative grid grid-cols-1 gap-10 pl-8 sm:pl-10 lg:grid-cols-[1fr_120px] lg:items-stretch lg:gap-16">
+            {/* FIX: kolom trail dilebarin dari 120px -> 240px, dan gap ditambah
+        biar trail punya ruang buat melengkung lebih jauh ke kanan dan
+        beneran "mengisi" sisi kanan section, bukan cuma mepet sempit
+        di ujung. */}
+            <div className="relative grid grid-cols-1 gap-10 pl-8 sm:pl-10 lg:grid-cols-[1fr_240px] lg:items-stretch lg:gap-20">
               <div className="relative">
                 <div
                   aria-hidden

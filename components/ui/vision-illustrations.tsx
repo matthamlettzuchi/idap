@@ -12,7 +12,7 @@ export function CarryingPersonIllustration({
   return (
     <motion.div
       aria-hidden
-      className={className}
+      className={`${className} flex items-center justify-center overflow-visible`}
       initial={{ opacity: 0, y: -24, rotate: -4 }}
       whileInView={{ opacity: 1, y: 0, rotate: -1.5 }}
       viewport={{ once: true, margin: "-10% 0px" }}
@@ -22,7 +22,7 @@ export function CarryingPersonIllustration({
         src="/bisnis.lottie"
         autoplay
         loop
-        className="h-full w-full"
+        className="h-auto w-auto"
       />
     </motion.div>
   );
@@ -47,6 +47,10 @@ export function DirectionCompass({
       viewport={{ once: true, margin: "-10% 0px" }}
       transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
     >
+      {/* FIX: backing panel tipis di belakang, biar compass gak "hilang"
+          ketimpa circuit-texture + noise di background dark section */}
+      <circle cx="80" cy="80" r="76" fill="var(--panel)" fillOpacity="0.35" />
+
       {/* denyut radar melebar */}
       <motion.circle
         cx="80"
@@ -67,25 +71,30 @@ export function DirectionCompass({
         style={{ transformOrigin: "80px 80px" }}
       />
 
-      {/* ring statis */}
+      {/* FIX: ring statis — sebelumnya pakai var(--panel-border-strong)
+          yang di dark mode cuma rgba(255,255,255,0.18), nyaris invisible.
+          Diganti signal-teal dengan opacity terkontrol biar tetap kebaca
+          tapi gak terlalu ramai */}
       <circle
         cx="80"
         cy="80"
         r="52"
-        stroke="var(--panel-border-strong)"
-        strokeWidth="1"
+        stroke="var(--signal-teal)"
+        strokeOpacity="0.35"
+        strokeWidth="1.2"
         strokeDasharray="2 6"
       />
       <circle
         cx="80"
         cy="80"
         r="30"
-        stroke="var(--panel-border-strong)"
-        strokeWidth="1"
+        stroke="var(--signal-teal)"
+        strokeOpacity="0.35"
+        strokeWidth="1.2"
         strokeDasharray="2 6"
       />
 
-      {/* tanda mata angin */}
+      {/* tanda mata angin — dinaikkan opacity/kontrasnya sedikit */}
       {[0, 90, 180, 270].map((deg) => (
         <line
           key={deg}
@@ -93,36 +102,44 @@ export function DirectionCompass({
           y1="8"
           x2="80"
           y2="16"
-          stroke="var(--ink-2)"
+          stroke="var(--ink-1)"
           strokeWidth="1.5"
           transform={`rotate(${deg} 80 80)`}
         />
       ))}
 
-      {/* jarum yang berputar terus, kayak nyari arah */}
-      <motion.g
-        style={{ transformOrigin: "80px 80px" }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 7, repeat: Infinity, ease: "linear", delay }}
-      >
-        <line
-          x1="80"
-          y1="80"
-          x2="80"
-          y2="24"
-          stroke="var(--signal-teal)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <circle cx="80" cy="24" r="4" fill="var(--signal-teal)">
-          <animate
-            attributeName="opacity"
-            values="1;0.4;1"
-            dur="1.6s"
-            repeatCount="indefinite"
+      {/* jarum yang berputar terus, kayak nyari arah.
+          FIX: grup ditranslate dulu ke pusat (80,80) pakai SVG transform
+          attribute (statis), lalu jarum digambar relatif ke local origin
+          0,0. Animasi rotate motion.g jalan di local space ini, jadi
+          otomatis berputar tepat di pusat compass — gak lagi bergantung
+          pada CSS transform-origin yang sebelumnya salah baca bounding box
+          garis (bikin jarum "terbang" keluar dari lingkaran saat berputar). */}
+      <g transform="translate(80 80)">
+        <motion.g
+          style={{ transformOrigin: "0px 0px" }}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 7, repeat: Infinity, ease: "linear", delay }}
+        >
+          <line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="-56"
+            stroke="var(--signal-teal)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
           />
-        </circle>
-      </motion.g>
+          <circle cx="0" cy="-56" r="4" fill="var(--signal-teal)">
+            <animate
+              attributeName="opacity"
+              values="1;0.4;1"
+              dur="1.6s"
+              repeatCount="indefinite"
+            />
+          </circle>
+        </motion.g>
+      </g>
 
       <circle cx="80" cy="80" r="5" fill="var(--signal-teal)" />
     </motion.svg>

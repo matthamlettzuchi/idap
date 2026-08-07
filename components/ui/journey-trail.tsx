@@ -7,9 +7,11 @@ import { Rocket, Flag } from "lucide-react";
 type Waypoint = { x: number; y: number };
 
 function buildWaypoints(count: number): Waypoint[] {
-  // amplitudo dilebarin (14 ↔ 86) biar zigzag-nya kerasa, gak nempel ke tengah/vertikal
+  // ASIMETRIS: sisi kiri (x kecil) gak usah jauh-jauh dari tengah, sisi kanan
+  // (x besar) didorong mepet ke 100 — hasilnya kurva condong & lebih banyak
+  // "mengisi" area kanan section, bukan zigzag simetris di tengah kayak sebelumnya.
   return Array.from({ length: count }, (_, i) => ({
-    x: i % 2 === 0 ? 14 : 86,
+    x: i % 2 === 0 ? 22 : 98,
     y: (i / (count - 1)) * 100,
   }));
 }
