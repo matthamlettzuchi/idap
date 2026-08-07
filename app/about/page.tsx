@@ -721,7 +721,7 @@ export default function AboutPage() {
           style={sectionTones.dark}
           className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
         >
-          <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-30" />
+          <div className="wave-stream-texture pointer-events-none absolute inset-0 opacity-80" />
           <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
               <span className="mono-label">Mengapa Memilih Kami</span>

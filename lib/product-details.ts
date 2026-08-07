@@ -47,7 +47,7 @@ export const productDetails: Record<string, ProductDetail> = {
       "Sistem Loan Origination yang menopang seluruh siklus pengajuan kredit — dari prospek hingga pencairan.",
     accent: "#2f4bd0",
     icon: "Building2",
-personImage: "/people/officer-multifinance.png",
+    personImage: "/peeps-talking.png",
     quickFacts: ["Web-Based", "Integrasi SLIK", "Multi Device", "Modul FISCUS"],
     overview: [
       "FISCUS Multifinance System adalah sistem khusus yang dirancang untuk mendukung kebutuhan proses pengajuan kredit pada perusahaan multifinance, bank, dan lembaga keuangan lainnya. Dengan pengalaman lebih dari 30 tahun di bidang pengembangan software pembiayaan — mulai dari DOS based, Windows based, Web based, hingga multi device — proses dalam FISCUS Multifinance System mencakup tahapan penting mulai dari pengelolaan calon konsumen atau prospek, initial scoring yang melibatkan pemeriksaan internal serta integrasi eksternal seperti pengecekan SLIK, hingga proses survei atau appraisal untuk memastikan kelengkapan data konsumen.",
@@ -68,11 +68,26 @@ personImage: "/people/officer-multifinance.png",
     featuresIntro:
       "Sistem terintegrasi dengan penilaian kredit otomatis yang menilai kelayakan debitur berdasarkan kriteria tertentu, serta memberikan hasil penilaian secara cepat dan akurat.",
     features: [
-      { title: "Penilaian Kredit", body: "Menilai kelayakan kredit debitur dan menentukan tingkat risiko secara cepat dan akurat." },
-      { title: "Dashboard Monitoring", body: "Memantau seluruh data kredit melalui tampilan dashboard interaktif dan real-time." },
-      { title: "Sistem Berbasis Web", body: "Sistem yang dapat diakses dimana pun dengan semua perangkat." },
-      { title: "Pelaporan dan Analitik", body: "Fitur pelaporan komprehensif untuk memantau Key Performance Indicator (KPI) serta menganalisis kinerja portofolio pembiayaan." },
-      { title: "Collection", body: "Mengelola, memonitor, dan mengoptimalkan proses penagihan angsuran pembiayaan kepada debitur, mulai dari keterlambatan awal hingga penyelesaian kredit bermasalah." },
+      {
+        title: "Penilaian Kredit",
+        body: "Menilai kelayakan kredit debitur dan menentukan tingkat risiko secara cepat dan akurat.",
+      },
+      {
+        title: "Dashboard Monitoring",
+        body: "Memantau seluruh data kredit melalui tampilan dashboard interaktif dan real-time.",
+      },
+      {
+        title: "Sistem Berbasis Web",
+        body: "Sistem yang dapat diakses dimana pun dengan semua perangkat.",
+      },
+      {
+        title: "Pelaporan dan Analitik",
+        body: "Fitur pelaporan komprehensif untuk memantau Key Performance Indicator (KPI) serta menganalisis kinerja portofolio pembiayaan.",
+      },
+      {
+        title: "Collection",
+        body: "Mengelola, memonitor, dan mengoptimalkan proses penagihan angsuran pembiayaan kepada debitur, mulai dari keterlambatan awal hingga penyelesaian kredit bermasalah.",
+      },
     ],
   },
 
@@ -105,10 +120,22 @@ personImage: "/people/officer-multifinance.png",
     featuresIntro:
       "Lacak dan kategorikan pengeluaran secara efisien, sehingga memungkinkan kontrol dan analisis biaya yang lebih baik.",
     features: [
-      { title: "Berbagai Jenis Factoring", body: "Factoring dengan hak tuntut (recourse) atau tanpa hak tuntut (without recourse). Factoring penuh (full factoring) atau pembiayaan faktur (invoice financing). Factoring piutang atau pembiayaan debitur." },
-      { title: "Dashboard Monitoring", body: "Memantau seluruh data factoring melalui tampilan dashboard interaktif dan real-time." },
-      { title: "Sistem Berbasis Web", body: "Sistem yang dapat diakses dimana pun dengan semua perangkat." },
-      { title: "Pelaporan dan Analitik", body: "Fitur pelaporan komprehensif untuk memantau Key Performance Indicator (KPI) serta menganalisis kinerja portofolio pembiayaan." },
+      {
+        title: "Berbagai Jenis Factoring",
+        body: "Factoring dengan hak tuntut (recourse) atau tanpa hak tuntut (without recourse). Factoring penuh (full factoring) atau pembiayaan faktur (invoice financing). Factoring piutang atau pembiayaan debitur.",
+      },
+      {
+        title: "Dashboard Monitoring",
+        body: "Memantau seluruh data factoring melalui tampilan dashboard interaktif dan real-time.",
+      },
+      {
+        title: "Sistem Berbasis Web",
+        body: "Sistem yang dapat diakses dimana pun dengan semua perangkat.",
+      },
+      {
+        title: "Pelaporan dan Analitik",
+        body: "Fitur pelaporan komprehensif untuk memantau Key Performance Indicator (KPI) serta menganalisis kinerja portofolio pembiayaan.",
+      },
     ],
   },
 
@@ -140,10 +167,22 @@ personImage: "/people/officer-multifinance.png",
     featuresIntro:
       "Lacak dan kategorikan pengeluaran secara efisien, sehingga memudahkan pengendalian dan analisis biaya.",
     features: [
-      { title: "Tampilan User-Friendly", body: "Menampilkan tampilan yang mempermudah navigasi dan penggunaan, sehingga dapat diakses dengan mudah dan efisien oleh pengguna dengan berbagai tingkat keahlian." },
-      { title: "Presisi dan Efisiensi", body: "Mengutamakan presisi dan efisiensi dalam proses keuangan, mendukung pencatatan, pelaporan, dan pengambilan keputusan yang akurat bagi bisnis." },
-      { title: "Layanan Pengembangan Sesuai Kebutuhan", body: "Menyediakan layanan pengembangan akuntansi yang dapat disesuaikan untuk memenuhi kebutuhan spesifik dan unik setiap klien, sekaligus memastikan fleksibilitas dan skalabilitas." },
-      { title: "Pelaporan dan Analitik", body: "Fitur pelaporan komprehensif untuk memantau data accounting serta menganalisis kinerja portofolio pembiayaan." },
+      {
+        title: "Tampilan User-Friendly",
+        body: "Menampilkan tampilan yang mempermudah navigasi dan penggunaan, sehingga dapat diakses dengan mudah dan efisien oleh pengguna dengan berbagai tingkat keahlian.",
+      },
+      {
+        title: "Presisi dan Efisiensi",
+        body: "Mengutamakan presisi dan efisiensi dalam proses keuangan, mendukung pencatatan, pelaporan, dan pengambilan keputusan yang akurat bagi bisnis.",
+      },
+      {
+        title: "Layanan Pengembangan Sesuai Kebutuhan",
+        body: "Menyediakan layanan pengembangan akuntansi yang dapat disesuaikan untuk memenuhi kebutuhan spesifik dan unik setiap klien, sekaligus memastikan fleksibilitas dan skalabilitas.",
+      },
+      {
+        title: "Pelaporan dan Analitik",
+        body: "Fitur pelaporan komprehensif untuk memantau data accounting serta menganalisis kinerja portofolio pembiayaan.",
+      },
     ],
   },
 
@@ -172,10 +211,22 @@ personImage: "/people/officer-multifinance.png",
     featuresIntro:
       "Fitur-fitur dalam laporan SLIK dan SILARAS dirancang untuk memberikan kemampuan analisis data yang komprehensif serta pelaporan yang informatif bagi perusahaan.",
     features: [
-      { title: "Export and Sharing Options", body: "Pengguna dapat mengekspor laporan ke berbagai format, seperti PDF, Excel, atau CSV, untuk analisis lebih lanjut." },
-      { title: "Flexible Database Integration", body: "Integrasi fleksibel dengan berbagai jenis database (MySQL, Oracle, PostgreSQL, MongoDB, dll)." },
-      { title: "PSAK & CKPN", body: "Mendukung impor data sesuai standar pelaporan PSAK & CKPN." },
-      { title: "Automatic Compare", body: "Fitur pembanding otomatis antar periode laporan untuk memudahkan analisis perubahan data." },
+      {
+        title: "Export and Sharing Options",
+        body: "Pengguna dapat mengekspor laporan ke berbagai format, seperti PDF, Excel, atau CSV, untuk analisis lebih lanjut.",
+      },
+      {
+        title: "Flexible Database Integration",
+        body: "Integrasi fleksibel dengan berbagai jenis database (MySQL, Oracle, PostgreSQL, MongoDB, dll).",
+      },
+      {
+        title: "PSAK & CKPN",
+        body: "Mendukung impor data sesuai standar pelaporan PSAK & CKPN.",
+      },
+      {
+        title: "Automatic Compare",
+        body: "Fitur pembanding otomatis antar periode laporan untuk memudahkan analisis perubahan data.",
+      },
     ],
   },
 
@@ -203,10 +254,22 @@ personImage: "/people/officer-multifinance.png",
     featuresIntro:
       "PLANTA merupakan sistem terintegrasi yang dikhususkan untuk perkebunan atau pabrik pengolahan kelapa sawit. Sistem ini mencatat seluruh kegiatan mulai dari kegiatan kebun hingga kegiatan di pabrik pengolahan, sehingga menghasilkan informasi biaya dan laporan keuangan yang dibutuhkan oleh industri perkebunan kelapa sawit.",
     features: [
-      { title: "Alokasi Biaya", body: "Mencatat semua kegiatan seperti Vehicle Running Account (VRA), inventory, beban gaji, dan pekerja rutin, sehingga menghasilkan laporan biaya yang terinci." },
-      { title: "Dashboard Monitoring", body: "Memantau seluruh data operasional melalui tampilan dashboard interaktif dan real-time." },
-      { title: "Sistem Berbasis Web", body: "Sistem yang sederhana, mudah dirawat, dapat diakses lintas platform, dan siap digunakan kapan saja, 24 jam sehari, 7 hari seminggu." },
-      { title: "Reporting and Analytics", body: "Fitur pelaporan komprehensif untuk memantau hasil laporan keuangan serta menganalisis kinerja setiap bagian." },
+      {
+        title: "Alokasi Biaya",
+        body: "Mencatat semua kegiatan seperti Vehicle Running Account (VRA), inventory, beban gaji, dan pekerja rutin, sehingga menghasilkan laporan biaya yang terinci.",
+      },
+      {
+        title: "Dashboard Monitoring",
+        body: "Memantau seluruh data operasional melalui tampilan dashboard interaktif dan real-time.",
+      },
+      {
+        title: "Sistem Berbasis Web",
+        body: "Sistem yang sederhana, mudah dirawat, dapat diakses lintas platform, dan siap digunakan kapan saja, 24 jam sehari, 7 hari seminggu.",
+      },
+      {
+        title: "Reporting and Analytics",
+        body: "Fitur pelaporan komprehensif untuk memantau hasil laporan keuangan serta menganalisis kinerja setiap bagian.",
+      },
     ],
   },
 };

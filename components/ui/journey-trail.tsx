@@ -1,7 +1,13 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useEffect, useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useSpring,
+  useTransform,
+  useMotionValue,
+} from "framer-motion";
 import { Rocket, Flag } from "lucide-react";
 
 type Waypoint = { x: number; y: number };
@@ -47,6 +53,9 @@ export function JourneyTrail({
   className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // ref ke <path> asli yang dirender, dipakai buat baca geometri kurva
+  // sesungguhnya lewat getPointAtLength — bukan interpolasi lurus antar titik.
+  const pathRef = useRef<SVGPathElement>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -61,11 +70,35 @@ export function JourneyTrail({
 
   const points = buildWaypoints(steps + 1);
   const pathD = buildSmoothPathD(points);
-  const inputRange = points.map((_, i) => i / (points.length - 1));
 
-  const dotLeft = useTransform(progress, inputRange, points.map((p) => `${p.x}%`));
-  const dotTop = useTransform(progress, inputRange, points.map((p) => `${p.y}%`));
   const dotOpacity = useTransform(progress, [0, 0.03, 0.97, 1], [0, 1, 1, 0]);
+
+  // posisi titik biru sekarang di-drive manual dari geometri path asli,
+  // bukan dari useTransform(points) yang cuma interpolasi garis lurus
+  // antar waypoint — itu penyebab titik "keluar jalur" di tikungan tajam.
+  const dotLeft = useMotionValue("0%");
+  const dotTop = useMotionValue("0%");
+
+  useEffect(() => {
+    const path = pathRef.current;
+    if (!path) return;
+
+    function updatePosition(p: number) {
+      if (!path) return;
+      const length = path.getTotalLength();
+      if (!length) return;
+      const clamped = Math.min(1, Math.max(0, p));
+      const point = path.getPointAtLength(clamped * length);
+      // viewBox 0 0 100 100 → koordinat path sudah dalam skala 0-100,
+      // jadi bisa langsung dipakai sebagai persen posisi (left/top).
+      dotLeft.set(`${point.x}%`);
+      dotTop.set(`${point.y}%`);
+    }
+
+    updatePosition(progress.get());
+    const unsubscribe = progress.on("change", updatePosition);
+    return () => unsubscribe();
+  }, [progress, dotLeft, dotTop]);
 
   const first = points[0];
   const last = points[points.length - 1];
@@ -88,6 +121,7 @@ export function JourneyTrail({
           vectorEffect="non-scaling-stroke"
         />
         <motion.path
+          ref={pathRef}
           d={pathD}
           stroke="var(--signal-teal)"
           strokeWidth="1.8"
