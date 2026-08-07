@@ -1,9 +1,9 @@
-// app/about/page.tsx
 "use client";
 
 import React, { useRef } from "react";
-import { EcosystemVisual } from "@/components/ui/ecosystem-visual";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import NumberFlow from "@number-flow/react";
 import {
   Award,
   Cpu,
@@ -36,6 +36,8 @@ import { TrustedBy } from "@/components/sections/trusted-by";
 import { Reveal } from "@/components/ui/reveal";
 import { principles } from "@/lib/data";
 import { sectionTones } from "@/lib/section-tones";
+
+const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const whyChooseIcons = [
   Sparkles,
@@ -152,6 +154,30 @@ export default function AboutPage() {
   // headline dipecah per kata biar bisa muncul staggered
   const headlineLine1 = "Membangun Fondasi".split(" ");
   const headlineLine2 = "Digital Enterprise Sejak 30+ Tahun.".split(" ");
+
+  function StatCounter({
+    value,
+    suffix = "",
+    label,
+    color = "text-signal-teal",
+  }: {
+    value: number;
+    suffix?: string;
+    label: string;
+    color?: string;
+  }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const inView = useInView(ref, { once: true, margin: "-15% 0px" });
+
+    return (
+      <div ref={ref}>
+        <div className={`font-mono text-3xl font-extrabold ${color}`}>
+          <NumberFlow value={inView ? value : 0} suffix={suffix} />
+        </div>
+        <div className="mt-1 text-[12px] font-medium text-ink-2">{label}</div>
+      </div>
+    );
+  }
 
   const headlineContainer = {
     hidden: {},
@@ -314,140 +340,152 @@ export default function AboutPage() {
           </motion.div>
         </div>
 
-        <div className="container-x max-w-6xl">
-          {/* BENTO GRID SECTION */}
-          <div className="mt-16 grid grid-cols-1 md:grid-cols-12 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="md:col-span-7 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md relative overflow-hidden flex flex-col justify-between group hover:border-signal-teal/40 transition-all"
-            >
-              <div className="space-y-4">
-                <div className="h-10 w-10 rounded-xl bg-signal-teal/10 flex items-center justify-center text-signal-teal">
-                  <Award size={22} />
-                </div>
-                <h3 className="text-2xl font-bold text-ink-0">
-                  30+ Tahun Pengalaman Industri
-                </h3>
-                <p className="text-sm text-ink-1 leading-relaxed">
-                  Sejak berdiri, Intidata terus tumbuh mendampingi ratusan
-                  instansi lokal maupun multinasional. Kami memadukan keahlian
-                  teknik mendalam dengan pemahaman domain bisnis yang matang
-                  untuk menghadirkan perangkat lunak yang andal.
-                </p>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-[var(--panel-border)] flex items-center gap-8">
-                <div>
-                  <div className="font-mono text-3xl font-extrabold text-signal-teal">
-                    30+
-                  </div>
-                  <div className="text-[12px] text-ink-2 font-medium">
-                    Tahun Rekam Jejak
-                  </div>
-                </div>
-                <div className="h-8 w-[1px] bg-[var(--panel-border)]" />
-                <div>
-                  <div className="font-mono text-3xl font-extrabold text-ink-0">
-                    100%
-                  </div>
-                  <div className="text-[12px] text-ink-2 font-medium">
-                    Custom Solutions
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
-              className="md:col-span-5 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md flex flex-col justify-between hover:border-signal-teal/40 transition-all"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="h-10 w-10 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
-                    <ShieldCheck size={22} />
-                  </div>
-                  <span className="font-mono text-[11px] px-2.5 py-1 rounded-md bg-panel-2 text-ink-2 border border-[var(--panel-border)]">
-                    Kemenkumham Registered
-                  </span>
-                </div>
-
-                <h3 className="text-xl font-bold text-ink-0">
-                  Ekosistem Perangkat Lunak FISCUS
-                </h3>
-                <p className="text-sm text-ink-1 leading-relaxed">
-                  Platform solusi paket unggulan yang dirancang khusus untuk
-                  otomatisasi alur pembiayaan, sistem akuntansi, hingga tata
-                  kelola enterprise skala kecil hingga besar.
-                </p>
-
-                {/* animasi ekosistem — pengganti ruang kosong */}
-                <EcosystemVisual />
-              </div>
-
-              <div className="mt-6 flex items-center gap-2 border-t border-[var(--panel-border)] pt-5 font-mono text-[12px] text-signal-teal font-semibold">
-                <span>Solusi Terintegrasi</span>
-                <ArrowRight size={14} />
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              className="md:col-span-5 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-all"
-            >
-              <div className="h-10 w-10 rounded-xl bg-signal-teal/10 flex items-center justify-center text-signal-teal mb-4">
-                <Code2 size={22} />
-              </div>
-              <h3 className="text-xl font-bold text-ink-0 mb-2">
-                Fleksibilitas Custom Software
-              </h3>
-              <p className="text-sm text-ink-1 leading-relaxed">
-                Setiap bisnis memiliki tantangan unik. Kami membangun perangkat
-                lunak terpesan (*tailor-made*) yang disesuaikan secara presisi
-                dengan alur operasional internal Anda—hal yang sering kali tidak
-                dapat dipenuhi oleh software pasaran (*readymade*).
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="md:col-span-7 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-all"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
-                  <Layers size={22} />
-                </div>
-                <h3 className="text-xl font-bold text-ink-0">
-                  Cakupan Solusi Enterprise
-                </h3>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-                {solutions.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center gap-2.5 rounded-lg border border-[var(--panel-border)] bg-panel-2/50 px-3 py-2.5 text-xs font-medium text-ink-1"
+        <section style={sectionTones.light} className="relative bg-void py-24">
+          <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-60" />
+          <div className="container-x max-w-6xl relative">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{
+                  y: -6,
+                  transition: { duration: 0.2, ease: EASE_OUT },
+                }}
+                transition={{ duration: 0.5, ease: EASE_OUT }}
+                className="md:col-span-7 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md relative overflow-hidden flex flex-col justify-between group hover:border-signal-teal/40 transition-colors"
+              >
+                <div className="space-y-4">
+                  <motion.div
+                    whileHover={{ rotate: -8 }}
+                    transition={{ duration: 0.2, ease: EASE_OUT }}
+                    className="h-10 w-10 rounded-xl bg-signal-teal/10 flex items-center justify-center text-signal-teal"
                   >
-                    <CheckCircle2
-                      size={15}
-                      className="text-signal-teal shrink-0"
-                    />
-                    <span className="truncate">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+                    <Award size={22} />
+                  </motion.div>
+                  <h3 className="text-2xl font-bold text-ink-0">
+                    30+ Tahun Pengalaman Industri
+                  </h3>
+                  <p className="text-sm text-ink-1 leading-relaxed">
+                    Sejak berdiri, Intidata terus tumbuh mendampingi ratusan
+                    instansi lokal maupun multinasional. Kami memadukan keahlian
+                    teknik mendalam dengan pemahaman domain bisnis yang matang
+                    untuk menghadirkan perangkat lunak yang andal.
+                  </p>
+                </div>
 
-          {/* VISI & MISI */}
-          <div className="mt-24">
+                <div className="mt-8 pt-6 border-t border-[var(--panel-border)] flex items-center gap-8">
+                  <StatCounter
+                    value={30}
+                    suffix="+"
+                    label="Tahun Rekam Jejak"
+                  />
+                  <div className="h-8 w-[1px] bg-[var(--panel-border)]" />
+                  <StatCounter
+                    value={100}
+                    suffix="%"
+                    label="Custom Solutions"
+                    color="text-ink-0"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.94 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-10% 0px" }}
+                transition={{ duration: 0.7, ease: EASE_OUT }}
+                className="md:col-span-5 flex items-center justify-center"
+              >
+                <DotLottieReact
+                  src="/animat.lottie"
+                  autoplay
+                  loop
+                  className="h-full w-full max-h-[320px] object-contain"
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{
+                  y: -6,
+                  transition: { duration: 0.2, ease: EASE_OUT },
+                }}
+                transition={{ duration: 0.5, delay: 0.12, ease: EASE_OUT }}
+                className="md:col-span-5 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-colors"
+              >
+                <motion.div
+                  whileHover={{ rotate: -8 }}
+                  transition={{ duration: 0.2, ease: EASE_OUT }}
+                  className="h-10 w-10 rounded-xl bg-signal-teal/10 flex items-center justify-center text-signal-teal mb-4"
+                >
+                  <Code2 size={22} />
+                </motion.div>
+                <h3 className="text-xl font-bold text-ink-0 mb-2">
+                  Fleksibilitas Custom Software
+                </h3>
+                <p className="text-sm text-ink-1 leading-relaxed">
+                  Setiap bisnis memiliki tantangan unik. Kami membangun
+                  perangkat lunak terpesan (*tailor-made*) yang disesuaikan
+                  secara presisi dengan alur operasional internal Anda—hal yang
+                  sering kali tidak dapat dipenuhi oleh software pasaran
+                  (*readymade*).
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{
+                  y: -6,
+                  transition: { duration: 0.2, ease: EASE_OUT },
+                }}
+                transition={{ duration: 0.5, delay: 0.18, ease: EASE_OUT }}
+                className="md:col-span-7 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-colors"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-10 w-10 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
+                    <Layers size={22} />
+                  </div>
+                  <h3 className="text-xl font-bold text-ink-0">
+                    Cakupan Solusi Enterprise
+                  </h3>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                  {solutions.map((item, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -8 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-10% 0px" }}
+                      transition={{
+                        duration: 0.4,
+                        delay: idx * 0.05,
+                        ease: EASE_OUT,
+                      }}
+                      className="flex items-center gap-2.5 rounded-lg border border-[var(--panel-border)] bg-panel-2/50 px-3 py-2.5 text-xs font-medium text-ink-1"
+                    >
+                      <CheckCircle2
+                        size={15}
+                        className="text-signal-teal shrink-0"
+                      />
+                      <span className="truncate">{item}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ================= 2 — DARK — VISI & MISI ================= */}
+        <section
+          style={sectionTones.dark}
+          className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
+        >
+          <div className="circuit-texture pointer-events-none absolute inset-0 opacity-50" />
+          <div className="container-x max-w-6xl relative">
             <Reveal className="text-center max-w-xl mx-auto mb-12">
               <span className="mono-label">Visi & Misi</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
@@ -498,9 +536,14 @@ export default function AboutPage() {
               </Reveal>
             </div>
           </div>
+        </section>
 
-          {/* PERJALANAN KAMI — timeline */}
-          <div className="mt-24">
+        {/* ================= 3 — LIGHT — PERJALANAN KAMI ================= */}
+        <section
+          style={sectionTones.light}
+          className="relative bg-void py-24 border-t border-[var(--panel-border)]"
+        >
+          <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
               <span className="mono-label">Perjalanan Kami</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
@@ -538,9 +581,15 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
+        </section>
 
-          {/* BAGAIMANA KAMI BEKERJA */}
-          <div className="mt-24">
+        {/* ================= 4 — DARK — CARA KERJA ================= */}
+        <section
+          style={sectionTones.dark}
+          className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
+        >
+          <div className="chevron-texture pointer-events-none absolute inset-0 opacity-40" />
+          <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
               <span className="mono-label">Cara Kerja</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
@@ -571,9 +620,14 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
+        </section>
 
-          {/* CORE VALUES SECTION */}
-          <div className="mt-24">
+        {/* ================= 5 — LIGHT — CORE VALUES ================= */}
+        <section
+          style={sectionTones.light}
+          className="relative bg-void py-24 border-t border-[var(--panel-border)]"
+        >
+          <div className="container-x max-w-6xl relative">
             <Reveal className="text-center max-w-xl mx-auto mb-12">
               <span className="mono-label">Pilar Keunggulan</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
@@ -597,9 +651,15 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
+        </section>
 
-          {/* MENGAPA MEMILIH INTIDATA */}
-          <div className="mt-24">
+        {/* ================= 6 — DARK — MENGAPA MEMILIH INTIDATA ================= */}
+        <section
+          style={sectionTones.dark}
+          className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
+        >
+          <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-30" />
+          <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
               <span className="mono-label">Mengapa Memilih Kami</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
@@ -628,9 +688,14 @@ export default function AboutPage() {
               })}
             </div>
           </div>
+        </section>
 
-          {/* SEKTOR YANG KAMI LAYANI */}
-          <div className="mt-24">
+        {/* ================= 7 — LIGHT — SEKTOR YANG KAMI LAYANI ================= */}
+        <section
+          style={sectionTones.light}
+          className="relative bg-void py-24 border-t border-[var(--panel-border)]"
+        >
+          <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
               <span className="mono-label">Cakupan Industri</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
@@ -656,10 +721,10 @@ export default function AboutPage() {
               ))}
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* TRUSTED BY STRIP */}
-        <div className="mt-24">
+        {/* ================= TRUSTED BY STRIP ================= */}
+        <div className="border-t border-[var(--panel-border)] pt-16">
           <Reveal className="container-x max-w-6xl text-center mb-8">
             <span className="mono-label">Dipercaya Oleh</span>
           </Reveal>
