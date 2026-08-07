@@ -208,11 +208,13 @@ export function ProductDetailView({
                 }}
               />
 
-              {product.quickFacts.slice(0, 3).map((fact, i) => {
-                const angle = (i / 3) * Math.PI * 2 - Math.PI / 2;
-                const radius = 160;
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius * 0.7 - 40;
+              {[
+                { top: "15%", left: "50%" }, // atas — tengah
+                { top: "58%", left: "92%" }, // kanan
+                { top: "48%", left: "8%" }, // kiri
+              ].map((pos, i) => {
+                const fact = product.quickFacts[i];
+                if (!fact) return null;
                 return (
                   <motion.span
                     key={fact}
@@ -223,11 +225,8 @@ export function ProductDetailView({
                       ease: "easeInOut",
                       delay: i * 0.3,
                     }}
-                    className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-[var(--panel-border)] bg-panel px-3 py-1.5 text-[11px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.35)] sm:flex"
-                    style={{
-                      left: `calc(50% + ${x}px)`,
-                      top: `calc(35% + ${y}px)`,
-                    }}
+                    className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-[var(--panel-border)] bg-panel px-3 py-1.5 text-[14px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.35)] sm:flex"
+                    style={pos}
                   >
                     {fact}
                   </motion.span>
