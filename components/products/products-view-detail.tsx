@@ -79,7 +79,7 @@ export function ProductDetailView({
   const bgY = useTransform(heroScrollProgress, [0, 1], ["0%", "14%"]);
   const bgScale = useTransform(heroScrollProgress, [0, 1], [1, 1.1]);
   // subjek orang bergerak sedikit lebih cepat -> kesan "di depan" background
-  const personY = useTransform(heroScrollProgress, [0, 1], ["5%", "26%"]);
+  const personY = useTransform(heroScrollProgress, [0, 1], ["9%", "26%"]);
   const contentOpacity = useTransform(heroScrollProgress, [0, 0.7], [1, 0]);
 
   return (
@@ -121,13 +121,18 @@ export function ProductDetailView({
           >
             <motion.div
               initial={{ opacity: 0, y: 60, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                scale: product.personImageScale ?? 1,
+              }}
               transition={{
                 type: "spring",
                 stiffness: 120,
                 damping: 16,
                 delay: 0.5,
               }}
+              style={{ transformOrigin: "bottom center" }}
               className="relative flex h-[64%] w-[320px] items-end justify-center sm:h-[72%] sm:w-[420px] lg:w-[500px]"
             >
               {/* contact shadow */}
