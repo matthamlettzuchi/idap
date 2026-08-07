@@ -2,25 +2,23 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useRef } from "react";
+import { useScroll, useTransform } from "framer-motion";
 import {
-  // Product Icons
   Building2,
   TrendingUp,
   Calculator,
   FileSpreadsheet,
   Sprout,
-  // UI & Arrow Icons
   ArrowRight,
   ArrowUpRight,
   CheckCircle2,
-  // Advantage Icons
   Sparkles,
   ShieldCheck,
   Rocket,
   Smartphone,
   Gauge,
   Zap,
-  // Feature Icons
   LayoutGrid,
   BarChart3,
   Globe,
@@ -42,7 +40,6 @@ const productIconMap: Record<ProductIconName, typeof Building2> = {
   FileSpreadsheet,
   Sprout,
 };
-
 const advantageIcons = [Sparkles, ShieldCheck, Rocket, Smartphone, Gauge, Zap];
 const featureIcons = [
   LayoutGrid,
@@ -62,53 +59,6 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-// Backdrop lingkaran dekoratif di belakang foto — kombinasi lingkaran solid
-// berbagai ukuran (buat depth) + cluster ring konsentris (motif "sasaran")
-// biar rame tapi tetap ngikutin warna accent tiap produk.
-function PersonBackdrop({ accent }: { accent: string }) {
-  const rings = Array.from({ length: 12 }, (_, i) => 22 + i * 9);
-
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-visible">
-      {/* lingkaran solid tersebar, opacity beda-beda buat kesan berlapis */}
-      <div
-        className="absolute -left-10 top-0 h-36 w-36 rounded-full"
-        style={{ background: hexToRgba(accent, 0.22) }}
-      />
-      <div
-        className="absolute right-0 top-24 h-20 w-20 rounded-full"
-        style={{ background: hexToRgba(accent, 0.14) }}
-      />
-      <div
-        className="absolute left-8 bottom-2 h-28 w-28 rounded-full"
-        style={{ background: hexToRgba(accent, 0.18) }}
-      />
-      <div
-        className="absolute -right-8 bottom-20 h-16 w-16 rounded-full"
-        style={{ background: hexToRgba(accent, 0.12) }}
-      />
-
-      {/* cluster ring konsentris, nyempil di pojok kanan atas */}
-      <svg
-        viewBox="0 0 300 300"
-        className="absolute -right-24 -top-16 h-[240px] w-[240px]"
-        fill="none"
-      >
-        {rings.map((r) => (
-          <circle
-            key={r}
-            cx="220"
-            cy="80"
-            r={r}
-            stroke={hexToRgba(accent, 0.28)}
-            strokeWidth="1"
-          />
-        ))}
-      </svg>
-    </div>
-  );
-}
-
 export function ProductDetailView({
   product,
   related,
@@ -119,146 +69,88 @@ export function ProductDetailView({
   const Icon = productIconMap[product.icon];
   const accent = product.accent;
 
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: heroScrollProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
+  // background bergerak pelan (parallax jauh)
+  const bgY = useTransform(heroScrollProgress, [0, 1], ["0%", "14%"]);
+  const bgScale = useTransform(heroScrollProgress, [0, 1], [1, 1.1]);
+  // subjek orang bergerak sedikit lebih cepat -> kesan "di depan" background
+  const personY = useTransform(heroScrollProgress, [0, 1], ["5%", "26%"]);
+  const contentOpacity = useTransform(heroScrollProgress, [0, 0.7], [1, 0]);
+
   return (
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal">
-      <Nav />
+      <Nav overlayHero />
 
-      <main className="pt-28">
-        {/* HERO */}
-        <section className="relative overflow-hidden py-16 lg:py-20">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -top-24 right-0 h-[420px] w-[420px] rounded-full blur-[120px]"
-            style={{
-              background: `radial-gradient(circle, ${hexToRgba(accent, 0.28)}, transparent 65%)`,
-            }}
-          />
-          <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-40" />
+      <main>
+        {/* HERO — full-bleed background, subjek ditumpuk di atasnya */}
+        {/* HERO — full-bleed background, teks center-right, subjek besar */}
+        {/* HERO — full-bleed background, teks kiri, subjek besar di kanan */}
+        <div
+          ref={heroRef}
+          className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen min-h-[900px] overflow-hidden"
+        >
+          {/* layer background: bakgrun.png dengan clip-path wipe reveal */}
+          <motion.div
+            className="absolute inset-0"
+            style={{ y: bgY, scale: bgScale }}
+          >
+            <motion.img
+              src="/bakgrun.png"
+              alt=""
+              aria-hidden
+              initial={{ clipPath: "inset(0 0 0 100%)" }}
+              animate={{ clipPath: "inset(0 0 0 0%)" }}
+              transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </motion.div>
 
-          <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="flex items-center gap-2 text-[12.5px] text-ink-2"
-              >
-                <Link
-                  href="/#produk"
-                  className="transition-colors hover:text-signal-teal"
-                >
-                  Products
-                </Link>
-                <span>/</span>
-                <span className="font-mono" style={{ color: accent }}>
-                  {product.code}
-                </span>
-              </motion.div>
+          {/* scrim: gelap di kiri (area teks) */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/72 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15" />
 
-              <motion.h1
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.05,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="mt-5 font-display text-[clamp(34px,5.2vw,58px)] font-semibold leading-[1.02] text-ink-0"
-              >
-                {product.name}
-              </motion.h1>
-
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.12,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="mt-5 max-w-lg text-[15.5px] leading-relaxed text-ink-1"
-              >
-                {product.tagline}
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.18 }}
-                className="mt-8 flex flex-wrap gap-3"
-              >
-                <a
-                  href="#kontak"
-                  className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[14px] font-medium text-white transition-transform hover:-translate-y-0.5"
-                  style={{ background: accent }}
-                >
-                  Konsultasi Sekarang <ArrowRight size={15} />
-                </a>
-                <Link
-                  href="/#produk"
-                  className="inline-flex items-center gap-2 rounded-full border border-[var(--panel-border)] px-6 py-3 text-[14px] font-medium text-ink-0 transition-colors hover:border-[var(--panel-border-strong)]"
-                >
-                  Lihat Produk Lain
-                </Link>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="mt-9 flex flex-wrap gap-2"
-              >
-                {product.quickFacts.map((fact) => (
-                  <span
-                    key={fact}
-                    className="rounded-full border px-3.5 py-1.5 text-[12px] font-medium"
-                    style={{
-                      borderColor: hexToRgba(accent, 0.35),
-                      color: accent,
-                      background: hexToRgba(accent, 0.08),
-                    }}
-                  >
-                    {fact}
-                  </span>
-                ))}
-              </motion.div>
-            </div>
-
-            {/* SIGNATURE PHOTO */}
+          {/* subjek orang: kanan-bawah, dikasih ruang napas dari tepi viewport */}
+          <motion.div
+            className="absolute inset-x-0 bottom-0 flex justify-end pb-8 pr-[4%] sm:pb-10 sm:pr-[7%]"
+            style={{ y: personY }}
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
+              initial={{ opacity: 0, y: 60, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{
-                duration: 0.7,
-                delay: 0.15,
-                ease: [0.16, 1, 0.3, 1],
+                type: "spring",
+                stiffness: 120,
+                damping: 16,
+                delay: 0.5,
               }}
-              className="relative mx-auto flex h-[320px] w-[280px] items-end justify-center sm:h-[400px] sm:w-[340px]"
+              className="relative flex h-[64%] w-[320px] items-end justify-center sm:h-[72%] sm:w-[420px] lg:w-[500px]"
             >
+              {/* contact shadow */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute bottom-6 left-1/2 h-[220px] w-[220px] -translate-x-1/2 rounded-full blur-[90px]"
-                style={{
-                  background: `radial-gradient(circle, ${hexToRgba(accent, 0.35)}, transparent 70%)`,
-                }}
+                className="pointer-events-none absolute bottom-4 left-1/2 h-[30px] w-[68%] -translate-x-1/2 rounded-full bg-black/45 blur-xl"
               />
-
               <img
                 src={product.personImage}
                 alt={`Tim ${product.name}`}
-                className="relative z-10 h-full w-auto select-none object-contain object-bottom grayscale"
+                className="relative z-10 h-full w-auto select-none object-contain object-bottom drop-shadow-[0_28px_32px_rgba(0,0,0,0.4)]"
                 draggable={false}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null;
-                  target.src = `https://placehold.co/360x560/e2e8f0/64748b?text=${encodeURIComponent(product.code)}`;
+                  target.src = `https://placehold.co/460x700/e2e8f0/64748b?text=${encodeURIComponent(product.code)}`;
                 }}
               />
 
               {[
-                { top: "15%", left: "50%" }, // atas — tengah
-                { top: "58%", left: "92%" }, // kanan
-                { top: "48%", left: "8%" }, // kiri
+                { top: "4%", left: "50%" },
+                { top: "42%", left: "-4%" },
+                { top: "34%", left: "104%" },
               ].map((pos, i) => {
                 const fact = product.quickFacts[i];
                 if (!fact) return null;
@@ -272,7 +164,7 @@ export function ProductDetailView({
                       ease: "easeInOut",
                       delay: i * 0.3,
                     }}
-                    className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-[var(--panel-border)] bg-panel px-3 py-1.5 text-[14px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.35)] sm:flex"
+                    className="absolute z-20 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-white/20 bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[13px] font-medium text-ink-1 shadow-[0_16px_32px_-16px_rgba(0,0,0,0.5)] sm:flex"
                     style={pos}
                   >
                     {fact}
@@ -280,8 +172,137 @@ export function ProductDetailView({
                 );
               })}
             </motion.div>
-          </div>
-        </section>
+          </motion.div>
+
+          {/* konten teks — kiri, center vertikal */}
+          <motion.div
+            style={{ opacity: contentOpacity }}
+            className="relative z-10 flex h-full items-center justify-start px-6 sm:px-10 lg:px-[clamp(40px,5vw,64px)]"
+          >
+            <div className="w-full max-w-lg text-left lg:w-[46%]">
+              <motion.div
+                initial={{ opacity: 0, x: -24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.7,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="flex items-center justify-start gap-2 text-[12.5px] text-white/70"
+              >
+                <Link
+                  href="/#produk"
+                  className="transition-colors hover:text-white"
+                >
+                  Products
+                </Link>
+                <span>/</span>
+                <span
+                  className="rounded-full px-2.5 py-0.5 font-mono text-[11px] font-semibold"
+                  style={{
+                    color: "#dce6ff",
+                    background: "rgba(111,141,255,0.22)",
+                    border: "1px solid rgba(111,141,255,0.4)",
+                  }}
+                >
+                  {product.code}
+                </span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, x: -40, skewX: 3 }}
+                animate={{ opacity: 1, x: 0, skewX: 0 }}
+                transition={{
+                  duration: 0.75,
+                  delay: 0.8,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="mt-5 font-display text-[clamp(32px,4.6vw,52px)] font-semibold leading-[1.04] text-white"
+              >
+                {product.name}
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, x: -32 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.65,
+                  delay: 0.92,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="mt-5 text-[15.5px] leading-relaxed text-white/85"
+              >
+                {product.tagline}
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, x: -32 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.65,
+                  delay: 1.04,
+                  ease: [0.16, 1, 0.3, 1],
+                }}
+                className="mt-8 flex flex-wrap items-center justify-start gap-3"
+              >
+                <a
+                  href="#kontak"
+                  className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[14px] font-medium text-white transition-transform hover:-translate-y-0.5"
+                  style={{ background: accent }}
+                >
+                  Konsultasi Sekarang <ArrowRight size={15} />
+                </a>
+                <Link
+                  href="/#produk"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-[14px] font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
+                >
+                  Lihat Produk Lain
+                </Link>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 1.16 }}
+                className="mt-9 flex flex-wrap items-center justify-start gap-2"
+              >
+                {product.quickFacts.map((fact) => (
+                  <span
+                    key={fact}
+                    className="rounded-full border px-3.5 py-1.5 text-[12px] font-medium backdrop-blur-sm"
+                    style={{
+                      borderColor: "rgba(255,255,255,0.35)",
+                      color: "#fff",
+                      background: hexToRgba(accent, 0.4),
+                    }}
+                  >
+                    {fact}
+                  </span>
+                ))}
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {/* scroll cue */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.4 }}
+            className="pointer-events-none absolute bottom-8 left-1/2 -translate-x-1/2"
+          >
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{
+                duration: 1.8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="flex h-9 w-6 items-start justify-center rounded-full border border-white/30 p-1.5"
+            >
+              <span className="h-1.5 w-1 rounded-full bg-white/70" />
+            </motion.div>
+          </motion.div>
+        </div>
 
         {/* OVERVIEW */}
         <section className="relative border-t border-[var(--panel-border)] py-20">
