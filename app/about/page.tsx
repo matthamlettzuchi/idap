@@ -4,6 +4,12 @@ import React, { useRef } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import NumberFlow from "@number-flow/react";
+import { JourneyTrail } from "@/components/ui/journey-trail";
+import {
+  CarryingPersonIllustration,
+  DirectionCompass,
+  FloatingProofBadges,
+} from "@/components/ui/vision-illustrations";
 import {
   Award,
   Cpu,
@@ -234,7 +240,6 @@ export default function AboutPage() {
 
       <main className="pt-28 pb-24">
         {/* HERO SECTION — full-bleed, sits behind the transparent nav */}
-        {/* HERO SECTION — full-bleed, sits behind the transparent nav */}
         <div
           ref={heroRef}
           className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen overflow-hidden"
@@ -339,7 +344,6 @@ export default function AboutPage() {
             </motion.div>
           </motion.div>
         </div>
-
         <section style={sectionTones.light} className="relative bg-void py-24">
           <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-60" />
           <div className="container-x max-w-6xl relative">
@@ -478,55 +482,106 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
+        {/* ================= 2 — DARK — VISI & MISI ================= */}
         {/* ================= 2 — DARK — VISI & MISI ================= */}
         <section
           style={sectionTones.dark}
-          className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
+          className="relative overflow-hidden bg-void py-36 border-t border-[var(--panel-border)] lg:pt-20"
         >
           <div className="circuit-texture pointer-events-none absolute inset-0 opacity-50" />
-          <div className="container-x max-w-6xl relative">
+
+          {/* glow di belakang karakter, biar overlap-nya kerasa sengaja */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -left-10 -top-6 hidden h-[300px] w-[300px] rounded-full blur-[90px] lg:block"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(111,141,255,.35), transparent 70%)",
+              zIndex: 0,
+            }}
+          />
+
+          {/* karakter — pojok kiri atas */}
+          <CarryingPersonIllustration className="pointer-events-none absolute top-5 left-4 z-20 hidden h-[280px] w-[280px] lg:block" />
+
+          {/* compass/radar — pojok kanan atas, nyambung tema "arah" */}
+          <DirectionCompass className="pointer-events-none absolute top-15 right-20 z-20 hidden h-[170px] w-[170px] lg:block" />
+
+          <div className="container-x max-w-6xl relative z-10">
             <Reveal className="text-center max-w-xl mx-auto mb-12">
-              <span className="mono-label">Visi & Misi</span>
-              <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
+              <span className="mono-label inline-flex items-center rounded-full border border-[var(--panel-border-strong)] bg-panel-2 px-3 py-1 !text-[11px] font-semibold tracking-[0.16em] text-signal-teal">
+                VISI & MISI
+              </span>
+              <h2 className="mt-4 text-2xl font-bold text-ink-0 md:text-3xl">
                 Arah yang kami tuju.
               </h2>
             </Reveal>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <Reveal>
-                <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
-                  <div className="h-11 w-11 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
-                    <Eye size={20} />
+              {/* ============ VISI ============ */}
+              <Reveal className="relative">
+                <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-signal-teal/30 bg-signal-blue-dim text-signal-teal shadow-[0_0_28px_-8px_var(--signal-teal)]">
+                      <Eye size={19} />
+                    </div>
+                    <h3 className="font-display text-[20px] font-semibold text-ink-0">
+                      Visi
+                    </h3>
                   </div>
-                  <h3 className="mt-6 font-display text-[20px] font-semibold text-ink-0">
-                    Visi
-                  </h3>
-                  <p className="mt-3 text-[14.5px] leading-relaxed text-ink-1">
+
+                  {/* tagline besar sebagai focal point */}
+                  <p className="mt-3 font-display text-[19px] font-medium leading-snug text-ink-0 sm:text-[21px]">
+                    Mitra teknologi tepercaya untuk keputusan bisnis berbasis
+                    data.
+                  </p>
+
+                  <p className="mt-4 text-[14.5px] leading-relaxed text-ink-0/75">
                     Menjadi mitra teknologi utama bagi institusi keuangan dan
                     korporasi di Indonesia — memungkinkan setiap keputusan
                     bisnis dibuat di atas data yang akurat, real-time, dan patuh
                     regulasi.
                   </p>
+
+                  {/* mini-stat, biar densitas sepadan sama list Misi */}
+                  <div className="mt-auto grid grid-cols-3 gap-3 border-t border-[var(--panel-border)] pt-6">
+                    {[
+                      { value: "25+", label: "Tahun Pengalaman" },
+                      { value: "17+", label: "Klien Aktif" },
+                      { value: "5", label: "Sistem Inti" },
+                    ].map((s) => (
+                      <div key={s.label}>
+                        <div className="font-display text-[18px] font-semibold text-signal-teal">
+                          {s.value}
+                        </div>
+                        <div className="mt-1 text-[10.5px] leading-snug text-ink-2">
+                          {s.label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </Reveal>
 
+              {/* ============ MISI ============ */}
               <Reveal delay={0.08}>
                 <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
-                  <div className="h-11 w-11 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
-                    <Compass size={20} />
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-signal-teal/30 bg-signal-blue-dim text-signal-teal shadow-[0_0_28px_-8px_var(--signal-teal)]">
+                      <Compass size={19} />
+                    </div>
+                    <h3 className="font-display text-[20px] font-semibold text-ink-0">
+                      Misi
+                    </h3>
                   </div>
-                  <h3 className="mt-6 font-display text-[20px] font-semibold text-ink-0">
-                    Misi
-                  </h3>
-                  <ul className="mt-4 space-y-3">
+                  <ul className="mt-5 space-y-5">
                     {missionPoints.map((point) => (
-                      <li key={point} className="flex items-start gap-2.5">
+                      <li key={point} className="flex items-start gap-3">
                         <CheckCircle2
-                          size={15}
-                          className="mt-0.5 shrink-0 text-signal-teal"
+                          size={16}
+                          className="mt-[3px] shrink-0 text-signal-teal"
                         />
-                        <span className="text-[14px] leading-relaxed text-ink-1">
+                        <span className="text-[14.5px] leading-relaxed text-ink-0/75">
                           {point}
                         </span>
                       </li>
@@ -537,7 +592,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
         {/* ================= 3 — LIGHT — PERJALANAN KAMI ================= */}
         <section
           style={sectionTones.light}
@@ -551,38 +605,45 @@ export default function AboutPage() {
               </h2>
             </Reveal>
 
-            <div className="relative pl-8 sm:pl-10">
-              <div
-                aria-hidden
-                className="absolute left-[7px] top-2 bottom-2 w-px bg-[var(--panel-border-strong)] sm:left-[11px]"
-              />
-              <div className="flex flex-col gap-10">
-                {journey.map((step, i) => (
-                  <Reveal
-                    key={step.title}
-                    delay={i * 0.06}
-                    className="relative"
-                  >
-                    <span
-                      aria-hidden
-                      className="absolute -left-8 top-1 h-3.5 w-3.5 rounded-full border-2 border-signal-teal bg-void sm:-left-10"
-                    />
-                    <span className="mono-label !text-signal-teal">
-                      {step.era}
-                    </span>
-                    <h3 className="mt-2 font-display text-[19px] font-medium text-ink-0">
-                      {step.title}
-                    </h3>
-                    <p className="mt-2 max-w-2xl text-[14.5px] leading-relaxed text-ink-1">
-                      {step.body}
-                    </p>
-                  </Reveal>
-                ))}
+<div className="relative grid grid-cols-1 gap-10 pl-8 sm:pl-10 lg:grid-cols-[1fr_120px] lg:items-stretch lg:gap-16">
+              <div className="relative">
+                <div
+                  aria-hidden
+                  className="absolute lg:left-[-33px] md:left-[-33px] top-2 bottom-2 w-px bg-[var(--panel-border-strong)] left-[-26px]"
+                />
+                <div className="flex flex-col gap-10">
+                  {journey.map((step, i) => (
+                    <Reveal
+                      key={step.title}
+                      delay={i * 0.06}
+                      className="relative"
+                    >
+                      <span
+                        aria-hidden
+                        className="absolute -left-8 top-1 h-3.5 w-3.5 rounded-full border-2 border-signal-teal bg-void sm:-left-10"
+                      />
+                      <span className="mono-label !text-signal-teal">
+                        {step.era}
+                      </span>
+                      <h3 className="mt-2 font-display text-[19px] font-medium text-ink-0">
+                        {step.title}
+                      </h3>
+                      <p className="mt-2 max-w-2xl text-[14.5px] leading-relaxed text-ink-1">
+                        {step.body}
+                      </p>
+                    </Reveal>
+                  ))}
+                </div>
               </div>
+
+              {/* trail kanan — hidden di mobile, muncul & tergambar seiring scroll di desktop */}
+              <JourneyTrail
+                steps={journey.length}
+                className="relative hidden lg:block"
+              />
             </div>
           </div>
         </section>
-
         {/* ================= 4 — DARK — CARA KERJA ================= */}
         <section
           style={sectionTones.dark}
@@ -621,7 +682,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
         {/* ================= 5 — LIGHT — CORE VALUES ================= */}
         <section
           style={sectionTones.light}
@@ -652,7 +712,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
         {/* ================= 6 — DARK — MENGAPA MEMILIH INTIDATA ================= */}
         <section
           style={sectionTones.dark}
@@ -689,7 +748,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
         {/* ================= 7 — LIGHT — SEKTOR YANG KAMI LAYANI ================= */}
         <section
           style={sectionTones.light}
@@ -722,7 +780,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-
         {/* ================= TRUSTED BY STRIP ================= */}
         <div className="border-t border-[var(--panel-border)] pt-16">
           <Reveal className="container-x max-w-6xl text-center mb-8">

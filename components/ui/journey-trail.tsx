@@ -1,0 +1,139 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { Rocket, Flag } from "lucide-react";
+
+type Waypoint = { x: number; y: number };
+
+function buildWaypoints(count: number): Waypoint[] {
+  // amplitudo dilebarin (14 ↔ 86) biar zigzag-nya kerasa, gak nempel ke tengah/vertikal
+  return Array.from({ length: count }, (_, i) => ({
+    x: i % 2 === 0 ? 14 : 86,
+    y: (i / (count - 1)) * 100,
+  }));
+}
+
+/** Catmull-Rom → cubic Bezier, biar jalur melengkung mulus, bukan patah tegas di tiap titik */
+function buildSmoothPathD(points: Waypoint[]) {
+  if (points.length < 2) return "";
+  const p = points;
+  let d = `M ${p[0].x} ${p[0].y}`;
+
+  for (let i = 0; i < p.length - 1; i++) {
+    const p0 = p[i - 1] ?? p[i];
+    const p1 = p[i];
+    const p2 = p[i + 1];
+    const p3 = p[i + 2] ?? p2;
+
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = p2.y - (p3.y - p1.y) / 6;
+
+    d += ` C ${c1x} ${c1y}, ${c2x} ${c2y}, ${p2.x} ${p2.y}`;
+  }
+
+  return d;
+}
+
+export function JourneyTrail({
+  steps,
+  className,
+}: {
+  steps: number;
+  className?: string;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  });
+
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 260,
+    damping: 34,
+    mass: 0.4,
+  });
+
+  const points = buildWaypoints(steps + 1);
+  const pathD = buildSmoothPathD(points);
+  const inputRange = points.map((_, i) => i / (points.length - 1));
+
+  const dotLeft = useTransform(progress, inputRange, points.map((p) => `${p.x}%`));
+  const dotTop = useTransform(progress, inputRange, points.map((p) => `${p.y}%`));
+  const dotOpacity = useTransform(progress, [0, 0.03, 0.97, 1], [0, 1, 1, 0]);
+
+  const first = points[0];
+  const last = points[points.length - 1];
+  const middle = points.slice(1, -1);
+
+  return (
+    <div ref={containerRef} className={className}>
+      <svg
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        className="absolute inset-0 h-full w-full overflow-visible"
+        fill="none"
+      >
+        <path
+          d={pathD}
+          stroke="var(--panel-border-strong)"
+          strokeWidth="1.4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <motion.path
+          d={pathD}
+          stroke="var(--signal-teal)"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
+          style={{ pathLength: progress }}
+        />
+      </svg>
+
+      {middle.map((p, i) => (
+        <span
+          key={i}
+          aria-hidden
+          style={{ left: `${p.x}%`, top: `${p.y}%` }}
+          className="absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-signal-teal bg-void"
+        />
+      ))}
+
+      <div
+        style={{ left: `${first.x}%`, top: `${first.y}%` }}
+        className="absolute -translate-x-1/2 -translate-y-1/2"
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-signal-teal bg-void text-signal-teal shadow-[0_0_16px_-2px_var(--signal-teal)]">
+          <Rocket size={15} strokeWidth={2} />
+        </span>
+        <span className="mono-label absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap !text-[9.5px]">
+          Mulai
+        </span>
+      </div>
+
+      <div
+        style={{ left: `${last.x}%`, top: `${last.y}%` }}
+        className="absolute -translate-x-1/2 -translate-y-1/2"
+      >
+        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-signal-teal bg-signal-teal text-white shadow-[0_0_18px_-2px_var(--signal-teal)]">
+          <Flag size={15} strokeWidth={2} />
+        </span>
+        <span className="mono-label absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap !text-[9.5px] !text-signal-teal">
+          Hari Ini
+        </span>
+      </div>
+
+      <motion.span
+        aria-hidden
+        style={{ left: dotLeft, top: dotTop, opacity: dotOpacity }}
+        className="pointer-events-none absolute h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-signal-teal shadow-[0_0_18px_5px_rgba(111,141,255,0.55)]"
+      />
+    </div>
+  );
+}
