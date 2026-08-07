@@ -62,6 +62,53 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+// Backdrop lingkaran dekoratif di belakang foto — kombinasi lingkaran solid
+// berbagai ukuran (buat depth) + cluster ring konsentris (motif "sasaran")
+// biar rame tapi tetap ngikutin warna accent tiap produk.
+function PersonBackdrop({ accent }: { accent: string }) {
+  const rings = Array.from({ length: 12 }, (_, i) => 22 + i * 9);
+
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-visible">
+      {/* lingkaran solid tersebar, opacity beda-beda buat kesan berlapis */}
+      <div
+        className="absolute -left-10 top-0 h-36 w-36 rounded-full"
+        style={{ background: hexToRgba(accent, 0.22) }}
+      />
+      <div
+        className="absolute right-0 top-24 h-20 w-20 rounded-full"
+        style={{ background: hexToRgba(accent, 0.14) }}
+      />
+      <div
+        className="absolute left-8 bottom-2 h-28 w-28 rounded-full"
+        style={{ background: hexToRgba(accent, 0.18) }}
+      />
+      <div
+        className="absolute -right-8 bottom-20 h-16 w-16 rounded-full"
+        style={{ background: hexToRgba(accent, 0.12) }}
+      />
+
+      {/* cluster ring konsentris, nyempil di pojok kanan atas */}
+      <svg
+        viewBox="0 0 300 300"
+        className="absolute -right-24 -top-16 h-[240px] w-[240px]"
+        fill="none"
+      >
+        {rings.map((r) => (
+          <circle
+            key={r}
+            cx="220"
+            cy="80"
+            r={r}
+            stroke={hexToRgba(accent, 0.28)}
+            strokeWidth="1"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
 export function ProductDetailView({
   product,
   related,
