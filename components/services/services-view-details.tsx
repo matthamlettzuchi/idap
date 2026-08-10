@@ -303,6 +303,8 @@ export function ServiceDetailView({
                   <img
                     src={placeholder(c.width * 2, c.height * 2, c.label)}
                     alt=""
+                    width={c.width}
+                    height={c.height}
                     className="h-full w-full object-cover opacity-90 [filter:saturate(0.82)_contrast(0.96)]"
                   />
                 </motion.div>
