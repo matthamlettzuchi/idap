@@ -137,10 +137,52 @@ const defaultFeatureCards: { icon: LucideIcon; title: string; desc: string }[] =
   ];
 
 const heroFloatCards = [
-  { top: "-10%", left: "-25%", size: 72, delay: 0 },
-  { top: "-6%", left: "120%", size: 64, delay: 0.5 },
-  { top: "64%", left: "-18%", size: 68, delay: 1 },
-  { top: "85%", left: "110%", size: 76, delay: 1.5 },
+  {
+    top: "-9%",
+    left: "-30%",
+    width: 112,
+    height: 112,
+    rotate: -2,
+    delay: 0,
+    label: "Developer+Workspace",
+  },
+  {
+    top: "-16%",
+    left: "106%",
+    width: 96,
+    height: 96,
+    rotate: 2,
+    delay: 0.45,
+    label: "Software+Interface",
+  },
+  {
+    top: "48%",
+    left: "-24%",
+    width: 140,
+    height: 106,
+    rotate: -1.5,
+    delay: 0.85,
+    label: "Team+Collaboration",
+  },
+  {
+    top: "72%",
+    left: "111%",
+    width: 160,
+    height: 116,
+    rotate: 1.5,
+    delay: 1.15,
+    label: "Coding+Workstation",
+  },
+  {
+    top: "104%",
+    left: "60%",
+    width: 138,
+    height: 100,
+    rotate: -1,
+    delay: 0.25,
+    isAnchor: true,
+    label: "Architecture+Planning",
+  },
 ];
 
 const whyCards = [
@@ -217,30 +259,51 @@ export function ServiceDetailView({
 
           <div className="container-x relative">
             <div className="relative mx-auto max-w-2xl py-10 text-center lg:py-16">
-              {/* floating decorative avatar/photo cards */}
               {heroFloatCards.map((c, i) => (
                 <motion.div
                   key={i}
                   aria-hidden
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{
-                    duration: 4 + i * 0.4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: c.delay,
+                  initial={{ opacity: 0, y: 14, rotate: 0 }}
+                  animate={{
+                    opacity: 1,
+                    y: [0, -9, 0],
+                    rotate: c.rotate,
                   }}
-                  className="pointer-events-none absolute hidden -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-[0_20px_40px_-16px_rgba(17,24,39,0.25)] lg:block"
+                  transition={{
+                    opacity: {
+                      duration: 0.7,
+                      delay: c.delay,
+                      ease: [0.16, 1, 0.3, 1],
+                    },
+                    rotate: {
+                      duration: 0.7,
+                      delay: c.delay,
+                      ease: [0.16, 1, 0.3, 1],
+                    },
+                    y: {
+                      duration: 4.5 + i * 0.4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: c.delay + 0.7,
+                    },
+                  }}
+                  className={`pointer-events-none absolute hidden overflow-hidden rounded-[20px] border border-[var(--panel-border)] bg-panel lg:block ${
+                    c.isAnchor
+                      ? "shadow-[0_24px_48px_-18px_rgba(17,24,39,0.3)]"
+                      : "shadow-[0_16px_34px_-16px_rgba(17,24,39,0.22)]"
+                  }`}
                   style={{
                     top: c.top,
                     left: c.left,
-                    width: c.size,
-                    height: c.size,
+                    width: c.width,
+                    height: c.height,
+                    transform: `translate(-50%, -50%) rotate(${c.rotate}deg)`,
                   }}
                 >
                   <img
-                    src={placeholder(c.size * 2, c.size * 2, "Photo")}
-                    alt="Placeholder"
-                    className="h-full w-full object-cover grayscale"
+                    src={placeholder(c.width * 2, c.height * 2, c.label)}
+                    alt=""
+                    className="h-full w-full object-cover opacity-90 [filter:saturate(0.82)_contrast(0.96)]"
                   />
                 </motion.div>
               ))}
@@ -479,14 +542,14 @@ export function ServiceDetailView({
             </Reveal>
 
             <Reveal delay={0.1} className="relative">
-              <div className="relative mx-auto max-w-sm">
+              <div className="relative isolate mx-auto max-w-sm">
                 {/* quarter-circle nongol dari belakang sudut kanan-atas foto */}
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute -right-3 -top-3 z-0 h-16 w-16"
+                  className="pointer-events-none absolute -right-3 -top-3 z-10 h-16 w-16"
                   style={{ background: accent, borderTopRightRadius: "100%" }}
                 />
-                <div className="relative z-10 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
+                <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
                   <img
                     src={placeholder(520, 640, "Team+Photo")}
                     alt="Placeholder"
@@ -586,7 +649,7 @@ export function ServiceDetailView({
                 {/* quarter-circle nongol dari belakang sudut kiri-bawah foto */}
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute -left-3 -bottom-3 z-20 h-16 w-16"
+                  className="pointer-events-none absolute -left-3 -bottom-3 z-10 h-16 w-16"
                   style={{ background: accent, borderBottomLeftRadius: "100%" }}
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
