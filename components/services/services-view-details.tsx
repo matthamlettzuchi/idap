@@ -16,6 +16,34 @@ import {
   TrendingUp,
   Download,
   FileText,
+  Code2,
+  Globe,
+  Smartphone,
+  Wrench,
+  Palette,
+  Rocket,
+  Settings2,
+  Building2,
+  BarChart3,
+  LayoutDashboard,
+  Link2,
+  RefreshCw,
+  Search,
+  PenTool,
+  Zap,
+  Cloud,
+  Monitor,
+  Tablet,
+  Gauge,
+  Lock,
+  Bug,
+  Headset,
+  ActivitySquare,
+  ClipboardList,
+  Eye,
+  Map as MapIcon,
+  Lightbulb,
+  type LucideIcon,
 } from "lucide-react";
 
 import { Nav } from "@/components/nav";
@@ -25,6 +53,7 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { Marquee } from "@/components/marquee";
 import { clientLogos } from "@/lib/data";
+import { serviceDetails, type ServiceIconName } from "@/lib/service-details";
 
 function toTitleCase(s: string) {
   return s.replace(/\b\w/g, (c) => c.toUpperCase());
@@ -32,15 +61,86 @@ function toTitleCase(s: string) {
 
 function placeholder(width: number, height: number, label: string) {
   return `https://placehold.co/${width}x${height}/eef1ff/2f4bd0?text=${encodeURIComponent(
-    label
+    label,
   )}`;
 }
 
+const serviceIconMap: Record<ServiceIconName, LucideIcon> = {
+  Code2,
+  Globe,
+  Layers,
+  Smartphone,
+  Wrench,
+  Palette,
+  Rocket,
+  Settings2,
+  ShieldCheck,
+  Building2,
+  Workflow,
+  BarChart3,
+  LayoutDashboard,
+  Link2,
+  RefreshCw,
+  Search,
+  PenTool,
+  CheckCircle2,
+  Zap,
+  Users2,
+  Cloud,
+  Monitor,
+  Tablet,
+  Gauge,
+  Lock,
+  Bug,
+  Headset,
+  Clock,
+  ActivitySquare,
+  ClipboardList,
+  Eye,
+  Wallet,
+  TrendingUp,
+  Map: MapIcon,
+  Lightbulb,
+};
+
+function hexToRgba(hex: string, alpha: number) {
+  const clean = hex.replace("#", "");
+  const bigint = parseInt(clean, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+const defaultFeatureCards: { icon: LucideIcon; title: string; desc: string }[] =
+  [
+    {
+      icon: Puzzle,
+      title: "Seamless Integrations",
+      desc: "Connect cleanly with the tools and systems your team already relies on.",
+    },
+    {
+      icon: Zap,
+      title: "Reduce Costs Year-Round",
+      desc: "Optimized workflows that lower operational overhead as you scale.",
+    },
+    {
+      icon: Layers,
+      title: "50+ Apps & Powerful Integrations",
+      desc: "Plug into the tools your team already uses without friction.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Built-In Reliability",
+      desc: "Consistent uptime and support baked into every engagement.",
+    },
+  ];
+
 const heroFloatCards = [
-  { top: "6%", left: "4%", size: 72, delay: 0 },
-  { top: "10%", left: "89%", size: 64, delay: 0.4 },
-  { top: "58%", left: "2%", size: 68, delay: 0.8 },
-  { top: "62%", left: "91%", size: 76, delay: 1.2 },
+  { top: "-10%", left: "-25%", size: 72, delay: 0 },
+  { top: "-6%", left: "120%", size: 64, delay: 0.5 },
+  { top: "64%", left: "-18%", size: 68, delay: 1 },
+  { top: "85%", left: "110%", size: 76, delay: 1.5 },
 ];
 
 const whyCards = [
@@ -85,21 +185,6 @@ const specialistItems = [
   },
 ];
 
-const featureCards = [
-  {
-    icon: Puzzle,
-    title: "Seamless Integrations",
-    desc: "Connect cleanly with the tools and systems your team already relies on.",
-  },
-  {
-    icon: Puzzle,
-    title: "Seamless Integrations",
-    desc: "Connect cleanly with the tools and systems your team already relies on.",
-  },
-  { title: "Reduce Costs Year-Round", desc: null },
-  { title: "50+ Apps & Powerful Integrations", desc: null },
-];
-
 const barSeeds = [42, 68, 55, 88, 64];
 
 export function ServiceDetailView({
@@ -110,6 +195,16 @@ export function ServiceDetailView({
   title: string;
 }) {
   const displayTitle = toTitleCase(title);
+  const detail = serviceDetails[slug];
+  const accent = detail?.accent ?? "#2f4bd0";
+
+  const featureCards = detail?.gridSection
+    ? detail.gridSection.items.slice(0, 4).map((item) => ({
+        icon: serviceIconMap[item.icon],
+        title: item.title,
+        desc: item.desc,
+      }))
+    : defaultFeatureCards;
 
   return (
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal">
@@ -158,7 +253,7 @@ export function ServiceDetailView({
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
-                className="pointer-events-none absolute left-[10%] top-[2%] hidden items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] lg:flex"
+                className="pointer-events-none absolute left-[10%] top-[-2%] hidden items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] lg:flex"
               >
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
                   <ArrowDownRight size={13} />
@@ -180,7 +275,7 @@ export function ServiceDetailView({
                   ease: "easeInOut",
                   delay: 0.6,
                 }}
-                className="pointer-events-none absolute right-[10%] top-[4%] hidden items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] lg:flex"
+                className="pointer-events-none absolute right-[10%] bottom-[-4%] hidden items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] lg:flex"
               >
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
                   <ArrowUpRight size={13} />
@@ -246,7 +341,13 @@ export function ServiceDetailView({
               {whyCards.map((c, i) => (
                 <Reveal key={c.title} delay={i * 0.08}>
                   <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-7 transition-colors hover:bg-panel-2">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-signal-blue-dim text-signal-teal">
+                    <span
+                      className="flex h-11 w-11 items-center justify-center rounded-xl"
+                      style={{
+                        background: hexToRgba(accent, 0.12),
+                        color: accent,
+                      }}
+                    >
                       <c.icon size={19} strokeWidth={1.75} />
                     </span>
                     <h3 className="mt-6 font-display text-[16px] font-medium text-ink-0">
@@ -300,7 +401,8 @@ export function ServiceDetailView({
                   <div className="rounded-xl border border-[var(--panel-border)] bg-panel-2 p-4">
                     <div className="text-[12px] text-ink-2">Completed</div>
                     <div className="mt-1 flex items-center gap-1 font-display text-[20px] font-semibold text-ink-0">
-                      24 <ArrowDownRight size={14} className="text-signal-teal" />
+                      24{" "}
+                      <ArrowDownRight size={14} className="text-signal-teal" />
                     </div>
                   </div>
                   <div className="rounded-xl border border-[var(--panel-border)] bg-panel-2 p-4">
@@ -319,16 +421,16 @@ export function ServiceDetailView({
                 Track your project the best way possible.
               </h2>
               <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ink-1">
-                End-to-end {title} and delivery tracking in a single
-                solution. Meet the platform built to help you stay in
-                control.
+                End-to-end {title} and delivery tracking in a single solution.
+                Meet the platform built to help you stay in control.
               </p>
               <ul className="mt-7 space-y-3.5">
                 {trackChecklist.map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle2
                       size={17}
-                      className="mt-0.5 shrink-0 text-signal-teal"
+                      className="mt-0.5 shrink-0"
+                      style={{ color: accent }}
                     />
                     <span className="text-[14.5px] text-ink-1">{item}</span>
                   </li>
@@ -354,7 +456,13 @@ export function ServiceDetailView({
               <div className="mt-9 space-y-6">
                 {specialistItems.map((item) => (
                   <div key={item.title} className="flex items-start gap-4">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-signal-blue-dim text-signal-teal">
+                    <span
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                      style={{
+                        background: hexToRgba(accent, 0.12),
+                        color: accent,
+                      }}
+                    >
                       <item.icon size={18} strokeWidth={1.75} />
                     </span>
                     <div>
@@ -371,25 +479,29 @@ export function ServiceDetailView({
             </Reveal>
 
             <Reveal delay={0.1} className="relative">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -right-10 -top-10 h-[260px] w-[260px] rounded-full blur-[100px]"
-                style={{
-                  background:
-                    "radial-gradient(circle, var(--signal-blue-light), transparent 65%)",
-                }}
-              />
-              <div className="relative mx-auto max-w-sm overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
-                <img
-                  src={placeholder(520, 640, "Team+Photo")}
-                  alt="Placeholder"
-                  className="h-[420px] w-full object-cover grayscale"
+              <div className="relative mx-auto max-w-sm">
+                {/* quarter-circle nongol dari belakang sudut kanan-atas foto */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -right-3 -top-3 z-0 h-16 w-16"
+                  style={{ background: accent, borderTopRightRadius: "100%" }}
                 />
+                <div className="relative z-10 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
+                  <img
+                    src={placeholder(520, 640, "Team+Photo")}
+                    alt="Placeholder"
+                    className="h-[420px] w-full object-cover grayscale"
+                  />
+                </div>
               </div>
 
               <motion.div
                 animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
                 className="absolute -left-6 bottom-8 hidden w-52 rounded-xl border border-[var(--panel-border)] bg-panel p-4 shadow-[0_20px_40px_-16px_rgba(17,24,39,0.3)] sm:block"
               >
                 <div className="text-[11px] text-ink-2">Total Progress</div>
@@ -426,7 +538,6 @@ export function ServiceDetailView({
           </div>
         </section>
 
-        {/* ================= FEATURES ================= */}
         <section className="relative bg-surface py-24">
           <div className="container-x relative">
             <Reveal className="max-w-lg">
@@ -434,36 +545,32 @@ export function ServiceDetailView({
                 Features that make a difference.
               </h2>
               <p className="mt-4 text-[15px] leading-relaxed text-ink-1">
-                End-to-end {title} and technical execution in a single
-                solution. Meet the platform built to help you realize it.
+                End-to-end {title} and technical execution in a single solution.
+                Meet the platform built to help you realize it.
               </p>
             </Reveal>
 
             <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {featureCards.map((c, i) => (
-                <Reveal key={i} delay={i * 0.06}>
+                <Reveal key={c.title} delay={i * 0.06}>
                   <div className="flex h-full flex-col justify-between rounded-2xl border border-[var(--panel-border)] bg-panel p-6">
-                    {"icon" in c && c.icon ? (
-                      <>
-                        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-signal-blue-dim text-signal-teal">
-                          <c.icon size={17} strokeWidth={1.75} />
-                        </span>
-                        <div className="mt-6">
-                          <div className="font-display text-[15px] font-medium text-ink-0">
-                            {c.title}
-                          </div>
-                          <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
-                            {c.desc}
-                          </p>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex h-full items-end">
-                        <div className="font-display text-[18px] font-semibold leading-snug text-ink-0">
-                          {c.title}
-                        </div>
+                    <span
+                      className="flex h-10 w-10 items-center justify-center rounded-lg"
+                      style={{
+                        background: hexToRgba(accent, 0.12),
+                        color: accent,
+                      }}
+                    >
+                      <c.icon size={17} strokeWidth={1.75} />
+                    </span>
+                    <div className="mt-6">
+                      <div className="font-display text-[15px] font-medium text-ink-0">
+                        {c.title}
                       </div>
-                    )}
+                      <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
+                        {c.desc}
+                      </p>
+                    </div>
                   </div>
                 </Reveal>
               ))}
@@ -475,28 +582,35 @@ export function ServiceDetailView({
         <section className="relative overflow-hidden bg-void py-24">
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
             <Reveal className="relative order-2 lg:order-1">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -left-10 -top-10 h-[240px] w-[240px] rounded-full blur-[100px]"
-                style={{
-                  background:
-                    "radial-gradient(circle, var(--signal-blue), transparent 65%)",
-                }}
-              />
-              <div className="relative mx-auto max-w-sm overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
-                <img
-                  src={placeholder(520, 640, "Feature+Photo")}
-                  alt="Placeholder"
-                  className="h-[420px] w-full object-cover grayscale"
+              <div className="relative isolate mx-auto max-w-sm">
+                {/* quarter-circle nongol dari belakang sudut kiri-bawah foto */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -left-3 -bottom-3 z-20 h-16 w-16"
+                  style={{ background: accent, borderBottomLeftRadius: "100%" }}
                 />
+                <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
+                  <img
+                    src={placeholder(520, 640, "Feature+Photo")}
+                    alt="Placeholder"
+                    className="h-[420px] w-full object-cover grayscale"
+                  />
+                </div>
               </div>
 
               <motion.div
                 animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
+                transition={{
+                  duration: 3.6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
                 className="absolute -right-4 top-10 hidden items-center gap-2.5 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] sm:flex"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
+                <span
+                  className="flex h-8 w-8 items-center justify-center rounded-full"
+                  style={{ background: hexToRgba(accent, 0.12), color: accent }}
+                >
                   <ArrowUpRight size={14} />
                 </span>
                 <div>
@@ -517,7 +631,10 @@ export function ServiceDetailView({
                 }}
                 className="absolute -right-6 bottom-16 hidden items-center gap-2.5 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] sm:flex"
               >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
+                <span
+                  className="flex h-8 w-8 items-center justify-center rounded-full"
+                  style={{ background: hexToRgba(accent, 0.12), color: accent }}
+                >
                   <ArrowUpRight size={14} />
                 </span>
                 <div>
@@ -598,7 +715,11 @@ export function ServiceDetailView({
                       readOnly
                     />
                   </div>
-                  <Button asChild variant="primary" className="mt-2 w-full justify-center">
+                  <Button
+                    asChild
+                    variant="primary"
+                    className="mt-2 w-full justify-center"
+                  >
                     <a href="#kontak">Send Message</a>
                   </Button>
                 </div>
@@ -616,8 +737,8 @@ export function ServiceDetailView({
                 Download our free {title} guide.
               </h2>
               <p className="mt-5 text-[15px] leading-relaxed text-ink-1">
-                End-to-end {title} and technical execution in a single
-                solution. Meet the team ready to help you realize it.
+                End-to-end {title} and technical execution in a single solution.
+                Meet the team ready to help you realize it.
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                 <Button asChild size="default">
