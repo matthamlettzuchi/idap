@@ -24,13 +24,16 @@ export type ProductDetail = {
   tagline: string;
   accent: string;
   icon: ProductIconName;
+  backgroundImage: string;
   personImage: string;
-  personImageScale?: number;    // sudah ada dari sebelumnya
-  personImageOffsetX?: number;  // NEW — geser kesamping dalam %, minus = kiri, plus = kanan
+  personImageScale?: number;
+  personImageOffsetX?: number;
+  personImageOffsetY?: number;
   quickFacts: string[];
   overview: string[];
   advantages: ProductAdvantage[];
   processIntro?: { heading: string; body: string };
+  processLottie?: string;
   featuresIntro?: string;
   features: ProductFeature[];
 };
@@ -49,8 +52,9 @@ export const productDetails: Record<string, ProductDetail> = {
       "Sistem Loan Origination yang menopang seluruh siklus pengajuan kredit — dari prospek hingga pencairan.",
     accent: "#2f4bd0",
     icon: "Building2",
+    backgroundImage: "/hoho.png",
     personImage: "/peeps-talking.png",
-    personImageScale: 1,
+    personImageScale: 1.2,
     quickFacts: ["Web-Based", "Integrasi SLIK", "Multi Device", "Modul FISCUS"],
     overview: [
       "FISCUS Multifinance System adalah sistem khusus yang dirancang untuk mendukung kebutuhan proses pengajuan kredit pada perusahaan multifinance, bank, dan lembaga keuangan lainnya. Dengan pengalaman lebih dari 30 tahun di bidang pengembangan software pembiayaan — mulai dari DOS based, Windows based, Web based, hingga multi device — proses dalam FISCUS Multifinance System mencakup tahapan penting mulai dari pengelolaan calon konsumen atau prospek, initial scoring yang melibatkan pemeriksaan internal serta integrasi eksternal seperti pengecekan SLIK, hingga proses survei atau appraisal untuk memastikan kelengkapan data konsumen.",
@@ -68,6 +72,7 @@ export const productDetails: Record<string, ProductDetail> = {
       heading: "Proses FISCUS Loan Origination System (LOS)",
       body: "Memudahkan debitur untuk mengajukan kredit melalui formulir online yang intuitif, dengan mengisi informasi penting seperti data pribadi, profil usaha, dan jumlah pinjaman yang diinginkan.",
     },
+    processLottie: "/turutu.lottie",
     featuresIntro:
       "Sistem terintegrasi dengan penilaian kredit otomatis yang menilai kelayakan debitur berdasarkan kriteria tertentu, serta memberikan hasil penilaian secara cepat dan akurat.",
     features: [
@@ -102,9 +107,11 @@ export const productDetails: Record<string, ProductDetail> = {
       "Ubah piutang usaha menjadi arus kas — dikelola dalam satu sistem yang terpadu.",
     accent: "#0e9488",
     icon: "TrendingUp",
+    backgroundImage: "/didi.png",
     personImage: "/factoring.png",
-    personImageScale: 1.35,
+    personImageScale: 1.6,
     personImageOffsetX: -10,
+    personImageOffsetY: 14,
     quickFacts: ["Invoice Financing", "Dashboard Real-time", "Modul FISCUS"],
     overview: [
       "FISCUS Factoring System merupakan sistem transaksi keuangan di mana sebuah perusahaan menjual piutang usahanya (seperti faktur atau tagihan pelanggan yang belum dibayar) kepada pihak ketiga yang disebut factor. Pihak factor — yang umumnya merupakan lembaga keuangan atau perusahaan pembiayaan khusus — membeli piutang tersebut dengan harga diskon dan memberikan dana tunai secara langsung kepada perusahaan penjual. Setelah transaksi dilakukan, factor bertanggung jawab untuk menagih pembayaran dari pelanggan yang memiliki kewajiban atas piutang tersebut.",
@@ -122,6 +129,7 @@ export const productDetails: Record<string, ProductDetail> = {
       heading: "Proses Factoring",
       body: "Permudah proses penagihan dengan pembuatan dan pengiriman faktur secara otomatis kepada klien atau pelanggan.",
     },
+    processLottie: "/mimi.lottie",
     featuresIntro:
       "Lacak dan kategorikan pengeluaran secara efisien, sehingga memungkinkan kontrol dan analisis biaya yang lebih baik.",
     features: [
@@ -152,9 +160,11 @@ export const productDetails: Record<string, ProductDetail> = {
       "Mitra keuangan presisi tinggi untuk pencatatan, pelaporan, dan pengambilan keputusan yang akurat.",
     accent: "#7c3aed",
     icon: "Calculator",
+    backgroundImage: "/coco.png",
     personImage: "/accountant.png",
-    personImageScale: 1.35,
+    personImageScale: 1.6,
     personImageOffsetX: -10,
+    personImageOffsetY: 14,
     quickFacts: ["General Ledger", "Multi-User", "Real-time Sync"],
     overview: [
       "FISCUS Accounting System adalah platform digital yang memudahkan pencatatan, pengelolaan, dan pelaporan transaksi keuangan secara efisien dan aman melalui antarmuka berbasis web. Dirancang untuk memenuhi kebutuhan akuntansi perusahaan yang beroperasi di lingkungan daring, sistem ini menyediakan berbagai fitur, termasuk buku besar digital, jurnal transaksi, pelaporan keuangan online, serta integrasi dengan layanan keuangan lainnya.",
@@ -171,6 +181,7 @@ export const productDetails: Record<string, ProductDetail> = {
       heading: "Proses Accounting",
       body: "Menyediakan dashboard terpusat untuk melihat dan mengelola portofolio keuangan, termasuk status faktur, tingkat pencairan dana, dan estimasi pendapatan.",
     },
+    processLottie: "/tiriti.lottie",
     featuresIntro:
       "Lacak dan kategorikan pengeluaran secara efisien, sehingga memudahkan pengendalian dan analisis biaya.",
     features: [
@@ -201,9 +212,11 @@ export const productDetails: Record<string, ProductDetail> = {
       "Jembatan pelaporan otomatis ke regulator — akurat, patuh, dan siap analisis.",
     accent: "#b45309",
     icon: "FileSpreadsheet",
+    backgroundImage: "/ripot.png",
     personImage: "/report.png",
-    personImageScale: 1.35,
-    personImageOffsetX: -14,
+    personImageScale: 1.6,
+    personImageOffsetX: -24,
+    personImageOffsetY: 0,
     quickFacts: ["OJK Compliant", "Multi Database", "Export PDF/Excel/CSV"],
     overview: [
       "FISCUS SLIK/SILARAS Report merupakan sistem analisis data inovatif yang dirancang secara cermat untuk memproses dan menganalisis data secara efektif, serta menghasilkan laporan yang informatif dan akurat. Didukung oleh platform FISCUS, sistem ini menawarkan kemampuan yang kuat dalam analisis data dan pembuatan laporan, membantu perusahaan memperoleh wawasan berharga untuk mendukung pengambilan keputusan yang tepat dan strategis.",
@@ -247,8 +260,10 @@ export const productDetails: Record<string, ProductDetail> = {
       "Sistem informasi terintegrasi untuk perkebunan kelapa sawit — dari kebun hingga pabrik.",
     accent: "#15803d",
     icon: "Sprout",
+    backgroundImage: "/sawitwok.png",
     personImage: "/planta.png",
     personImageScale: 1,
+    personImageOffsetX: -12,
     quickFacts: ["Estate + Mill", "VRA Tracking", "Akses 24/7"],
     overview: [
       "Planta merupakan solusi sistem informasi terintegrasi yang dirancang untuk mengoptimalkan pengelolaan perkebunan kelapa sawit, mencakup manajemen perkebunan, manajemen aset, pemeliharaan lapangan, pengendalian dan pemeliharaan biaya, serta pengelolaan keuangan dan biaya operasional. Planta dikembangkan bersama para ahli perkebunan untuk menghasilkan informasi yang akurat, menekan biaya operasional, meningkatkan efisiensi, serta mendorong produktivitas perkebunan secara keseluruhan.",

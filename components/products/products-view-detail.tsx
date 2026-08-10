@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRef } from "react";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useScroll, useTransform } from "framer-motion";
 import {
   Building2,
@@ -94,13 +95,12 @@ export function ProductDetailView({
           ref={heroRef}
           className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen min-h-[900px] overflow-hidden"
         >
-          {/* layer background: bakgrun.png dengan clip-path wipe reveal */}
           <motion.div
             className="absolute inset-0"
             style={{ y: bgY, scale: bgScale }}
           >
             <motion.img
-              src="/bakgrun.png"
+              src={product.backgroundImage}
               alt=""
               aria-hidden
               initial={{ clipPath: "inset(0 0 0 100%)" }}
@@ -110,7 +110,6 @@ export function ProductDetailView({
             />
           </motion.div>
 
-          {/* scrim: gelap di kiri (area teks) */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/72 via-black/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15" />
 
@@ -123,7 +122,8 @@ export function ProductDetailView({
               initial={{ opacity: 0, y: 60, scale: 0.9 }}
               animate={{
                 opacity: 1,
-                y: 0,
+                y: product.personImageOffsetY ?? 0,
+                x: `${product.personImageOffsetX ?? 0}%`,
                 scale: product.personImageScale ?? 1,
               }}
               transition={{
@@ -153,9 +153,9 @@ export function ProductDetailView({
               />
 
               {[
-                { top: "4%", left: "48%" },
-                { top: "56%", left: "2%" },
-                { top: "38%", left: "92%" },
+                { top: "4%", left: "46%" },
+                { top: "58%", left: "6%" },
+                { top: "35%", left: "83%" },
               ].map((pos, i) => {
                 const fact = product.quickFacts[i];
                 if (!fact) return null;
@@ -438,27 +438,44 @@ export function ProductDetailView({
           </div>
         </section>
 
-        {/* PROCESS */}
         {product.processIntro && (
           <section className="relative border-t border-[var(--panel-border)] py-20">
             <div className="container-x">
               <Reveal>
                 <div
-                  className="rounded-2xl border p-8 sm:p-10"
+                  className="grid grid-cols-1 items-center gap-8 overflow-hidden rounded-2xl border p-8 sm:p-10 lg:grid-cols-[1.15fr_0.85fr]"
                   style={{
                     borderColor: hexToRgba(accent, 0.3),
                     background: hexToRgba(accent, 0.05),
                   }}
                 >
-                  <span className="mono-label" style={{ color: accent }}>
-                    Proses
-                  </span>
-                  <h3 className="mt-3 font-display text-[22px] font-semibold text-ink-0 sm:text-[26px]">
-                    {product.processIntro.heading}
-                  </h3>
-                  <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-ink-1">
-                    {product.processIntro.body}
-                  </p>
+                  <div>
+                    <span className="mono-label" style={{ color: accent }}>
+                      Proses
+                    </span>
+                    <h3 className="mt-3 font-display text-[22px] font-semibold text-ink-0 sm:text-[26px]">
+                      {product.processIntro.heading}
+                    </h3>
+                    <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-ink-1">
+                      {product.processIntro.body}
+                    </p>
+                  </div>
+
+                  {product.processLottie && (
+                    <div className="relative mx-auto flex h-[220px] w-full max-w-[320px] items-center justify-center sm:h-[260px]">
+                      <div
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 rounded-full blur-[60px]"
+                        style={{ background: hexToRgba(accent, 0.25) }}
+                      />
+                      <DotLottieReact
+                        src={product.processLottie}
+                        autoplay
+                        loop
+                        className="relative h-full w-full"
+                      />
+                    </div>
+                  )}
                 </div>
               </Reveal>
             </div>
