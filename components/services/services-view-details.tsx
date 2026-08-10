@@ -1,519 +1,259 @@
-// components/services/services-view-details.tsx
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  ArrowDownRight,
   ArrowUpRight,
-  Code2,
-  Globe,
-  Layers,
-  Smartphone,
-  Wrench,
-  Palette,
-  Rocket,
-  Settings2,
-  ShieldCheck,
-  Building2,
-  Workflow,
-  BarChart3,
-  LayoutDashboard,
-  Link2,
-  RefreshCw,
-  Search,
-  PenTool,
   CheckCircle2,
-  Zap,
-  Users2,
-  Cloud,
-  Monitor,
-  Tablet,
-  Gauge,
-  Lock,
-  Bug,
-  Headset,
-  Clock,
-  ActivitySquare,
-  ClipboardList,
-  Eye,
+  Layers,
+  ShieldCheck,
   Wallet,
+  Puzzle,
+  Users2,
+  Clock,
+  Workflow,
   TrendingUp,
-  Map,
-  Lightbulb,
-  Boxes,
-  Database,
-  Network,
-  Building,
-  HeartHandshake,
-  BrainCircuit,
-  Mail,
-  Phone,
-  MapPin,
-  type LucideIcon,
+  Download,
+  FileText,
 } from "lucide-react";
 
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
+import { Contact } from "@/components/sections/contact";
+import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
-import { sectionTones } from "@/lib/section-tones";
-import { contact } from "@/lib/data";
-import type { ServiceDetail, ServiceIconName } from "@/lib/service-details";
+import { Marquee } from "@/components/marquee";
+import { clientLogos } from "@/lib/data";
 
-const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
-
-const serviceIconMap: Record<ServiceIconName, LucideIcon> = {
-  Code2,
-  Globe,
-  Layers,
-  Smartphone,
-  Wrench,
-  Palette,
-  Rocket,
-  Settings2,
-  ShieldCheck,
-  Building2,
-  Workflow,
-  BarChart3,
-  LayoutDashboard,
-  Link2,
-  RefreshCw,
-  Search,
-  PenTool,
-  CheckCircle2,
-  Zap,
-  Users2,
-  Cloud,
-  Monitor,
-  Tablet,
-  Gauge,
-  Lock,
-  Bug,
-  Headset,
-  Clock,
-  ActivitySquare,
-  ClipboardList,
-  Eye,
-  Wallet,
-  TrendingUp,
-  Map,
-  Lightbulb,
-};
-
-function hexToRgba(hex: string, alpha: number) {
-  const clean = hex.replace("#", "");
-  const bigint = parseInt(clean, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+function toTitleCase(s: string) {
+  return s.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-/* ------------------------------------------------------------------ */
-/* Generic value-prop copy — derived from highlights when present,    */
-/* falls back to universal engineering principles otherwise so every  */
-/* service page (even ones without `highlights`) gets this section.   */
-/* ------------------------------------------------------------------ */
-const defaultPrinciples = [
+function placeholder(width: number, height: number, label: string) {
+  return `https://placehold.co/${width}x${height}/eef1ff/2f4bd0?text=${encodeURIComponent(
+    label
+  )}`;
+}
+
+const heroFloatCards = [
+  { top: "6%", left: "4%", size: 72, delay: 0 },
+  { top: "10%", left: "89%", size: 64, delay: 0.4 },
+  { top: "58%", left: "2%", size: 68, delay: 0.8 },
+  { top: "62%", left: "91%", size: 76, delay: 1.2 },
+];
+
+const whyCards = [
   {
-    icon: Boxes,
-    tag: "Tailored",
-    body: "Every system is scoped around your actual workflow, not a generic template.",
+    icon: Layers,
+    title: "Modern Architecture",
+    desc: "Built on a modular stack designed to scale with your business as requirements grow.",
+  },
+  {
+    icon: Wallet,
+    title: "Transparent Pricing",
+    desc: "No hidden costs or surprise fees — you know exactly what you're paying for from day one.",
   },
   {
     icon: ShieldCheck,
-    tag: "Secure",
-    body: "Security and reliability are built in from architecture, not patched on afterward.",
-  },
-  {
-    icon: Layers,
-    tag: "Scalable",
-    body: "Architecture designed to grow with transaction volume and organizational scale.",
+    title: "Enterprise-Grade Security",
+    desc: "Every system we build follows strict security and compliance standards from the ground up.",
   },
 ];
 
-const differentiators = [
+const trackChecklist = [
+  "Get full project visibility at a glance",
+  "Deploy updates easily and securely",
+  "Get live support whenever you need it",
+];
+
+const specialistItems = [
   {
-    icon: BrainCircuit,
-    title: "Business Understanding",
-    body: "We map your operational process before proposing a single technical decision.",
+    icon: Workflow,
+    title: "First Working Process",
+    desc: "A clear discovery-to-delivery pipeline so nothing falls through the cracks.",
   },
   {
-    icon: Code2,
-    title: "Technology Expertise",
-    body: "Engineering practices proven across financial and enterprise-grade systems.",
+    icon: Users2,
+    title: "Dedicated Team",
+    desc: "A consistent team of engineers who understand your business end to end.",
   },
   {
-    icon: Network,
-    title: "Integration Ready",
-    body: "Built to connect cleanly with existing core systems, not to replace them wholesale.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Long-Term Support",
-    body: "Systems are maintained as a relationship, not shipped and abandoned.",
+    icon: Clock,
+    title: "24/7 Hours Support",
+    desc: "Responsive support long after go-live, whenever an issue comes up.",
   },
 ];
 
-const pipelineStages = [
-  "Business Requirements",
-  "Business Logic",
-  "Software Architecture",
-  "Application",
-  "Integration",
-  "Operational System",
+const featureCards = [
+  {
+    icon: Puzzle,
+    title: "Seamless Integrations",
+    desc: "Connect cleanly with the tools and systems your team already relies on.",
+  },
+  {
+    icon: Puzzle,
+    title: "Seamless Integrations",
+    desc: "Connect cleanly with the tools and systems your team already relies on.",
+  },
+  { title: "Reduce Costs Year-Round", desc: null },
+  { title: "50+ Apps & Powerful Integrations", desc: null },
 ];
 
-const stageLabels = ["DISCOVER", "DESIGN", "BUILD", "DELIVER"];
-
-function gridCols(count: number) {
-  if (count <= 3) return "sm:grid-cols-2 lg:grid-cols-3";
-  if (count === 4) return "sm:grid-cols-2 lg:grid-cols-4";
-  return "sm:grid-cols-2 lg:grid-cols-3";
-}
-
-/* ------------------------------------------------------------------ */
-/* Abstract "engineering environment" visual — layered architecture   */
-/* nodes + a monitor silhouette. No people, no readable code.         */
-/* ------------------------------------------------------------------ */
-function HeroTechVisual({ accent }: { accent: string }) {
-  return (
-    <div className="relative h-[420px] w-full max-w-[440px]">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-[32px] blur-[70px]"
-        style={{ background: hexToRgba(accent, 0.28) }}
-      />
-      <svg viewBox="0 0 440 420" className="relative h-full w-full" fill="none">
-        {/* faint layer grid */}
-        {[80, 160, 240, 320].map((y, i) => (
-          <motion.line
-            key={y}
-            x1="30"
-            y1={y}
-            x2="410"
-            y2={y}
-            stroke="rgba(255,255,255,0.08)"
-            strokeWidth="1"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.3 + i * 0.12, ease: EASE_OUT }}
-          />
-        ))}
-
-        {/* monitor silhouette, right side */}
-        <motion.g
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.2, ease: EASE_OUT }}
-        >
-          <rect x="220" y="60" width="170" height="112" rx="6" stroke="rgba(255,255,255,0.22)" strokeWidth="1.5" />
-          <rect x="232" y="72" width="146" height="88" rx="2" fill="rgba(255,255,255,0.03)" />
-          {[0, 1, 2, 3].map((i) => (
-            <motion.rect
-              key={i}
-              x={240}
-              y={82 + i * 18}
-              width={i % 2 === 0 ? 100 : 70}
-              height="6"
-              rx="2"
-              fill={hexToRgba(accent, 0.5)}
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              style={{ transformOrigin: "240px center" }}
-              transition={{ duration: 0.6, delay: 0.6 + i * 0.1, ease: EASE_OUT }}
-            />
-          ))}
-          <rect x="290" y="172" width="30" height="14" fill="rgba(255,255,255,0.15)" />
-          <rect x="270" y="186" width="70" height="5" rx="2" fill="rgba(255,255,255,0.15)" />
-        </motion.g>
-
-        {/* architecture nodes, left side */}
-        {[
-          { x: 70, y: 100, r: 20 },
-          { x: 60, y: 200, r: 15 },
-          { x: 110, y: 270, r: 18 },
-          { x: 60, y: 340, r: 12 },
-        ].map((n, i) => (
-          <motion.circle
-            key={i}
-            cx={n.x}
-            cy={n.y}
-            r={n.r}
-            stroke={hexToRgba(accent, 0.55)}
-            strokeWidth="1.5"
-            fill={hexToRgba(accent, 0.08)}
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 + i * 0.12, ease: EASE_OUT }}
-          />
-        ))}
-
-        {/* connecting lines between nodes + monitor */}
-        {[
-          [70, 100, 220, 90],
-          [60, 200, 220, 130],
-          [110, 270, 220, 150],
-          [60, 340, 90, 300],
-          [90, 300, 110, 270],
-        ].map(([x1, y1, x2, y2], i) => (
-          <motion.line
-            key={i}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
-            stroke="rgba(255,255,255,0.16)"
-            strokeWidth="1"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.7 + i * 0.08, ease: EASE_OUT }}
-          />
-        ))}
-
-        {/* traveling signal */}
-        <motion.circle
-          r="3"
-          fill={accent}
-          animate={{
-            cx: [70, 220, 70],
-            cy: [100, 90, 100],
-            opacity: [0, 1, 0],
-          }}
-          transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 1.4 }}
-          style={{ filter: `drop-shadow(0 0 6px ${accent})` }}
-        />
-      </svg>
-    </div>
-  );
-}
-
-/* Layered "Business → Applications → Integration → Data → Infrastructure" diagram */
-function CapabilityDiagram({ accent }: { accent: string }) {
-  const layers = ["Business", "Applications", "Integration", "Data", "Infrastructure"];
-  return (
-    <div className="relative flex flex-col gap-3">
-      {layers.map((label, i) => (
-        <Reveal key={label} delay={i * 0.06} className="relative">
-          <div
-            className="flex items-center justify-between rounded-lg border px-5 py-3.5"
-            style={{
-              borderColor: hexToRgba(accent, 0.25 - i * 0.02),
-              background: hexToRgba(accent, 0.05 - i * 0.005),
-              marginLeft: `${i * 14}px`,
-            }}
-          >
-            <span className="font-mono text-[11px] tracking-wide text-ink-2">
-              0{i + 1}
-            </span>
-            <span className="font-display text-[14.5px] font-medium text-ink-0">
-              {label}
-            </span>
-          </div>
-          {i < layers.length - 1 && (
-            <div
-              className="ml-[calc(50%-0.5px)] h-3 w-px"
-              style={{ background: hexToRgba(accent, 0.3), marginLeft: `${i * 14 + 26}px` }}
-            />
-          )}
-        </Reveal>
-      ))}
-    </div>
-  );
-}
-
-/* Abstract enterprise workstation / dashboard environment visual */
-function EnterpriseEnvironmentVisual({ accent }: { accent: string }) {
-  return (
-    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel">
-      <div className="circuit-texture pointer-events-none absolute inset-0 opacity-40" />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-20 top-1/2 h-[280px] w-[280px] -translate-y-1/2 rounded-full blur-[90px]"
-        style={{ background: hexToRgba(accent, 0.22) }}
-      />
-      <div className="relative flex h-full items-center justify-center gap-4 p-8 sm:gap-6">
-        {/* left small panel */}
-        <motion.div
-          initial={{ opacity: 0, x: -16 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.6, ease: EASE_OUT }}
-          className="hidden h-[62%] w-[18%] rounded-lg border border-[var(--panel-border-strong)] bg-panel-2 p-2.5 sm:block"
-        >
-          {[0, 1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="mb-1.5 h-1.5 rounded-full bg-[var(--panel-border-strong)]"
-              style={{ width: `${60 + (i % 3) * 15}%` }}
-            />
-          ))}
-        </motion.div>
-
-        {/* main dashboard panel */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.7, ease: EASE_OUT }}
-          className="h-[78%] w-[58%] rounded-lg border border-[var(--panel-border-strong)] bg-panel-2 p-3 sm:w-[46%]"
-        >
-          <div className="flex h-full flex-col gap-2">
-            <div className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-ink-3/50" />
-              <span className="h-2 w-2 rounded-full bg-ink-3/50" />
-              <span className="h-2 w-2 rounded-full bg-ink-3/50" />
-            </div>
-            <div className="flex flex-1 items-end gap-1.5 rounded-md border border-[var(--panel-border)] bg-panel p-2.5">
-              {[38, 62, 48, 80, 56, 70].map((h, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ height: 0 }}
-                  whileInView={{ height: `${h}%` }}
-                  viewport={{ once: true, margin: "-10% 0px" }}
-                  transition={{ duration: 0.6, delay: 0.15 + i * 0.06, ease: EASE_OUT }}
-                  className="flex-1 rounded-sm"
-                  style={{ background: hexToRgba(accent, 0.7) }}
-                />
-              ))}
-            </div>
-            <div className="h-3.5 rounded-sm border border-[var(--panel-border)] bg-panel" />
-          </div>
-        </motion.div>
-
-        {/* right small panel */}
-        <motion.div
-          initial={{ opacity: 0, x: 16 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-10% 0px" }}
-          transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT }}
-          className="hidden h-[62%] w-[18%] rounded-lg border border-[var(--panel-border-strong)] bg-panel-2 p-2.5 sm:flex sm:flex-col sm:items-center sm:justify-center"
-        >
-          <div
-            className="h-14 w-14 rounded-full border-2"
-            style={{ borderColor: hexToRgba(accent, 0.5) }}
-          />
-        </motion.div>
-      </div>
-    </div>
-  );
-}
+const barSeeds = [42, 68, 55, 88, 64];
 
 export function ServiceDetailView({
-  service,
-  related,
+  slug,
+  title,
 }: {
-  service: ServiceDetail;
-  related: ServiceDetail[];
+  slug: string;
+  title: string;
 }) {
-  const Icon = serviceIconMap[service.icon];
-  const accent = service.accent;
-
-  const principles = service.highlights?.length
-    ? service.highlights.map((h) => ({
-        icon: serviceIconMap[h.icon],
-        tag: h.title,
-        body: h.desc,
-      }))
-    : defaultPrinciples.map((p) => ({ icon: p.icon, tag: p.tag, body: p.body }));
+  const displayTitle = toTitleCase(title);
 
   return (
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal">
       <Nav />
 
-      <main className="pt-28 pb-24">
+      <main className="pt-28">
         {/* ================= HERO ================= */}
-        <section
-          style={sectionTones.dark}
-          className="relative overflow-hidden bg-void py-24 border-b border-[var(--panel-border)] lg:py-28"
-        >
-          <div className="circuit-texture pointer-events-none absolute inset-0 opacity-50" />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-32 -top-32 h-[460px] w-[460px] rounded-full blur-[120px]"
-            style={{ background: `radial-gradient(circle, ${hexToRgba(accent, 0.3)}, transparent 65%)` }}
-          />
+        <section className="relative overflow-hidden py-16 lg:py-24">
+          <div className="ledger-lines-texture pointer-events-none absolute inset-0" />
 
-          <div className="container-x relative grid grid-cols-1 items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="max-w-xl">
-              <Reveal className="flex items-center gap-2 text-[12.5px] text-ink-2">
-                <Link href="/#service" className="transition-colors hover:text-white">
-                  Services
-                </Link>
-                <span>/</span>
-                <span
-                  className="rounded-full px-2.5 py-0.5 font-mono text-[11px] font-semibold"
+          <div className="container-x relative">
+            <div className="relative mx-auto max-w-2xl py-10 text-center lg:py-16">
+              {/* floating decorative avatar/photo cards */}
+              {heroFloatCards.map((c, i) => (
+                <motion.div
+                  key={i}
+                  aria-hidden
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{
+                    duration: 4 + i * 0.4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: c.delay,
+                  }}
+                  className="pointer-events-none absolute hidden -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-[0_20px_40px_-16px_rgba(17,24,39,0.25)] lg:block"
                   style={{
-                    color: "#dce6ff",
-                    background: hexToRgba(accent, 0.22),
-                    border: `1px solid ${hexToRgba(accent, 0.4)}`,
+                    top: c.top,
+                    left: c.left,
+                    width: c.size,
+                    height: c.size,
                   }}
                 >
-                  {service.code}
-                </span>
-              </Reveal>
+                  <img
+                    src={placeholder(c.size * 2, c.size * 2, "Photo")}
+                    alt="Placeholder"
+                    className="h-full w-full object-cover grayscale"
+                  />
+                </motion.div>
+              ))}
 
-              <Reveal delay={0.06} className="mt-6 flex items-center gap-4">
-                <span
-                  className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white shadow-[0_20px_40px_-16px_rgba(0,0,0,0.4)]"
-                  style={{ background: accent }}
-                >
-                  <Icon size={24} strokeWidth={1.75} />
+              <motion.div
+                aria-hidden
+                animate={{ y: [0, -8, 0] }}
+                transition={{
+                  duration: 3.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="pointer-events-none absolute left-[10%] top-[2%] hidden items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] lg:flex"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
+                  <ArrowDownRight size={13} />
                 </span>
-              </Reveal>
+                <div className="text-left">
+                  <div className="text-[10.5px] text-ink-2">Delivered</div>
+                  <div className="font-mono text-[12.5px] font-semibold text-ink-0">
+                    12 Sprints
+                  </div>
+                </div>
+              </motion.div>
 
-              <Reveal delay={0.12}>
-                <h1 className="mt-6 font-display text-[clamp(32px,4.2vw,50px)] font-semibold leading-[1.06] text-white">
-                  {service.heroTitle}
+              <motion.div
+                aria-hidden
+                animate={{ y: [0, -8, 0] }}
+                transition={{
+                  duration: 3.8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.6,
+                }}
+                className="pointer-events-none absolute right-[10%] top-[4%] hidden items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] lg:flex"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
+                  <ArrowUpRight size={13} />
+                </span>
+                <div className="text-left">
+                  <div className="text-[10.5px] text-ink-2">Shipped</div>
+                  <div className="font-mono text-[12.5px] font-semibold text-ink-0">
+                    v2.4 Release
+                  </div>
+                </div>
+              </motion.div>
+
+              <Reveal>
+                <h1 className="font-display text-[clamp(32px,5.4vw,52px)] font-bold leading-[1.05] tracking-tight text-ink-0">
+                  Building {displayTitle} has never been easier
                 </h1>
-                <p className="mt-6 max-w-lg text-[15.5px] leading-relaxed text-ink-1">
-                  {service.heroDesc}
+              </Reveal>
+              <Reveal delay={0.08}>
+                <p className="mx-auto mt-6 max-w-lg text-[15.5px] leading-relaxed text-ink-1">
+                  End-to-end {title} and technical execution in a single
+                  partnership. Meet the team ready to help you realize it.
                 </p>
-
-                <div className="mt-9 flex flex-wrap items-center gap-3">
-                  <a
-                    href="#kontak"
-                    className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[14px] font-medium text-white transition-transform hover:-translate-y-0.5"
-                    style={{ background: accent }}
-                  >
-                    Konsultasi Sekarang <ArrowRight size={15} />
-                  </a>
-                  <Link
-                    href="/#service"
-                    className="inline-flex items-center gap-2 rounded-full border border-[var(--panel-border)] bg-panel-2 px-6 py-3 text-[14px] font-medium text-ink-0 transition-colors hover:bg-panel"
-                  >
-                    Lihat Layanan Lain
-                  </Link>
+              </Reveal>
+              <Reveal delay={0.14}>
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                  <Button asChild size="default">
+                    <a href="#kontak">
+                      Get Started <ArrowRight size={15} />
+                    </a>
+                  </Button>
+                  <Button asChild variant="ghost" size="default">
+                    <a href="#kontak">Request Demo</a>
+                  </Button>
                 </div>
               </Reveal>
-            </div>
-
-            <div className="hidden justify-center lg:flex">
-              <HeroTechVisual accent={accent} />
             </div>
           </div>
         </section>
 
-        {/* ================= VALUE PROPS — editorial numbered row ================= */}
-        <section style={sectionTones.light} className="relative bg-void py-20 border-b border-[var(--panel-border)]">
-          <div className="container-x">
-            <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-8">
-              {principles.slice(0, 3).map((p, i) => (
-                <Reveal key={p.tag} delay={i * 0.08}>
-                  <div className={i > 0 ? "sm:border-l sm:border-[var(--panel-border)] sm:pl-8" : ""}>
-                    <div className="flex items-center gap-3">
-                      <span className="font-mono text-[13px] text-ink-3">
-                        0{i + 1}
-                      </span>
-                      <span style={{ color: accent }}>
-                        <p.icon size={18} strokeWidth={1.75} />
-                      </span>
-                    </div>
-                    <h3 className="mt-4 font-display text-[16.5px] font-medium text-ink-0">
-                      {p.tag}
+        {/* ================= TRUSTED BY ================= */}
+        <section className="relative border-y border-[var(--panel-border)] bg-surface py-10">
+          <Reveal className="container-x mb-6 text-center">
+            <p className="text-[13px] font-medium text-ink-2">
+              Trusted by 30+ enterprise and financial institutions across
+              Indonesia.
+            </p>
+          </Reveal>
+          <Marquee items={clientLogos} />
+        </section>
+
+        {/* ================= WHY US — 3 CARDS ================= */}
+        <section className="relative bg-void py-24">
+          <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-60" />
+          <div className="container-x relative">
+            <Reveal className="mx-auto max-w-xl text-center">
+              <span className="mono-label">Why Intidata</span>
+              <h2 className="mt-4 text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
+                Specially engineered for {title}.
+              </h2>
+            </Reveal>
+
+            <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3">
+              {whyCards.map((c, i) => (
+                <Reveal key={c.title} delay={i * 0.08}>
+                  <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-7 transition-colors hover:bg-panel-2">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-signal-blue-dim text-signal-teal">
+                      <c.icon size={19} strokeWidth={1.75} />
+                    </span>
+                    <h3 className="mt-6 font-display text-[16px] font-medium text-ink-0">
+                      {c.title}
                     </h3>
                     <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-2">
-                      {p.body}
+                      {c.desc}
                     </p>
                   </div>
                 </Reveal>
@@ -522,348 +262,381 @@ export function ServiceDetailView({
           </div>
         </section>
 
-        {/* ================= CAPABILITY MAP ================= */}
-        {service.gridSection && (
-          <section
-            style={sectionTones.dark}
-            className="relative overflow-hidden bg-void py-28 border-b border-[var(--panel-border)]"
-          >
-            <div className="wave-stream-texture pointer-events-none absolute inset-0 opacity-60" />
-            <div className="container-x relative max-w-6xl">
-              <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1fr_0.85fr] lg:items-start">
-                <Reveal>
-                  <span className="mono-label" style={{ color: accent }}>
-                    {service.gridSection.label}
-                  </span>
-                  <h2 className="mt-3 text-[clamp(28px,3.4vw,40px)] font-semibold text-white">
-                    {service.gridSection.title}
-                  </h2>
-                  {service.gridSection.desc && (
-                    <p className="mt-5 max-w-md text-[14.5px] leading-relaxed text-ink-1">
-                      {service.gridSection.desc}
-                    </p>
-                  )}
-                </Reveal>
-                <Reveal delay={0.1}>
-                  <CapabilityDiagram accent={accent} />
-                </Reveal>
-              </div>
-
-              {/* editorial list, alternating rhythm instead of equal tiles */}
-              <div className="mt-16 divide-y divide-[var(--panel-border)] border-t border-[var(--panel-border)]">
-                {service.gridSection.items.map((item, i) => {
-                  const ItemIcon = serviceIconMap[item.icon];
-                  return (
-                    <Reveal key={item.title} delay={i * 0.05}>
-                      <div className="grid grid-cols-1 items-baseline gap-3 py-6 sm:grid-cols-[auto_1fr_auto] sm:gap-8">
-                        <span
-                          className="flex h-9 w-9 items-center justify-center rounded-lg"
-                          style={{ background: hexToRgba(accent, 0.14), color: accent }}
-                        >
-                          <ItemIcon size={16} strokeWidth={1.75} />
-                        </span>
-                        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-8">
-                          <span className="font-display text-[15.5px] font-medium text-ink-0 sm:w-64 sm:shrink-0">
-                            {item.title}
-                          </span>
-                          <p className="text-[13.5px] leading-relaxed text-ink-2">
-                            {item.desc}
-                          </p>
-                        </div>
-                        <span className="font-mono text-[11px] text-ink-3 sm:justify-self-end">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                      </div>
-                    </Reveal>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ================= TECH STACK ================= */}
-        {service.techStack && (
-          <section style={sectionTones.dark} className="relative overflow-hidden bg-void py-24 border-b border-[var(--panel-border)]">
-            <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-40" />
-            <div className="container-x relative max-w-6xl">
-              <Reveal className="max-w-xl mb-12">
-                <span className="mono-label" style={{ color: accent }}>
-                  {service.techStack.label}
-                </span>
-                <h2 className="mt-3 text-[clamp(26px,3vw,36px)] font-semibold text-white">
-                  {service.techStack.title}
-                </h2>
-                {service.techStack.desc && (
-                  <p className="mt-4 text-[14.5px] leading-relaxed text-ink-1">
-                    {service.techStack.desc}
-                  </p>
-                )}
-              </Reveal>
-
-              <div className="grid grid-cols-1 gap-x-10 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
-                {service.techStack.groups.map((group, i) => (
-                  <Reveal key={group.label} delay={i * 0.06}>
-                    <div className="border-t border-[var(--panel-border)] pt-5">
-                      <div className="mono-label !text-[10.5px]">{group.label}</div>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {group.items.map((tech) => (
-                          <span
-                            key={tech}
-                            className="rounded-full border border-[var(--panel-border)] bg-panel-2 px-3.5 py-1.5 text-[12.5px] text-ink-1"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ================= PROCESS TIMELINE ================= */}
-        {service.process && (
-          <section style={sectionTones.light} className="relative bg-void py-28 border-b border-[var(--panel-border)]">
-            <div className="container-x relative max-w-6xl">
-              <Reveal className="max-w-xl mb-16">
-                <span className="mono-label" style={{ color: accent }}>
-                  Proses Kerja
-                </span>
-                <h2 className="mt-3 text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
-                  Bagaimana kami membangun layanan ini.
-                </h2>
-              </Reveal>
-
-              <div className="relative grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
-                <div
-                  aria-hidden
-                  className="absolute left-0 right-0 top-[26px] hidden h-px bg-[var(--panel-border)] lg:block"
-                />
-                {service.process.map((step, i) => {
-                  const StepIcon = serviceIconMap[step.icon];
-                  return (
-                    <Reveal key={step.title} delay={i * 0.08} className="relative lg:px-5">
-                      <div className="flex items-center gap-3 lg:flex-col lg:items-start lg:gap-0">
-                        <span
-                          className="relative z-10 flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full border-2 bg-void font-display text-[17px] font-semibold"
-                          style={{ borderColor: accent, color: accent }}
-                        >
-                          {step.step}
-                        </span>
-                        <span
-                          className="ml-3 font-mono text-[10.5px] tracking-[0.14em] text-ink-3 lg:ml-0 lg:mt-5"
-                        >
-                          {stageLabels[i] ?? "STAGE"}
-                        </span>
-                      </div>
-                      <div className="mt-4 flex items-center gap-2 lg:mt-1">
-                        <StepIcon size={15} strokeWidth={1.75} style={{ color: accent }} />
-                        <div className="font-display text-[16px] font-medium text-ink-0">
-                          {step.title}
-                        </div>
-                      </div>
-                      <p className="mt-2.5 max-w-[220px] text-[13px] leading-relaxed text-ink-2">
-                        {step.desc}
-                      </p>
-                    </Reveal>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ================= WHAT MAKES INTIDATA DIFFERENT (generic) ================= */}
-        <section style={sectionTones.dark} className="relative overflow-hidden bg-void py-28 border-b border-[var(--panel-border)]">
-          <div className="chevron-texture pointer-events-none absolute inset-0 opacity-30" />
-          <div className="container-x relative max-w-6xl">
-            <div className="grid grid-cols-1 gap-14 lg:grid-cols-[0.85fr_1.15fr]">
-              <Reveal>
-                <span className="mono-label" style={{ color: accent }}>
-                  Perbedaan Kami
-                </span>
-                <h2 className="mt-4 font-display text-[clamp(26px,3.2vw,38px)] font-semibold leading-tight text-white">
-                  Software engineering dengan konteks bisnis.
-                </h2>
-                <p className="mt-6 max-w-sm text-[14.5px] leading-relaxed text-ink-1">
-                  Kami bukan sekadar penyedia jasa outsourcing software. Kami
-                  memahami proses operasional Anda terlebih dahulu, baru
-                  merancang teknologi di sekitarnya.
-                </p>
-              </Reveal>
-
-              <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2">
-                {differentiators.map((d, i) => (
-                  <Reveal key={d.title} delay={i * 0.06}>
-                    <div className="h-full bg-panel p-7">
-                      <span
-                        className="flex h-10 w-10 items-center justify-center rounded-lg"
-                        style={{ background: hexToRgba(accent, 0.14), color: accent }}
-                      >
-                        <d.icon size={18} strokeWidth={1.75} />
-                      </span>
-                      <h4 className="mt-5 font-display text-[15px] font-medium text-ink-0">
-                        {d.title}
-                      </h4>
-                      <p className="mt-2.5 text-[13px] leading-relaxed text-ink-2">
-                        {d.body}
-                      </p>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ================= ENTERPRISE ENVIRONMENT VISUAL (generic) ================= */}
-        <section className="relative border-b border-[var(--panel-border)] py-24">
-          <div className="container-x max-w-5xl">
-            <Reveal>
-              <EnterpriseEnvironmentVisual accent={accent} />
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ================= RELATED SERVICES — compact nav rows ================= */}
-        <section className="relative border-b border-[var(--panel-border)] py-20">
-          <div className="container-x max-w-4xl">
-            <Reveal className="mb-8 max-w-xl">
-              <span className="mono-label">Layanan Lainnya</span>
-              <h2 className="mt-3 text-[clamp(22px,2.4vw,28px)] font-semibold text-ink-0">
-                Jelajahi layanan Intidata lainnya.
-              </h2>
-            </Reveal>
-
-            <div className="divide-y divide-[var(--panel-border)] border-t border-[var(--panel-border)]">
-              {related.map((r, i) => {
-                const RIcon = serviceIconMap[r.icon];
-                return (
-                  <Reveal key={r.slug} delay={i * 0.05}>
-                    <Link
-                      href={`/services/${r.slug}`}
-                      className="group flex items-center justify-between gap-4 py-4 transition-colors hover:bg-panel-2/40"
-                    >
-                      <div className="flex items-center gap-3.5">
-                        <span
-                          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
-                          style={{ background: hexToRgba(r.accent, 0.12), color: r.accent }}
-                        >
-                          <RIcon size={16} strokeWidth={1.75} />
-                        </span>
-                        <span className="font-display text-[14.5px] font-medium text-ink-0">
-                          {r.name}
-                        </span>
-                      </div>
-                      <ArrowUpRight
-                        size={16}
-                        className="shrink-0 text-ink-2 opacity-0 transition-all -translate-x-1 group-hover:translate-x-0 group-hover:opacity-100"
-                      />
-                    </Link>
-                  </Reveal>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ================= CTA ================= */}
-        <section style={sectionTones.dark} className="relative overflow-hidden bg-void py-28">
-          <div className="grid-texture pointer-events-none absolute inset-0" />
-          <motion.div
-            aria-hidden
-            animate={{ opacity: [0.14, 0.26, 0.14] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]"
-            style={{ background: `radial-gradient(circle, ${hexToRgba(accent, 0.22)}, transparent 65%)` }}
-          />
-
+        {/* ================= TRACK PROGRESS — MOCKUP + TEXT ================= */}
+        <section className="relative overflow-hidden bg-surface py-24">
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
             <Reveal>
-              <span className="mono-label" style={{ color: accent }}>
-                Contact
-              </span>
-              <h2 className="mt-6 text-[clamp(28px,3.6vw,42px)] font-semibold leading-[1.1] text-white">
-                {service.closingCtaTitle ?? "Let's build something that works for your business."}
-              </h2>
-              <p className="mt-6 max-w-md text-[14.5px] leading-relaxed text-ink-1">
-                Tell us about your business requirements, operational
-                challenges, or software project. Our team can help define the
-                right technical approach.
-              </p>
-              <a
-                href="#kontak"
-                className="mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-[14px] font-medium text-white transition-transform hover:-translate-y-0.5"
-                style={{ background: accent }}
-              >
-                Discuss Your Project <ArrowRight size={15} />
-              </a>
+              <div className="relative overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel p-7 shadow-[0_30px_60px_-24px_rgba(17,24,39,0.25)]">
+                <div className="mono-label">Quick Overview</div>
+                <div className="mt-5 flex items-center">
+                  {["D", "S", "A", "B", "M"].map((initial, i) => (
+                    <span
+                      key={i}
+                      style={{ marginLeft: i === 0 ? 0 : -10 }}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-panel bg-[image:var(--grad-signal)] text-[12px] font-semibold text-white"
+                    >
+                      {initial}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-7">
+                  <div className="flex items-center justify-between text-[12px] text-ink-2">
+                    <span>Progress</span>
+                    <span>72%</span>
+                  </div>
+                  <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-panel-2">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "72%" }}
+                      viewport={{ once: true, margin: "-10% 0px" }}
+                      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                      className="h-full rounded-full bg-[image:var(--grad-signal)]"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-7 grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-[var(--panel-border)] bg-panel-2 p-4">
+                    <div className="text-[12px] text-ink-2">Completed</div>
+                    <div className="mt-1 flex items-center gap-1 font-display text-[20px] font-semibold text-ink-0">
+                      24 <ArrowDownRight size={14} className="text-signal-teal" />
+                    </div>
+                  </div>
+                  <div className="rounded-xl border border-[var(--panel-border)] bg-panel-2 p-4">
+                    <div className="text-[12px] text-ink-2">In Progress</div>
+                    <div className="mt-1 flex items-center gap-1 font-display text-[20px] font-semibold text-ink-0">
+                      6 <TrendingUp size={14} className="text-signal-blue" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </Reveal>
 
             <Reveal delay={0.1}>
-              <div id="kontak" className="panel divide-y divide-[var(--panel-border)] p-2">
-                <div className="group flex gap-4 rounded-[calc(var(--radius)-6px)] p-6 transition-colors hover:bg-panel-2">
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--panel-border)]"
-                    style={{ color: accent }}
-                  >
-                    <MapPin size={17} />
-                  </span>
-                  <div>
-                    <div className="mono-label !text-[10.5px]">Location</div>
-                    <p className="mt-1.5 text-[15px] font-medium leading-snug text-ink-0">
-                      {contact.address}
-                    </p>
-                  </div>
-                </div>
-                <div className="group flex gap-4 rounded-[calc(var(--radius)-6px)] p-6 transition-colors hover:bg-panel-2">
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--panel-border)]"
-                    style={{ color: accent }}
-                  >
-                    <Mail size={17} />
-                  </span>
-                  <div>
-                    <div className="mono-label !text-[10.5px]">Email</div>
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className="mt-1.5 block text-[15px] font-medium text-ink-0 transition-colors hover:text-signal-teal"
-                    >
-                      {contact.email}
-                    </a>
-                  </div>
-                </div>
-                <div className="group flex gap-4 rounded-[calc(var(--radius)-6px)] p-6 transition-colors hover:bg-panel-2">
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--panel-border)]"
-                    style={{ color: accent }}
-                  >
-                    <Phone size={17} />
-                  </span>
-                  <div>
-                    <div className="mono-label !text-[10.5px]">Phone</div>
-                    <div className="mt-1.5 flex flex-col gap-1">
-                      {contact.phones.map((p) => (
-                        <a
-                          key={p}
-                          href={`tel:${p.replace(/-/g, "")}`}
-                          className="text-[15px] font-medium text-ink-0 transition-colors hover:text-signal-teal"
-                        >
-                          {p}
-                        </a>
-                      ))}
+              <span className="mono-label">Why Choose Us</span>
+              <h2 className="mt-4 text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
+                Track your project the best way possible.
+              </h2>
+              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ink-1">
+                End-to-end {title} and delivery tracking in a single
+                solution. Meet the platform built to help you stay in
+                control.
+              </p>
+              <ul className="mt-7 space-y-3.5">
+                {trackChecklist.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CheckCircle2
+                      size={17}
+                      className="mt-0.5 shrink-0 text-signal-teal"
+                    />
+                    <span className="text-[14.5px] text-ink-1">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ================= SPECIALIST — TEXT + PHOTO ================= */}
+        <section className="relative overflow-hidden bg-void py-24">
+          <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
+            <Reveal>
+              <span className="mono-label">Why Choose Us</span>
+              <h2 className="mt-4 text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
+                Specialists helping clients solve technical challenges.
+              </h2>
+              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ink-1">
+                End-to-end {title} delivered by a team that understands your
+                operational reality, not just the spec sheet.
+              </p>
+
+              <div className="mt-9 space-y-6">
+                {specialistItems.map((item) => (
+                  <div key={item.title} className="flex items-start gap-4">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-signal-blue-dim text-signal-teal">
+                      <item.icon size={18} strokeWidth={1.75} />
+                    </span>
+                    <div>
+                      <div className="font-display text-[15px] font-medium text-ink-0">
+                        {item.title}
+                      </div>
+                      <p className="mt-1.5 text-[13.5px] leading-relaxed text-ink-2">
+                        {item.desc}
+                      </p>
                     </div>
                   </div>
+                ))}
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.1} className="relative">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -right-10 -top-10 h-[260px] w-[260px] rounded-full blur-[100px]"
+                style={{
+                  background:
+                    "radial-gradient(circle, var(--signal-blue-light), transparent 65%)",
+                }}
+              />
+              <div className="relative mx-auto max-w-sm overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
+                <img
+                  src={placeholder(520, 640, "Team+Photo")}
+                  alt="Placeholder"
+                  className="h-[420px] w-full object-cover grayscale"
+                />
+              </div>
+
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -left-6 bottom-8 hidden w-52 rounded-xl border border-[var(--panel-border)] bg-panel p-4 shadow-[0_20px_40px_-16px_rgba(17,24,39,0.3)] sm:block"
+              >
+                <div className="text-[11px] text-ink-2">Total Progress</div>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <span className="font-display text-[19px] font-semibold text-ink-0">
+                    82%
+                  </span>
+                  <span className="text-[11px] font-medium text-signal-teal">
+                    +14%
+                  </span>
                 </div>
+                <div className="mt-3 flex h-[36px] items-end gap-1.5">
+                  {barSeeds.map((h, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ height: 0 }}
+                      whileInView={{ height: `${h}%` }}
+                      viewport={{ once: true, margin: "-10% 0px" }}
+                      transition={{
+                        duration: 0.6,
+                        delay: 0.1 + i * 0.06,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className="w-full rounded-sm"
+                      style={{
+                        background: "linear-gradient(180deg, #2fe0c2, #4b64ff)",
+                        opacity: 0.85,
+                      }}
+                    />
+                  ))}
+                </div>
+              </motion.div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ================= FEATURES ================= */}
+        <section className="relative bg-surface py-24">
+          <div className="container-x relative">
+            <Reveal className="max-w-lg">
+              <h2 className="text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
+                Features that make a difference.
+              </h2>
+              <p className="mt-4 text-[15px] leading-relaxed text-ink-1">
+                End-to-end {title} and technical execution in a single
+                solution. Meet the platform built to help you realize it.
+              </p>
+            </Reveal>
+
+            <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {featureCards.map((c, i) => (
+                <Reveal key={i} delay={i * 0.06}>
+                  <div className="flex h-full flex-col justify-between rounded-2xl border border-[var(--panel-border)] bg-panel p-6">
+                    {"icon" in c && c.icon ? (
+                      <>
+                        <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-signal-blue-dim text-signal-teal">
+                          <c.icon size={17} strokeWidth={1.75} />
+                        </span>
+                        <div className="mt-6">
+                          <div className="font-display text-[15px] font-medium text-ink-0">
+                            {c.title}
+                          </div>
+                          <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
+                            {c.desc}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex h-full items-end">
+                        <div className="font-display text-[18px] font-semibold leading-snug text-ink-0">
+                          {c.title}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ================= OUR FEATURE — PHOTO + TEXT ================= */}
+        <section className="relative overflow-hidden bg-void py-24">
+          <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
+            <Reveal className="relative order-2 lg:order-1">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -left-10 -top-10 h-[240px] w-[240px] rounded-full blur-[100px]"
+                style={{
+                  background:
+                    "radial-gradient(circle, var(--signal-blue), transparent 65%)",
+                }}
+              />
+              <div className="relative mx-auto max-w-sm overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
+                <img
+                  src={placeholder(520, 640, "Feature+Photo")}
+                  alt="Placeholder"
+                  className="h-[420px] w-full object-cover grayscale"
+                />
+              </div>
+
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -right-4 top-10 hidden items-center gap-2.5 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] sm:flex"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
+                  <ArrowUpRight size={14} />
+                </span>
+                <div>
+                  <div className="text-[11px] font-medium text-ink-0">
+                    Feature Shipped
+                  </div>
+                  <div className="text-[10.5px] text-ink-2">2 hours ago</div>
+                </div>
+              </motion.div>
+
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.5,
+                }}
+                className="absolute -right-6 bottom-16 hidden items-center gap-2.5 rounded-xl border border-[var(--panel-border)] bg-panel px-3.5 py-2.5 shadow-[0_16px_32px_-16px_rgba(17,24,39,0.3)] sm:flex"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-signal-blue-dim text-signal-teal">
+                  <ArrowUpRight size={14} />
+                </span>
+                <div>
+                  <div className="text-[11px] font-medium text-ink-0">
+                    Deployed on Time
+                  </div>
+                  <div className="text-[10.5px] text-ink-2">Today, 09:41</div>
+                </div>
+              </motion.div>
+            </Reveal>
+
+            <Reveal delay={0.1} className="order-1 lg:order-2">
+              <span className="mono-label">Our Feature</span>
+              <h2 className="mt-4 text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
+                Ship {title} quickly, from anywhere.
+              </h2>
+              <p className="mt-5 max-w-md text-[15px] leading-relaxed text-ink-1">
+                Stay close to delivery with real-time visibility into every
+                sprint, release, and support ticket — wherever your team is
+                working from.
+              </p>
+              <Button asChild size="default" className="mt-8">
+                <a href="#kontak">
+                  Get Started <ArrowRight size={15} />
+                </a>
+              </Button>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ================= CTA BANNER ================= */}
+        <section className="relative overflow-hidden bg-signal-blue py-24">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-20"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+              backgroundSize: "56px 56px",
+            }}
+          />
+          <div className="container-x relative grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
+            <Reveal>
+              <h2 className="text-[clamp(28px,3.6vw,42px)] font-semibold leading-tight text-white">
+                We are here to help you
+                <br />
+                grow your business.
+              </h2>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <div className="mx-auto max-w-sm rounded-2xl border border-[var(--panel-border)] bg-panel p-7 shadow-[0_30px_60px_-20px_rgba(17,24,39,0.4)]">
+                <div className="space-y-4">
+                  <div>
+                    <label className="mono-label !text-[10px]">Name</label>
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      className="mt-2 w-full rounded-lg border border-[var(--panel-border)] bg-panel-2 px-3.5 py-2.5 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="mono-label !text-[10px]">Email</label>
+                    <input
+                      type="email"
+                      placeholder="Your Email Address"
+                      className="mt-2 w-full rounded-lg border border-[var(--panel-border)] bg-panel-2 px-3.5 py-2.5 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal"
+                      readOnly
+                    />
+                  </div>
+                  <div>
+                    <label className="mono-label !text-[10px]">Message</label>
+                    <input
+                      type="text"
+                      placeholder="Tell us about your project"
+                      className="mt-2 w-full rounded-lg border border-[var(--panel-border)] bg-panel-2 px-3.5 py-2.5 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal"
+                      readOnly
+                    />
+                  </div>
+                  <Button asChild variant="primary" className="mt-2 w-full justify-center">
+                    <a href="#kontak">Send Message</a>
+                  </Button>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ================= DOWNLOAD / RESOURCES ================= */}
+        <section className="relative bg-void py-24 text-center">
+          <div className="container-x relative">
+            <Reveal className="mx-auto max-w-xl">
+              <span className="mono-label">Get Started</span>
+              <h2 className="mt-4 text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
+                Download our free {title} guide.
+              </h2>
+              <p className="mt-5 text-[15px] leading-relaxed text-ink-1">
+                End-to-end {title} and technical execution in a single
+                solution. Meet the team ready to help you realize it.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <Button asChild size="default">
+                  <a href="#kontak">
+                    <Download size={15} /> Download Brochure
+                  </a>
+                </Button>
+                <Button asChild variant="ghost" size="default">
+                  <a href="#kontak">
+                    <FileText size={15} /> Request Demo
+                  </a>
+                </Button>
               </div>
             </Reveal>
           </div>
         </section>
       </main>
 
+      <Contact />
       <Footer />
     </div>
   );
