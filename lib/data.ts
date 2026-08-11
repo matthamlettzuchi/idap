@@ -204,18 +204,19 @@ export const products: Product[] = [
     link: "multifinance",
     code: "FIS-MF",
     name: "FISCUS Multifinance",
-    summary: "Customer financing and payments within a single core system.",
+    summary:
+      "A Loan Origination System for the entire loan application process, from prospect to disbursement.",
     description:
-      "An integrated solution for the entire consumer finance lifecycle—from contract acquisition and installment scheduling to collections. FISCUS Multifinance takes over the daily operational workload so your team can focus on portfolio growth.",
+      "FISCUS Multifinance System supports the credit application process for multifinance companies, banks, and other financial institutions, covering prospect management, initial credit scoring with SLIK integration, and the survey and appraisal process, through to disbursement and installment collection.",
     metrics: [
-      { label: "Contract cycle", value: "Real-time" },
-      { label: "Reconciliation", value: "Automated" },
+      { label: "Credit Scoring", value: "Fast & Accurate" },
+      { label: "Monitoring", value: "Real-time Dashboard" },
     ],
     modules: [
-      "Origination",
-      "Installment Scheduling",
-      "Collections",
-      "Cash Reconciliation",
+      "Application & Scoring",
+      "Approval & Contract",
+      "Disbursement",
+      "Collection",
     ],
   },
   {
@@ -223,18 +224,19 @@ export const products: Product[] = [
     link: "factoring",
     code: "FIS-FC",
     name: "FISCUS Factoring",
-    summary: "Factoring with invoice backing, fully tracked.",
+    summary:
+      "Sell your outstanding invoices for immediate cash, fully tracked in one system.",
     description:
-      "A system providing financing solutions backed by accounts receivable or invoices—tracking every document from verification to disbursement, with complete visibility into debtor concentration risk.",
+      "FISCUS Factoring lets a company sell its receivables, such as unpaid customer invoices, to a factor for immediate cash. The system manages the full cycle: facility setup, contract, disbursement, payment, and refund.",
     metrics: [
-      { label: "Invoice verification", value: "Multi-layered" },
-      { label: "Risk tracking", value: "Per debtor" },
+      { label: "Factoring Types", value: "Recourse & Non-Recourse" },
+      { label: "Monitoring", value: "Real-time Dashboard" },
     ],
     modules: [
-      "Invoice Verification",
+      "Facility & Contract",
       "Fund Disbursement",
-      "Risk Management",
-      "Receivables Reporting",
+      "Payment Tracking",
+      "Reporting & Analytics",
     ],
   },
   {
@@ -242,32 +244,39 @@ export const products: Product[] = [
     link: "accounting",
     code: "FIS-AC",
     name: "FISCUS Accounting",
-    summary: "Corporate bookkeeping with no gaps across general ledgers.",
+    summary:
+      "Web-based recording, management, and reporting of financial transactions.",
     description:
-      "An accounting information system optimizing comprehensive bookkeeping: accounts receivable, accounts payable, general ledger, fixed assets, to special ledgers—all connected in a single source of truth.",
+      "FISCUS Accounting provides a digital general ledger, transaction journals, and online financial reporting, guiding transactions through the accounting cycle from journal entry and posting to balancing, reporting, and period-end closing.",
     metrics: [
-      { label: "General ledger", value: "Unified" },
-      { label: "Period closing", value: "Scheduled" },
+      { label: "Data Updates", value: "Real-Time" },
+      { label: "Backups", value: "Automatic" },
     ],
-    modules: ["Accounts Receivable", "Accounts Payable", "General Ledger", "Fixed Assets"],
+    modules: [
+      "Journal & Posting",
+      "Balancing",
+      "Financial Reports",
+      "Period-End Closing",
+    ],
   },
   {
     id: "planta",
     link: "planta",
     code: "PLN",
     name: "Planta",
-    summary: "Palm oil plantation operations, from field to mill.",
+    summary:
+      "An integrated system for oil palm plantation and mill operations.",
     description:
-      "An integrated system to manage palm oil plantations—covering both Estates (field production and logistics) and Mills (processing plant) within a single operational data chain.",
+      "Planta covers plantation management, asset management, field maintenance, and cost and financial control for palm oil plantations and processing mills, developed together with plantation experts.",
     metrics: [
-      { label: "Coverage", value: "Estates + Mills" },
-      { label: "Production data", value: "Daily" },
+      { label: "Coverage", value: "Estate + Mill" },
+      { label: "Access", value: "24/7 Web-Based" },
     ],
     modules: [
-      "Field Management",
-      "FFB Logistics",
-      "Mill Production",
-      "Quality Control",
+      "Field & Voucher Records",
+      "Cost Allocation",
+      "Estate & Mill Reports",
+      "Consolidation",
     ],
   },
   {
@@ -275,18 +284,18 @@ export const products: Product[] = [
     link: "slik-silaras",
     code: "SLK-SR",
     name: "SLIK / SILARAS Report",
-    summary: "Direct reporting bridge to regulatory systems.",
+    summary: "Data analysis and reporting built for OJK compliance.",
     description:
-      "Connects your company's financial systems directly with OJK reporting systems—SLIK and SILARAS—ensuring data format, deadlines, and validation compliance every reporting cycle.",
+      "FISCUS SLIK/SILARAS Report processes and analyzes company data to produce informative, accurate reports, supporting risk assessment, compliance reporting, and strategic planning.",
     metrics: [
-      { label: "Format validation", value: "Pre-submission" },
-      { label: "OJK deadline", value: "Maintained" },
+      { label: "Compliance", value: "OJK Regulations" },
+      { label: "Export Formats", value: "PDF, Excel, CSV" },
     ],
     modules: [
-      "Data Extraction",
-      "Format Validation",
-      "Scheduled Submission",
-      "Audit Trail",
+      "Data Analysis",
+      "Database Integration",
+      "PSAK & CKPN Support",
+      "Period Comparison",
     ],
   },
 ];
