@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { motion } from "framer-motion";
 import {
@@ -51,7 +51,9 @@ function HeroDashboardCard() {
             <span
               key={i}
               className={`flex h-6.5 w-6.5 items-center justify-center rounded-md ${
-                i === 0 ? "bg-[image:var(--grad-signal)] text-white" : "text-ink-2"
+                i === 0
+                  ? "bg-[image:var(--grad-signal)] text-white"
+                  : "text-ink-2"
               }`}
             >
               <Icon size={12} />
@@ -136,7 +138,6 @@ export function Hero() {
       <div className="container-x relative flex flex-col lg:min-h-[72vh] lg:flex-row lg:items-stretch lg:gap-4">
         {/* left: eyebrow > floating dashboard > copy + CTA */}
         <div className="relative z-20 order-3 flex flex-col lg:order-1 lg:w-[26%] lg:justify-between lg:pb-6">
-
           <div className="mt-8 hidden justify-center lg:mt-0 lg:flex lg:justify-start">
             <HeroDashboardCard />
           </div>
@@ -148,7 +149,10 @@ export function Hero() {
             className="mt-8 text-center lg:mt-0 lg:text-left"
           >
             <p className="mx-auto max-w-xs text-[14.5px] leading-relaxed text-ink-1 lg:mx-0">
-              Data infrastructure underpinning financial decisions. We build and maintain core systems for multifinance, factoring, and enterprise institutions.
+              With over 25 years of experience, we deliver integrated IT systems
+              engineered for precision and reliability, helping businesses
+              innovate through technology and earn lasting trust from their
+              customers.
             </p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3.5 lg:justify-start">
               <Button asChild size="sm">
@@ -170,7 +174,11 @@ export function Hero() {
           <motion.div
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+            transition={{
+              duration: 0.9,
+              ease: [0.22, 1, 0.36, 1],
+              delay: 0.15,
+            }}
             className="absolute bottom-4 left-1/2 z-0 h-[280px] w-[280px] -translate-x-[200px] rounded-full sm:h-[360px] sm:w-[360px] lg:left-[38%] lg:h-[420px] lg:w-[420px]"
             style={{
               background:
@@ -194,7 +202,6 @@ export function Hero() {
           />
         </div>
 
-        {/* right: giant statement */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -202,11 +209,11 @@ export function Hero() {
           className="relative z-20 order-2 mt-8 flex flex-col items-center text-center lg:order-3 lg:mt-0 lg:w-[36%] lg:-ml-14 lg:items-end lg:justify-center lg:text-right"
         >
           <h1 className="font-display text-[clamp(46px,8.5vw,108px)] font-bold leading-[0.86] tracking-tight text-ink-0">
-            Right
+            Solutions
             <br />
-            <span className="text-blue-300">Financial</span>
+            <span className="text-blue-300">Built On</span>
             <br />
-            <span className="text-blue-400">Decisions.</span>
+            <span className="text-blue-400">Trust.</span>
           </h1>
         </motion.div>
       </div>

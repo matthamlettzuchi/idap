@@ -241,8 +241,6 @@ export function ServiceDetailView({
           <div className="container-x relative">
             <div className="relative mx-auto max-w-2xl py-10 text-center lg:py-16">
               {heroFloatCards.map((c, i) => {
-                // Badge now renders a real language/framework logo via
-                // Iconify instead of a generic lucide icon.
                 const floatIconName = heroIcons[i % heroIcons.length];
                 const badgeSize = Math.round(
                   Math.min(c.width, c.height) * 0.55,
