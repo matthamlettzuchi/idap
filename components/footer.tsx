@@ -16,18 +16,18 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer style={sectionTones.dark} className="relative overflow-hidden border-t border-[var(--panel-border)] bg-surface pb-10 pt-24">
+    <footer style={sectionTones.dark} className="relative overflow-hidden border-t border-(--panel-border) bg-surface pb-10 pt-24">
       <div className="constellation-texture pointer-events-none absolute inset-0 opacity-90" />
 
       <div className="container-x relative">
-        <div className="grid grid-cols-1 gap-14 border-b border-[var(--panel-border)] pb-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid grid-cols-1 gap-14 border-b border-(--panel-border) pb-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
             <Logo className="h-9 w-36" />
-            <p className="mt-5 max-w-[280px] text-[14px] leading-relaxed text-ink-1">
+            <p className="mt-5 max-w-70 text-[14px] leading-relaxed text-ink-1">
               PT Intidata Anugrah Pratama — integrated IT consulting solutions
               for corporate and public sectors.
             </p>
-            <p className="mt-4 max-w-[280px] text-[12.5px] leading-relaxed text-ink-2">
+            <p className="mt-4 max-w-70 text-[12.5px] leading-relaxed text-ink-2">
               {contact.address}
             </p>
           </div>
@@ -99,7 +99,7 @@ export function Footer() {
                 key={s.label}
                 href={s.href}
                 aria-label={s.label}
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--panel-border)] text-ink-1 transition-all duration-200 hover:-translate-y-0.5 hover:border-signal-teal hover:text-signal-teal"
+                className="flex h-9 w-9 items-center justify-center rounded-lg border border-(--panel-border) text-ink-1 transition-all duration-200 hover:-translate-y-0.5 hover:border-signal-teal hover:text-signal-teal"
               >
                 <s.icon size={15} />
               </a>

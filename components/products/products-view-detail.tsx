@@ -88,7 +88,7 @@ export function ProductDetailView({
       <main>
         <div
           ref={heroRef}
-          className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen min-h-[900px] overflow-hidden"
+          className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen min-h-225 overflow-hidden"
         >
           <motion.div
             className="absolute inset-0"
@@ -105,8 +105,8 @@ export function ProductDetailView({
             />
           </motion.div>
 
-          <div className="absolute inset-0 bg-gradient-to-r from-black/72 via-black/30 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15" />
+          <div className="absolute inset-0 bg-linear-to-r from-black/72 via-black/30 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/45 via-transparent to-black/15" />
 
           <motion.div
             className="absolute inset-x-0 bottom-0 flex justify-end pb-8 pr-[4%] sm:pb-10 sm:pr-[7%]"
@@ -127,11 +127,11 @@ export function ProductDetailView({
                 delay: 0.5,
               }}
               style={{ transformOrigin: "bottom center" }}
-              className="relative flex h-[64%] w-[320px] items-end justify-center sm:h-[72%] sm:w-[420px] lg:w-[500px]"
+              className="relative flex h-[64%] w-[320px] items-end justify-center sm:h-[72%] sm:w-105 lg:w-125"
             >
               <div
                 aria-hidden
-                className="pointer-events-none absolute bottom-4 left-1/2 h-[30px] w-[68%] -translate-x-1/2 rounded-full bg-black/45 blur-xl"
+                className="pointer-events-none absolute bottom-4 left-1/2 h-7.5 w-[68%] -translate-x-1/2 rounded-full bg-black/45 blur-xl"
               />
               <img
                 src={product.personImage}
@@ -303,7 +303,7 @@ export function ProductDetailView({
           </motion.div>
         </div>
 
-        <section className="relative border-t border-[var(--panel-border)] py-20">
+        <section className="relative border-t border-(--panel-border) py-20">
           <div className="container-x grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <Reveal>
               <span className="mono-label" style={{ color: accent }}>
@@ -321,7 +321,7 @@ export function ProductDetailView({
             <Reveal delay={0.1} className="relative">
               <div
                 aria-hidden
-                className="pointer-events-none absolute -right-6 -top-10 hidden h-[120px] w-[120px] items-center justify-center lg:flex"
+                className="pointer-events-none absolute -right-6 -top-10 hidden h-30 w-30 items-center justify-center lg:flex"
               >
                 {[0, 1, 2].map((ring) => (
                   <motion.span
@@ -348,7 +348,7 @@ export function ProductDetailView({
                 </span>
               </div>
 
-              <div className="rounded-2xl border border-[var(--panel-border)] bg-panel p-7">
+              <div className="rounded-2xl border border-(--panel-border) bg-panel p-7">
                 <div className="mono-label">System Summary</div>
                 <ul className="mt-5 space-y-4">
                   {product.quickFacts.map((fact) => (
@@ -366,7 +366,7 @@ export function ProductDetailView({
                     </li>
                   ))}
                 </ul>
-                <div className="mt-7 flex items-center gap-2 border-t border-[var(--panel-border)] pt-5 font-mono text-[12px] text-ink-2">
+                <div className="mt-7 flex items-center gap-2 border-t border-(--panel-border) pt-5 font-mono text-[12px] text-ink-2">
                   Integrated modules
                   <ArrowUpRight size={13} style={{ color: accent }} />
                   FISCUS Platform
@@ -377,7 +377,7 @@ export function ProductDetailView({
         </section>
 
         <section
-          className="relative overflow-hidden border-t border-[var(--panel-border)] py-20"
+          className="relative overflow-hidden border-t border-(--panel-border) py-20"
           style={{ background: hexToRgba(accent, 0.04) }}
         >
           <div className="container-x">
@@ -390,7 +390,7 @@ export function ProductDetailView({
               </h2>
             </Reveal>
 
-            <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-(--panel-border) bg-(--panel-border) sm:grid-cols-2 lg:grid-cols-3">
               {product.advantages.map((adv, i) => {
                 const AdvIcon = advantageIcons[i % advantageIcons.length];
                 return (
@@ -427,7 +427,7 @@ export function ProductDetailView({
         </section>
 
         {product.processIntro && (
-          <section className="relative border-t border-[var(--panel-border)] py-20">
+          <section className="relative border-t border-(--panel-border) py-20">
             <div className="container-x">
               <Reveal>
                 <div
@@ -450,7 +450,7 @@ export function ProductDetailView({
                   </div>
 
                   {product.processLottie && (
-                    <div className="relative mx-auto flex h-[220px] w-full max-w-[320px] items-center justify-center sm:h-[260px]">
+                    <div className="relative mx-auto flex h-55 w-full max-w-[320px] items-center justify-center sm:h-55">
                       <div
                         aria-hidden
                         className="pointer-events-none absolute inset-0 rounded-full blur-[60px]"
@@ -470,7 +470,7 @@ export function ProductDetailView({
           </section>
         )}
 
-        <section className="relative border-t border-[var(--panel-border)] py-20">
+        <section className="relative border-t border-(--panel-border) py-20">
           <div className="container-x">
             <Reveal className="max-w-2xl">
               <span className="mono-label" style={{ color: accent }}>
@@ -491,7 +491,7 @@ export function ProductDetailView({
                 const FIcon = featureIcons[i % featureIcons.length];
                 return (
                   <Reveal key={f.title} delay={i * 0.06}>
-                    <div className="h-full rounded-xl border border-[var(--panel-border)] bg-panel p-6 transition-colors hover:bg-panel-2">
+                    <div className="h-full rounded-xl border border-(--panel-border) bg-panel p-6 transition-colors hover:bg-panel-2">
                       <span
                         className="flex h-10 w-10 items-center justify-center rounded-lg border"
                         style={{
@@ -515,7 +515,7 @@ export function ProductDetailView({
           </div>
         </section>
 
-        <section className="relative border-t border-[var(--panel-border)] py-20">
+        <section className="relative border-t border-(--panel-border) py-20">
           <div className="container-x">
             <Reveal className="mb-10 max-w-xl">
               <span className="mono-label">Other Products</span>
@@ -531,7 +531,7 @@ export function ProductDetailView({
                   <Reveal key={r.slug} delay={i * 0.05}>
                     <Link
                       href={`/products/${r.slug}`}
-                      className="group flex h-full flex-col justify-between rounded-xl border border-[var(--panel-border)] bg-panel p-5 transition-colors hover:bg-panel-2"
+                      className="group flex h-full flex-col justify-between rounded-xl border border-(--panel-border) bg-panel p-5 transition-colors hover:bg-panel-2"
                     >
                       <div>
                         <span

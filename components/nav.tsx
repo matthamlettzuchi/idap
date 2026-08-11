@@ -165,11 +165,11 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
       <div
         className={`border-b transition-all duration-300 ${
           scrolled
-            ? "border-[var(--panel-border)] bg-void/85 backdrop-blur-xl"
+            ? "border-(--panel-border) bg-void/85 backdrop-blur-xl"
             : "border-transparent bg-transparent"
         }`}
       >
-        <div className="container-x flex h-[72px] items-center justify-between">
+        <div className="container-x flex h-18 items-center justify-between">
           <Link href="/" className="flex items-center">
             <Logo className="h-12 w-32" />
           </Link>
@@ -205,7 +205,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute -left-20 top-full w-[680px] rounded-2xl border border-[var(--panel-border)] bg-panel p-6 shadow-2xl"
+                    className="absolute -left-20 top-full w-170 rounded-2xl border border-(--panel-border) bg-panel p-6 shadow-2xl"
                   >
                     <div className="mono-label mb-4">Core Products Suite</div>
                     <div className="grid grid-cols-2 gap-3">
@@ -213,9 +213,9 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                         <Link
                           key={prod.name}
                           href={prod.href}
-                          className="group flex items-start gap-3.5 rounded-xl border border-transparent p-3 transition-colors hover:border-[var(--panel-border)] hover:bg-panel-2"
+                          className="group flex items-start gap-3.5 rounded-xl border border-transparent p-3 transition-colors hover:border-(--panel-border) hover:bg-panel-2"
                         >
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-(--panel-border) text-signal-teal transition-colors group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
                             <prod.icon size={18} />
                           </span>
                           <div>
@@ -259,15 +259,15 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute -left-40 top-full flex w-[780px] overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-2xl"
+                    className="absolute -left-40 top-full flex w-195 overflow-hidden rounded-2xl border border-(--panel-border) bg-panel shadow-2xl"
                   >
-                    <div className="w-64 border-r border-[var(--panel-border)] bg-panel-2 p-4">
+                    <div className="w-64 border-r border-(--panel-border) bg-panel-2 p-4">
                       <div className="mono-label mb-3 px-3">Category</div>
                       <button
                         onMouseEnter={() => setActiveCategory("sw")}
                         className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
                           activeCategory === "sw"
-                            ? "border border-[var(--panel-border)] bg-panel text-ink-0"
+                            ? "border border-(--panel-border) bg-panel text-ink-0"
                             : "text-ink-2 hover:text-ink-0"
                         }`}
                       >
@@ -285,7 +285,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                         onMouseEnter={() => setActiveCategory("infra")}
                         className={`mt-2 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
                           activeCategory === "infra"
-                            ? "border border-[var(--panel-border)] bg-panel text-ink-0"
+                            ? "border border-(--panel-border) bg-panel text-ink-0"
                             : "text-ink-2 hover:text-ink-0"
                         }`}
                       >
@@ -402,7 +402,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
-          className="max-h-[calc(100vh-72px)] overflow-y-auto border-b border-[var(--panel-border)] bg-void/95 backdrop-blur-xl md:hidden"
+          className="max-h-[calc(100vh-72px)] overflow-y-auto border-b border-(--panel-border) bg-void/95 backdrop-blur-xl md:hidden"
         >
           <div className="container-x flex flex-col gap-4 py-6">
             <Link
@@ -430,7 +430,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                 />
               </button>
               {mobileAccordion === "products" && (
-                <div className="mt-3 flex flex-col gap-3 border-l border-[var(--panel-border)] pl-4">
+                <div className="mt-3 flex flex-col gap-3 border-l border-(--panel-border) pl-4">
                   {productList.map((prod) => (
                     <Link
                       key={prod.name}
@@ -463,7 +463,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                 />
               </button>
               {mobileAccordion === "services" && (
-                <div className="mt-3 flex flex-col gap-3 border-l border-[var(--panel-border)] pl-4">
+                <div className="mt-3 flex flex-col gap-3 border-l border-(--panel-border) pl-4">
                   <div className="mono-label text-[11px]">Software Development</div>
                   {softwareDevServices.map((item) => (
                     <Link

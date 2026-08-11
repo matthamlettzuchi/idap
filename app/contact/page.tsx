@@ -65,7 +65,7 @@ export default function ContactPage() {
       <Nav overlayHero />
 
       <main>
-        <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen lg:h-screen lg:min-h-[900px] overflow-hidden">
+        <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen lg:h-screen lg:min-h-225 overflow-hidden">
           <img
             src="/skaiskrepers.jpg"
             alt=""
@@ -78,8 +78,7 @@ export default function ContactPage() {
             }}
             className="absolute inset-0 h-full w-full object-cover"
           />
-          {/* light overlay for text legibility — remove if the photo already reads fine */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/10 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
 
           <div className="relative z-10 flex min-h-full flex-col justify-between gap-10 px-6 pb-10 pt-36 sm:px-10 lg:px-14 lg:pb-8 lg:pt-60">
             {/* copy + form */}
@@ -135,10 +134,10 @@ export default function ContactPage() {
                   delay: 0.2,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="w-full rounded-[24px] bg-white p-6 shadow-[0_30px_70px_-24px_rgba(10,30,80,0.45)] sm:p-8 lg:max-h-[calc(100vh-240px)]"
+                className="w-full rounded-3xl bg-white p-6 shadow-[0_30px_70px_-24px_rgba(10,30,80,0.45)] sm:p-8 lg:max-h-[calc(100vh-240px)]"
               >
                 {submitted ? (
-                  <div className="flex min-h-[420px] flex-col items-center justify-center text-center">
+                  <div className="flex min-h-105 flex-col items-center justify-center text-center">
                     <span
                       className="flex h-14 w-14 items-center justify-center rounded-full text-[24px] font-bold text-[#12141c]"
                       style={{ background: ACCENT_LIME }}

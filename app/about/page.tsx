@@ -231,8 +231,8 @@ export default function AboutPage() {
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal relative overflow-hidden">
       <Nav overlayHero />
 
-      <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[600px] w-full max-w-7xl -translate-x-1/2 opacity-30 blur-[120px]">
-        <div className="h-full w-full bg-gradient-to-tr from-signal-teal/30 via-signal-blue/20 to-transparent" />
+      <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-150 w-full max-w-7xl -translate-x-1/2 opacity-30 blur-[120px]">
+        <div className="h-full w-full bg-linear-to-tr from-signal-teal/30 via-signal-blue/20 to-transparent" />
       </div>
       <div className="pointer-events-none absolute -top-40 right-0 -z-10 h-96 w-96 rounded-full bg-signal-teal/10 blur-[100px]" />
 
@@ -259,11 +259,11 @@ export default function AboutPage() {
             className="absolute inset-0 bg-black/55"
             style={{ opacity: heroOverlayOpacity }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
 
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+            className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-linear-to-r from-transparent via-white/10 to-transparent"
             initial={{ x: "-20%" }}
             animate={{ x: "260%" }}
             transition={{ duration: 2.2, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -349,7 +349,7 @@ export default function AboutPage() {
                   transition: { duration: 0.2, ease: EASE_OUT },
                 }}
                 transition={{ duration: 0.5, ease: EASE_OUT }}
-                className="md:col-span-7 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md relative overflow-hidden flex flex-col justify-between group hover:border-signal-teal/40 transition-colors"
+                className="md:col-span-7 rounded-2xl border border-(--panel-border) bg-panel/70 p-8 backdrop-blur-md relative overflow-hidden flex flex-col justify-between group hover:border-signal-teal/40 transition-colors"
               >
                 <div className="space-y-4">
                   <motion.div
@@ -369,13 +369,13 @@ export default function AboutPage() {
                   </p>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-[var(--panel-border)] flex items-center gap-8">
+                <div className="mt-8 pt-6 border-t border-(--panel-border) flex items-center gap-8">
                   <StatCounter
                     value={30}
                     suffix="+"
                     label="Years Track Record"
                   />
-                  <div className="h-8 w-[1px] bg-[var(--panel-border)]" />
+                  <div className="h-8 w-px bg-(--panel-border)" />
                   <StatCounter
                     value={100}
                     suffix="%"
@@ -396,7 +396,7 @@ export default function AboutPage() {
                   src="/animat.lottie"
                   autoplay
                   loop
-                  className="h-auto w-auto max-h-[320px] object-contain"
+                  className="h-auto w-auto max-h-80 object-contain"
                 />
               </motion.div>
 
@@ -408,7 +408,7 @@ export default function AboutPage() {
                   transition: { duration: 0.2, ease: EASE_OUT },
                 }}
                 transition={{ duration: 0.5, delay: 0.12, ease: EASE_OUT }}
-                className="md:col-span-5 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-colors"
+                className="md:col-span-5 rounded-2xl border border-(--panel-border) bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-colors"
               >
                 <motion.div
                   whileHover={{ rotate: -8 }}
@@ -434,7 +434,7 @@ export default function AboutPage() {
                   transition: { duration: 0.2, ease: EASE_OUT },
                 }}
                 transition={{ duration: 0.5, delay: 0.18, ease: EASE_OUT }}
-                className="md:col-span-7 rounded-2xl border border-[var(--panel-border)] bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-colors"
+                className="md:col-span-7 rounded-2xl border border-(--panel-border) bg-panel/70 p-8 backdrop-blur-md hover:border-signal-teal/40 transition-colors"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-10 w-10 rounded-xl bg-signal-blue-dim flex items-center justify-center text-signal-teal">
@@ -457,7 +457,7 @@ export default function AboutPage() {
                         delay: idx * 0.05,
                         ease: EASE_OUT,
                       }}
-                      className="flex items-center gap-2.5 rounded-lg border border-[var(--panel-border)] bg-panel-2/50 px-3 py-2.5 text-xs font-medium text-ink-1"
+                      className="flex items-center gap-2.5 rounded-lg border border-(--panel-border) bg-panel-2/50 px-3 py-2.5 text-xs font-medium text-ink-1"
                     >
                       <CheckCircle2
                         size={15}
@@ -473,13 +473,13 @@ export default function AboutPage() {
         </section>
         <section
           style={sectionTones.dark}
-          className="relative overflow-hidden bg-void py-36 border-t border-[var(--panel-border)] lg:pt-20"
+          className="relative overflow-hidden bg-void py-36 border-t border-(--panel-border) lg:pt-20"
         >
           <div className="circuit-texture pointer-events-none absolute inset-0 opacity-50" />
 
           <div
             aria-hidden
-            className="pointer-events-none absolute -left-10 -top-6 hidden h-[300px] w-[300px] rounded-full blur-[90px] lg:block"
+            className="pointer-events-none absolute -left-10 -top-6 hidden h-75 w-75 rounded-full blur-[90px] lg:block"
             style={{
               background:
                 "radial-gradient(circle, rgba(111,141,255,.35), transparent 70%)",
@@ -487,13 +487,13 @@ export default function AboutPage() {
             }}
           />
 
-          <CarryingPersonIllustration className="pointer-events-none absolute top-21 left-4 z-20 hidden h-[280px] w-[280px] lg:block" />
+          <CarryingPersonIllustration className="pointer-events-none absolute top-21 left-4 z-20 hidden h-70 w-70 lg:block" />
 
-          <DirectionCompass className="pointer-events-none absolute top-15 right-20 z-20 hidden h-[170px] w-[170px] lg:block" />
+          <DirectionCompass className="pointer-events-none absolute top-15 right-20 z-20 hidden h-42.5 w-42.5 lg:block" />
 
           <div className="container-x max-w-6xl relative z-10">
             <Reveal className="text-center max-w-xl mx-auto mb-12">
-              <span className="mono-label inline-flex items-center rounded-full border border-[var(--panel-border-strong)] bg-panel-2 px-3 py-1 !text-[11px] font-semibold tracking-[0.16em] text-signal-teal">
+              <span className="mono-label inline-flex items-center rounded-full border border-(--panel-border-strong) bg-panel-2 px-3 py-1 text-[11px]! font-semibold tracking-[0.16em] text-signal-teal">
                 VISION & MISSION
               </span>
               <h2 className="mt-4 text-2xl font-bold text-ink-0 md:text-3xl">
@@ -503,7 +503,7 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               <Reveal className="relative">
-                <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
+                <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-(--panel-border) bg-panel p-8">
                   <div className="flex items-center gap-3">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-signal-teal/30 bg-signal-blue-dim text-signal-teal shadow-[0_0_28px_-8px_var(--signal-teal)]">
                       <Eye size={19} />
@@ -521,7 +521,7 @@ export default function AboutPage() {
                     To be the primary technology partner for financial institutions and corporations in Indonesia — enabling every business decision to be made on accurate, real-time, and regulatory-compliant data.
                   </p>
 
-                  <div className="mt-auto grid grid-cols-3 gap-3 border-t border-[var(--panel-border)] pt-6">
+                  <div className="mt-auto grid grid-cols-3 gap-3 border-t border-(--panel-border) pt-6">
                     {[
                       { value: "25+", label: "Years Experience" },
                       { value: "17+", label: "Active Clients" },
@@ -541,7 +541,7 @@ export default function AboutPage() {
               </Reveal>
 
               <Reveal delay={0.08}>
-                <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
+                <div className="h-full rounded-2xl border border-(--panel-border) bg-panel p-8">
                   <div className="flex items-center gap-3">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-signal-teal/30 bg-signal-blue-dim text-signal-teal shadow-[0_0_28px_-8px_var(--signal-teal)]">
                       <Compass size={19} />
@@ -555,7 +555,7 @@ export default function AboutPage() {
                       <li key={point} className="flex items-start gap-3">
                         <CheckCircle2
                           size={16}
-                          className="mt-[3px] shrink-0 text-signal-teal"
+                          className="mt-0.75 shrink-0 text-signal-teal"
                         />
                         <span className="text-[14.5px] leading-relaxed text-ink-0/75">
                           {point}
@@ -570,7 +570,7 @@ export default function AboutPage() {
         </section>
         <section
           style={sectionTones.light}
-          className="relative bg-void py-24 border-t border-[var(--panel-border)]"
+          className="relative bg-void py-24 border-t border-(--panel-border)"
         >
           <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
@@ -584,7 +584,7 @@ export default function AboutPage() {
               <div className="relative">
                 <div
                   aria-hidden
-                  className="absolute lg:left-[-33px] md:left-[-33px] top-2 bottom-2 w-px bg-[var(--panel-border-strong)] left-[-26px]"
+                  className="absolute lg:-left-8.25 md:-left-8.25 top-2 bottom-2 w-px bg-(--panel-border-strong) -left-6.5"
                 />
                 <div className="flex flex-col gap-10">
                   {journey.map((step, i) => (
@@ -597,7 +597,7 @@ export default function AboutPage() {
                         aria-hidden
                         className="absolute -left-8 top-1 h-3.5 w-3.5 rounded-full border-2 border-signal-teal bg-void sm:-left-10"
                       />
-                      <span className="mono-label !text-signal-teal">
+                      <span className="mono-label text-signal-teal!">
                         {step.era}
                       </span>
                       <h3 className="mt-2 font-display text-[19px] font-medium text-ink-0">
@@ -620,7 +620,7 @@ export default function AboutPage() {
         </section>
         <section
           style={sectionTones.dark}
-          className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
+          className="relative overflow-hidden bg-void py-24 border-t border-(--panel-border)"
         >
           <div className="chevron-texture pointer-events-none absolute inset-0 opacity-40" />
           <div className="container-x max-w-6xl relative">
@@ -631,12 +631,12 @@ export default function AboutPage() {
               </h2>
             </Reveal>
 
-            <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-(--panel-border) bg-(--panel-border) sm:grid-cols-2 lg:grid-cols-4">
               {processSteps.map((step, i) => (
                 <Reveal key={step.label} delay={i * 0.06}>
                   <div className="group h-full bg-panel p-6 transition-colors duration-300 hover:bg-panel-2">
                     <div className="flex items-center justify-between">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-(--panel-border) text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
                         <step.icon size={17} strokeWidth={1.75} />
                       </span>
                       <span className="font-mono text-[11px] text-ink-2">
@@ -657,7 +657,7 @@ export default function AboutPage() {
         </section>
         <section
           style={sectionTones.light}
-          className="relative bg-void py-24 border-t border-[var(--panel-border)]"
+          className="relative bg-void py-24 border-t border-(--panel-border)"
         >
           <div className="container-x max-w-6xl relative">
             <Reveal className="text-center max-w-xl mx-auto mb-12">
@@ -670,7 +670,7 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {coreValues.map((val, i) => (
                 <Reveal key={val.title} delay={i * 0.06}>
-                  <div className="h-full rounded-xl border border-[var(--panel-border)] bg-panel/40 p-6 backdrop-blur-sm transition-all hover:border-signal-teal/30 hover:bg-panel/70">
+                  <div className="h-full rounded-xl border border-(--panel-border) bg-panel/40 p-6 backdrop-blur-sm transition-all hover:border-signal-teal/30 hover:bg-panel/70">
                     <div className="font-mono text-xs text-signal-teal mb-3">
                       0{i + 1}
                     </div>
@@ -686,7 +686,7 @@ export default function AboutPage() {
         </section>
         <section
           style={sectionTones.dark}
-          className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
+          className="relative overflow-hidden bg-void py-24 border-t border-(--panel-border)"
         >
           <div className="wave-stream-texture pointer-events-none absolute inset-0 opacity-80" />
           <div className="container-x max-w-6xl relative">
@@ -702,7 +702,7 @@ export default function AboutPage() {
                 const Icon = whyChooseIcons[i % whyChooseIcons.length];
                 return (
                   <Reveal key={p.label} delay={i * 0.05}>
-                    <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-6 transition-colors hover:bg-panel-2">
+                    <div className="h-full rounded-2xl border border-(--panel-border) bg-panel p-6 transition-colors hover:bg-panel-2">
                       <div className="h-10 w-10 rounded-lg bg-signal-blue-dim flex items-center justify-center text-signal-teal">
                         <Icon size={18} strokeWidth={1.75} />
                       </div>
@@ -721,7 +721,7 @@ export default function AboutPage() {
         </section>
         <section
           style={sectionTones.light}
-          className="relative bg-void py-24 border-t border-[var(--panel-border)]"
+          className="relative bg-void py-24 border-t border-(--panel-border)"
         >
           <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
@@ -734,8 +734,8 @@ export default function AboutPage() {
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
               {industries.map((ind, i) => (
                 <Reveal key={ind.title} delay={i * 0.05}>
-                  <div className="h-full rounded-xl border border-[var(--panel-border)] bg-panel-2/50 p-5 transition-colors hover:bg-panel">
-                    <div className="h-9 w-9 rounded-lg bg-panel flex items-center justify-center text-signal-teal border border-[var(--panel-border)]">
+                  <div className="h-full rounded-xl border border-(--panel-border) bg-panel-2/50 p-5 transition-colors hover:bg-panel">
+                    <div className="h-9 w-9 rounded-lg bg-panel flex items-center justify-center text-signal-teal border border-(--panel-border)">
                       <ind.icon size={16} strokeWidth={1.75} />
                     </div>
                     <h4 className="mt-4 text-[13.5px] font-semibold text-ink-0">
@@ -750,7 +750,7 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        <div className="border-t border-[var(--panel-border)] pt-16">
+        <div className="border-t border-(--panel-border) pt-16">
           <Reveal className="container-x max-w-6xl text-center mb-8">
             <span className="mono-label">Trusted By</span>
           </Reveal>
