@@ -5,11 +5,11 @@ import { useEffect, useRef } from "react";
 type Anchor = { x: number; y: number; label: string };
 
 const anchors: Anchor[] = [
-  { x: 0.5, y: 0.5, label: "Core Ledger" },
-  { x: 0.16, y: 0.22, label: "FISCUS Multifinance" },
-  { x: 0.84, y: 0.2, label: "FISCUS Factoring" },
+  { x: 0.5, y: 0.5, label: "FISCUS Core System" },
+  { x: 0.16, y: 0.22, label: "Report" },
+  { x: 0.84, y: 0.2, label: "Factoring" },
   { x: 0.14, y: 0.78, label: "Planta" },
-  { x: 0.86, y: 0.8, label: "FISCUS Accounting" },
+  { x: 0.86, y: 0.8, label: "Accounting" },
   { x: 0.5, y: 0.08, label: "SLIK — OJK" },
   { x: 0.5, y: 0.92, label: "SILARAS — OJK" },
 ];

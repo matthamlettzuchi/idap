@@ -147,12 +147,12 @@ function HandshakeVisual() {
       />
 
       <motion.img
-        src="/handshake-partnership.png"
+        src="/deal.svg"
         alt="Jabat tangan kemitraan Intidata"
         initial={{ opacity: 0, y: 16 }}
         animate={active ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute bottom-10 left-1/2 h-auto w-[88%] -translate-x-1/2 select-none"
+        className="absolute bottom-5 left-1/2 h-auto w-[70%] -translate-x-1/2 select-none"
         style={{
           background: `
       radial-gradient(

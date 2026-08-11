@@ -19,7 +19,7 @@ export function Technology() {
             multiple integration points.
           </h2>
           <p className="mt-7 max-w-md text-[15.5px] leading-relaxed text-ink-1">
-            Every Intidata system connects to the same Core Ledger — ensuring
+            Every Intidata system connects to the same FISCUS Core System — ensuring
             data flows consistently from your internal operational systems all
             the way to regulatory reporting, without duplicate entry or manual
             reconciliation.

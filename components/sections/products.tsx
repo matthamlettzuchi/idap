@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { products } from "@/lib/data";
 import { Reveal } from "@/components/ui/reveal";
+import Link from "next/link";
 
 const sidebarIcons = [LayoutGrid, BarChart3, Database, ShieldCheck, Settings2];
 
@@ -206,7 +207,6 @@ export function Products() {
 
         <Reveal delay={0.1}>
           <div className="grid grid-cols-1 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] lg:grid-cols-[320px_1fr]">
-            {/* product list */}
             <div className="flex flex-col border-b border-[var(--panel-border)] bg-panel lg:border-b-0 lg:border-r">
               {products.map((p) => (
                 <button
@@ -230,14 +230,16 @@ export function Products() {
                       {p.name}
                     </span>
                   </span>
-                  <ArrowUpRight
-                    size={16}
-                    className={`shrink-0 transition-all ${
-                      activeId === p.id
-                        ? "translate-x-0 text-signal-teal opacity-100"
-                        : "-translate-x-1 text-ink-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
-                    }`}
-                  />
+                  <Link href={`/products/${p.link}`}>
+                    <ArrowUpRight
+                      size={16}
+                      className={`shrink-0 transition-all ${
+                        activeId === p.id
+                          ? "translate-x-0 text-signal-teal opacity-100"
+                          : "-translate-x-1 text-ink-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
+                      }`}
+                    />
+                  </Link>
                 </button>
               ))}
             </div>

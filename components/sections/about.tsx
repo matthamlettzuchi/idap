@@ -117,7 +117,6 @@ export function About() {
           </Reveal>
         </div>
 
-        {/* KOLOM KANAN (4 Cards Grid) */}
         <div className="lg:col-span-7 lg:ml-6">
           <Reveal delay={0.1}>
             <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius)] border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2">
