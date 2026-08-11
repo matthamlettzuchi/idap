@@ -56,37 +56,37 @@ const whyChooseIcons = [
 
 const journey = [
   {
-    era: "Starting Point",
-    title: "Core System Foundation",
-    body: "Intidata started from the most fundamental need of financial institutions: accurate record-keeping and reliable daily operational processes.",
+    era: "Software Heritage",
+    title: "Three Decades of Financial Software Expertise",
+    body: "For more than 30 years, Intidata has developed and implemented software for the financial industry, evolving from DOS-based systems, to Windows-based, to web-based, and now multi-device platforms.",
   },
   {
-    era: "Specialization",
-    title: "Focus on the Multifinance Sector",
-    body: "Deep field experience in the financing industry became the blueprint for FISCUS — a core system specially designed for contract lifecycles, installments, and collections.",
+    era: "Product Registration",
+    title: "FISCUS: A Registered Solution",
+    body: "FISCUS is Intidata's suite of solutions, officially registered with Indonesia's Ministry of Law and Human Rights.",
   },
   {
-    era: "Service Expansion",
-    title: "From Factoring to Plantation Management",
-    body: "The ecosystem expanded into Factoring, Accounting, and Planta — proving that our modular architecture can adapt across industries without being rebuilt from scratch.",
+    era: "Solution Scope",
+    title: "From Multifinance to Enterprise ERP",
+    body: "Our software portfolio spans MultiFinance (Loan Origination & Loan Management Systems), Factoring, Plantation, Accounting (GL/AR/AP), Payroll, Helpdesk, and ERP, supporting businesses of every scale.",
   },
   {
-    era: "Standardization",
-    title: "Direct Regulatory Connectivity",
-    body: "The SLIK/SILARAS Report module was built so format validation and reporting schedules to OJK run automatically, rather than being manual tasks at period-end.",
+    era: "Our Approach",
+    title: "Custom Software, Built Around You",
+    body: "We focus on understanding each client's needs and building custom software tailored to their business: solutions that off-the-shelf products often can't provide.",
   },
   {
     era: "Present Day",
-    title: "Enterprise-Scale Partner",
-    body: "More than 30 years later, Intidata supports dozens of local and multinational institutions — from single branch offices to large corporate groups.",
+    title: "Serving Local and International Clients",
+    body: "Since our founding, Intidata has grown to serve a range of local and foreign companies across Indonesia, guided by hard work, dedication, cutting-edge technology, and teamwork.",
   },
 ];
 
 const missionPoints = [
-  "Designing systems that minimize manual processes and accelerate daily operational cycles.",
-  "Making regulatory compliance run automatically, rather than being an extra burden at month-end.",
-  "Building long-term partnerships with clients rather than treating projects as one-off transactions.",
-  "Supporting client business growth without forcing them to rebuild systems from scratch.",
+  "Understanding our partners' needs, requirements, and challenges, then providing reliable and skilled resources for every project.",
+  "Treating every project as part of an integrated plan built around each client's specific business needs.",
+  "Creating synergy between our technical expertise and client needs to deliver complete IT solutions.",
+  "Focusing on custom, tailored software: solutions that off-the-shelf products often can't provide.",
 ];
 
 const processSteps = [
@@ -206,25 +206,25 @@ export default function AboutPage() {
     },
     {
       title: "Cutting-Edge Technology",
-      desc: "Adopting modern open-source and cloud-native architecture stacks.",
+      desc: "Focused on modern, open-source-based innovation and technology.",
     },
     {
       title: "Team Collaboration",
-      desc: "A synergy of experienced tech experts and financial analysts.",
+      desc: "A team equal in creativity and intelligence, working together on every project.",
     },
     {
-      title: "Long-Term Partnerships",
-      desc: "Guiding enterprise system growth from SMEs to large corporations.",
+      title: "Client-Focused Service",
+      desc: "Personalized service built around understanding each client's needs and challenges.",
     },
   ];
 
   const solutions = [
     "MultiFinance System (LOS & LMS)",
-    "Factoring & Supply Chain Finance",
+    "Factoring Solutions",
     "Enterprise Accounting (GL/AR/AP)",
-    "Payroll & Human Resource ERP",
-    "Agribusiness & Plantation System",
-    "Software Licensing & Cybersecurity",
+    "Payroll & Helpdesk Systems",
+    "Plantation & Agribusiness System",
+    "ERP, Licensing & Software Security",
   ];
 
   return (
@@ -313,8 +313,10 @@ export default function AboutPage() {
               }}
               className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/80 md:text-base"
             >
-              A trusted end-to-end software engineering, IT infrastructure automation,
-              and registered financial platform development partner in Indonesia.
+              A software solutions company focused on desktop, web, and mobile
+              applications, serving small, medium, and large businesses,
+              organizations, and institutions across Indonesia with personalized
+              service and technology-driven innovation.
             </motion.p>
 
             <motion.div
@@ -363,9 +365,10 @@ export default function AboutPage() {
                     30+ Years of Industry Experience
                   </h3>
                   <p className="text-sm text-ink-1 leading-relaxed">
-                    Since its inception, Intidata has grown to support hundreds of local
-                    and multinational institutions. We combine deep technical expertise
-                    with mature domain knowledge to deliver reliable software.
+                    For more than 30 years, we have developed and implemented
+                    software solutions for businesses of every scale, from small
+                    and medium enterprises to large corporations, serving local
+                    and international companies across Indonesia.
                   </p>
                 </div>
 
@@ -421,8 +424,9 @@ export default function AboutPage() {
                   Custom Software Flexibility
                 </h3>
                 <p className="text-sm text-ink-1 leading-relaxed">
-                  Every business faces unique challenges. We build tailor-made
-                  software explicitly tailored to your internal operational workflows—something off-the-shelf software often fails to address.
+                  Every business faces unique challenges. We focus on custom
+                  software built around each client's needs, solutions that
+                  off-the-shelf, readymade products often can't provide.
                 </p>
               </motion.div>
 
@@ -514,11 +518,14 @@ export default function AboutPage() {
                   </div>
 
                   <p className="mt-3 font-display text-[19px] font-medium leading-snug text-ink-0 sm:text-[21px]">
-                    A trusted technology partner for data-driven business decisions.
+                    An integrated IT solutions partner for businesses across
+                    Indonesia.
                   </p>
 
                   <p className="mt-4 text-[14.5px] leading-relaxed text-ink-0/75">
-                    To be the primary technology partner for financial institutions and corporations in Indonesia — enabling every business decision to be made on accurate, real-time, and regulatory-compliant data.
+                    To be a trusted provider of integrated IT solutions covering
+                    most of our clients' technology needs, freeing them to focus
+                    on what matters most: their core business.
                   </p>
 
                   <div className="mt-auto grid grid-cols-3 gap-3 border-t border-(--panel-border) pt-6">
