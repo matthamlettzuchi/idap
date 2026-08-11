@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { Icon } from "@iconify/react";
 import {
   ArrowRight,
   ArrowDownRight,
@@ -10,13 +11,10 @@ import {
   Layers,
   ShieldCheck,
   Wallet,
-  Puzzle,
   Users2,
   Clock,
   Workflow,
   TrendingUp,
-  Download,
-  FileText,
   Code2,
   Globe,
   Smartphone,
@@ -59,12 +57,6 @@ import Image from "next/image";
 
 function toTitleCase(s: string) {
   return s.replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function placeholder(width: number, height: number, label: string) {
-  return `https://placehold.co/${width}x${height}/eef1ff/2f4bd0?text=${encodeURIComponent(
-    label,
-  )}`;
 }
 
 const serviceIconMap: Record<ServiceIconName, LucideIcon> = {
@@ -114,37 +106,13 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-const defaultHeroFloatIcons: ServiceIconName[] = [
-  "Settings2",
-  "ShieldCheck",
-  "Layers",
-  "Code2",
-  "CheckCircle2",
+const defaultHeroFloatIcons: string[] = [
+  "logos:dotnet",
+  "logos:nodejs-icon",
+  "logos:react",
+  "logos:javascript",
+  "logos:docker-icon",
 ];
-
-const defaultFeatureCards: { icon: LucideIcon; title: string; desc: string }[] =
-  [
-    {
-      icon: Puzzle,
-      title: "Seamless Integrations",
-      desc: "Connect cleanly with the tools and systems your team already relies on.",
-    },
-    {
-      icon: Zap,
-      title: "Reduce Costs Year-Round",
-      desc: "Optimized workflows that lower operational overhead as you scale.",
-    },
-    {
-      icon: Layers,
-      title: "50+ Apps & Powerful Integrations",
-      desc: "Plug into the tools your team already uses without friction.",
-    },
-    {
-      icon: ShieldCheck,
-      title: "Built-In Reliability",
-      desc: "Consistent uptime and support baked into every engagement.",
-    },
-  ];
 
 const heroFloatCards = [
   {
@@ -195,24 +163,6 @@ const heroFloatCards = [
   },
 ];
 
-const whyCards = [
-  {
-    icon: Layers,
-    title: "Modern Architecture",
-    desc: "Built on a modular stack designed to scale with your business as requirements grow.",
-  },
-  {
-    icon: Wallet,
-    title: "Transparent Pricing",
-    desc: "No hidden costs or surprise fees — you know exactly what you're paying for from day one.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Enterprise-Grade Security",
-    desc: "Every system we build follows strict security and compliance standards from the ground up.",
-  },
-];
-
 const trackChecklist = [
   "Get full project visibility at a glance",
   "Deploy updates easily and securely",
@@ -250,28 +200,29 @@ export function ServiceDetailView({
   const detail = serviceDetails[slug];
   const accent = detail?.accent ?? "#2f4bd0";
 
-  const featureCards = detail?.gridSection
-    ? detail.gridSection.items.slice(0, 4).map((item) => ({
-        icon: serviceIconMap[item.icon],
-        title: item.title,
-        desc: item.desc,
-      }))
-    : defaultFeatureCards;
+  const featureCards = (detail?.gridSection?.items ?? []).map((item) => ({
+    icon: serviceIconMap[item.icon],
+    title: item.title,
+    desc: item.desc,
+  }));
 
   const heroIcons = detail?.heroFloatIcons ?? defaultHeroFloatIcons;
 
-  // Every section below has its own ref + useInView so its infinite
-  // (repeat: Infinity) float-badge animations only run while that section
-  // is actually on screen. Previously these ran for the entire time the
-  // page was open, all at once, which was the main cause of scroll jank
-  // and occasional freezes.
+  const whyCards = (
+    detail?.highlights ??
+    detail?.gridSection?.items.slice(0, 3) ??
+    []
+  ).map((h) => ({
+    icon: serviceIconMap[h.icon],
+    title: h.title,
+    desc: h.desc,
+  }));
+
   const heroRef = useRef<HTMLElement>(null);
   const heroInView = useInView(heroRef, { margin: "-20% 0px 0px 0px" });
 
   const specialistsRef = useRef<HTMLDivElement>(null);
-  const specialistsInView = useInView(specialistsRef, {
-    margin: "-20% 0px",
-  });
+  const specialistsInView = useInView(specialistsRef, { margin: "-20% 0px" });
 
   const featureRef = useRef<HTMLDivElement>(null);
   const featureInView = useInView(featureRef, { margin: "-20% 0px" });
@@ -290,10 +241,11 @@ export function ServiceDetailView({
           <div className="container-x relative">
             <div className="relative mx-auto max-w-2xl py-10 text-center lg:py-16">
               {heroFloatCards.map((c, i) => {
-                const FloatIcon =
-                  serviceIconMap[heroIcons[i % heroIcons.length]];
+                // Badge now renders a real language/framework logo via
+                // Iconify instead of a generic lucide icon.
+                const floatIconName = heroIcons[i % heroIcons.length];
                 const badgeSize = Math.round(
-                  Math.min(c.width, c.height) * 0.68,
+                  Math.min(c.width, c.height) * 0.55,
                 );
 
                 return (
@@ -334,18 +286,18 @@ export function ServiceDetailView({
                     }}
                   >
                     <span
-                      className={`flex items-center justify-center rounded-[20px] border border-white/25 text-white ${
+                      className={`flex items-center justify-center rounded-[20px] border border-[var(--panel-border)] bg-panel ${
                         c.isAnchor
                           ? "shadow-[0_24px_48px_-18px_rgba(17,24,39,0.35)]"
                           : "shadow-[0_16px_34px_-16px_rgba(17,24,39,0.25)]"
                       }`}
-                      style={{
-                        width: c.width,
-                        height: c.height,
-                        background: `linear-gradient(135deg, ${accent}, ${hexToRgba(accent, 0.55)})`,
-                      }}
+                      style={{ width: c.width, height: c.height }}
                     >
-                      <FloatIcon size={badgeSize} strokeWidth={1.6} />
+                      <Icon
+                        icon={floatIconName}
+                        width={badgeSize}
+                        height={badgeSize}
+                      />
                     </span>
                   </motion.div>
                 );
@@ -396,7 +348,8 @@ export function ServiceDetailView({
 
               <Reveal>
                 <h1 className="font-display text-[clamp(32px,5.4vw,52px)] font-bold leading-[1.05] tracking-tight text-ink-0">
-                  Building <span style={{color: accent}}>{displayTitle}</span> Has Never Been Easier
+                  Building <span style={{ color: accent }}>{displayTitle}</span>{" "}
+                  Has Never Been Easier
                 </h1>
               </Reveal>
               <Reveal delay={0.08}>
@@ -407,7 +360,11 @@ export function ServiceDetailView({
               </Reveal>
               <Reveal delay={0.14}>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                  <Button asChild size="default" style={{backgroundColor: accent}}>
+                  <Button
+                    asChild
+                    size="default"
+                    style={{ backgroundColor: accent }}
+                  >
                     <a href="/contact">
                       Get Started <ArrowRight size={15} />
                     </a>
@@ -476,7 +433,10 @@ export function ServiceDetailView({
                   {["D", "S", "A", "B", "M"].map((initial, i) => (
                     <span
                       key={i}
-                      style={{ marginLeft: i === 0 ? 0 : -10, backgroundColor: accent }}
+                      style={{
+                        marginLeft: i === 0 ? 0 : -10,
+                        backgroundColor: accent,
+                      }}
                       className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-panel text-[12px] font-semibold text-white"
                     >
                       {initial}
@@ -495,7 +455,7 @@ export function ServiceDetailView({
                       whileInView={{ width: "72%" }}
                       viewport={{ once: true, margin: "-10% 0px" }}
                       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                      style={{backgroundColor: accent}}
+                      style={{ backgroundColor: accent }}
                       className="h-full rounded-full"
                     />
                   </div>
@@ -582,10 +542,13 @@ export function ServiceDetailView({
             </Reveal>
 
             <Reveal delay={0.1} className="relative">
-              <div ref={specialistsRef} className="relative isolate mx-auto max-w-sm">
+              <div
+                ref={specialistsRef}
+                className="relative isolate mx-auto max-w-sm"
+              >
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute -right-3 -top-3 z-10 h-16 w-16"
+                  className="pointer-events-none absolute -right-7 -top-5 z-10 h-16 w-16"
                   style={{ background: accent, borderTopRightRadius: "100%" }}
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
@@ -685,10 +648,13 @@ export function ServiceDetailView({
         <section className="relative overflow-hidden bg-void py-24">
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
             <Reveal className="relative order-2 lg:order-1">
-              <div ref={featureRef} className="relative isolate mx-auto max-w-sm">
+              <div
+                ref={featureRef}
+                className="relative isolate mx-auto max-w-sm"
+              >
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute -left-3 -bottom-3 z-10 h-16 w-16"
+                  className="pointer-events-none absolute -left-8 -bottom-3 z-10 h-16 w-16"
                   style={{ background: accent, borderBottomLeftRadius: "100%" }}
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
@@ -760,7 +726,12 @@ export function ServiceDetailView({
                 sprint, release, and support ticket — wherever your team is
                 working from.
               </p>
-              <Button asChild size="default" style={{backgroundColor: accent}} className="mt-8">
+              <Button
+                asChild
+                size="default"
+                style={{ backgroundColor: accent }}
+                className="mt-8"
+              >
                 <a href="#kontak">
                   Get Started <ArrowRight size={15} />
                 </a>
@@ -768,7 +739,6 @@ export function ServiceDetailView({
             </Reveal>
           </div>
         </section>
-
       </main>
 
       <Contact />

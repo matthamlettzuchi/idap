@@ -1,13 +1,16 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, AnimatePresence, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { Icon } from "@iconify/react";
 import {
   Settings2,
+  Globe,
   Layers,
+  Smartphone,
   Wrench,
+  Palette,
   Rocket,
-  Server,
   ShieldCheck,
   Network,
   ArrowRight,
@@ -17,73 +20,55 @@ import {
   Cloud,
   Lock,
   Cpu,
+  Server,
 } from "lucide-react";
 import { Reveal } from "@/components/ui/reveal";
 import { sectionTones } from "@/lib/section-tones";
 
-const colsClass: Record<number, string> = {
-  2: "sm:grid-cols-2 lg:grid-cols-2",
-  3: "sm:grid-cols-2 lg:grid-cols-3",
-  4: "sm:grid-cols-2 lg:grid-cols-4",
-};
-
-const serviceCategories = [
+const softwareServices = [
   {
-    id: "software",
-    label: "Software Development",
-    tagline:
-      "Custom software development solutions engineered specifically to support your unique business needs and long-term growth.",
-    services: [
-      {
-        icon: Settings2,
-        title: "Custom Software Development",
-        desc: "Tailored software solutions designed precisely around your business workflows and operational demands.",
-      },
-      {
-        icon: Layers,
-        title: "System Integration",
-        desc: "Connecting internal core systems with regulatory reporting pipelines end-to-end.",
-      },
-      {
-        icon: Wrench,
-        title: "Software Maintenance & Support",
-        desc: "Dedicated maintenance and support services to ensure your systems remain reliable and up-to-date.",
-      },
-      {
-        icon: Rocket,
-        title: "Modular Scaling",
-        desc: "Phased rollout of new modules as your operational scope and business requirements evolve.",
-      },
-    ],
+    icon: Settings2,
+    title: "Custom Software Development",
+    desc: "Software solutions tailored to your business processes, operational needs, and growth strategy.",
+    href: "/services/custom-software-development",
   },
   {
-    id: "infrastructure",
-    label: "Infrastructure",
-    tagline:
-      "Tailored IT infrastructure solutions designed to support high uptime, security, and scalable business growth.",
-    services: [
-      {
-        icon: Server,
-        title: "IT Services",
-        desc: "End-to-end IT services managing underlying infrastructure, network setups, and day-to-day operations.",
-      },
-      {
-        icon: Network,
-        title: "Network Management",
-        desc: "Proactive management of stable internal networks and connectivity required for daily operations.",
-      },
-      {
-        icon: ShieldCheck,
-        title: "System Security & Reliability",
-        desc: "Safeguarding core system performance, minimizing downtime, and protecting critical enterprise data.",
-      },
-    ],
+    icon: Globe,
+    title: "Web Application Development",
+    desc: "Scalable, secure web applications that support your operations and deliver the best user experience.",
+    href: "/services/web-application-development",
+  },
+  {
+    icon: Layers,
+    title: "Full Stack Development",
+    desc: "End-to-end systems with modern architecture, high performance, and ready to scale.",
+    href: "/services/full-stack-development",
+  },
+  {
+    icon: Smartphone,
+    title: "Mobile App Development",
+    desc: "High-performance Android and iOS applications with an architecture ready to grow with your business.",
+    href: "/services/mobile-app-development",
+  },
+  {
+    icon: Wrench,
+    title: "Software Maintenance & Support",
+    desc: "Professional maintenance and support that keeps your systems stable, secure, and optimized.",
+    href: "/services/software-maintenance-support",
+  },
+  {
+    icon: Palette,
+    title: "UI/UX Design Services",
+    desc: "Intuitive, consistent interface design grounded in real user research, from wireframes to handoff.",
+    href: "/services/ui-ux-design-services",
+  },
+  {
+    icon: Rocket,
+    title: "MVP Software Development",
+    desc: "Fast, focused MVPs that let you validate an idea and scale confidently toward the full product.",
+    href: "/services/mvp-software-development",
   },
 ];
-
-// badges dash out from the handshake point, then float.
-// "depth" drives size/opacity/blur so the set reads like a perspective
-// field — small + hazy far away, large + crisp close to the viewer.
 type Depth = "far" | "mid" | "near";
 
 const depthStyle: Record<
@@ -118,9 +103,6 @@ const HANDSHAKE_ORIGIN = { top: "62%", left: "50%" };
 function HandshakeVisual() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
-  // Continuously tracks whether the visual is on screen so the infinite
-  // float/glow loops actually stop once scrolled away, instead of running
-  // forever in the background and eating into scroll frame time.
   const inViewNow = useInView(containerRef, {
     margin: "-20% 0px",
     once: false,
@@ -148,7 +130,7 @@ function HandshakeVisual() {
 
       <motion.img
         src="/deal.svg"
-        alt="Jabat tangan kemitraan Intidata"
+        alt="Intidata partnership handshake"
         initial={{ opacity: 0, y: 16 }}
         animate={active ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -217,10 +199,6 @@ function HandshakeVisual() {
 }
 
 export function Services() {
-  const [activeCat, setActiveCat] = useState(serviceCategories[0].id);
-  const category =
-    serviceCategories.find((c) => c.id === activeCat) ?? serviceCategories[0];
-
   return (
     <section
       id="layanan"
@@ -240,12 +218,12 @@ export function Services() {
         {" "}
         <div className="max-w-[640px]">
           <Reveal>
-            <span className="mono-label">Our Services</span>
+            <span className="mono-label">Software Development</span>
 
             <h2 className="mt-6 text-[clamp(30px,3.6vw,44px)] font-semibold text-white">
               One partner,
               <br />
-              comprehensive financial solutions.
+              a full software development lifecycle.
             </h2>
           </Reveal>
         </div>
@@ -258,76 +236,42 @@ export function Services() {
 
       <div className="container-x">
         <Reveal delay={0.1}>
-          <div className="mb-8 inline-flex gap-2 rounded-full border border-[var(--panel-border)] bg-panel-2 p-1.5">
-            {serviceCategories.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveCat(c.id)}
-                className={`flex items-center gap-2 rounded-full px-4 py-2 text-[13.5px] font-medium transition-colors ${
-                  activeCat === c.id
-                    ? "bg-[image:var(--grad-signal)] text-white"
-                    : "text-ink-1 hover:text-ink-0"
-                }`}
+          <p className="mb-8 max-w-lg text-[14.5px] leading-relaxed text-ink-1">
+            Custom software development solutions engineered specifically to
+            support your unique business needs and long-term growth — from
+            the first line of code to ongoing support.
+          </p>
+
+          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2 lg:grid-cols-4">
+            {softwareServices.map((s) => (
+              <a
+                key={s.title}
+                href={s.href}
+                className="group flex h-full flex-col justify-between bg-panel p-6 transition-colors duration-300 hover:bg-panel-2"
               >
-                {c.id === "software" ? (
-                  <Code2 size={14} />
-                ) : (
-                  <Server size={14} />
-                )}
-                {c.label}
-              </button>
+                <div>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                    <s.icon size={17} strokeWidth={1.75} />
+                  </span>
+                  <div className="mt-5 font-display text-[16px] font-medium text-ink-0">
+                    {s.title}
+                  </div>
+                  <p className="mt-2.5 text-[13px] leading-relaxed text-ink-2">
+                    {s.desc}
+                  </p>
+                </div>
+
+                <span className="mt-6 flex items-center gap-1.5 text-[12.5px] font-medium text-signal-teal opacity-80 transition-opacity group-hover:opacity-100">
+                  Learn More
+                  <ArrowRight
+                    size={13}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
+                </span>
+              </a>
             ))}
           </div>
         </Reveal>
-
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={category.id}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <p className="mb-8 max-w-lg text-[14.5px] leading-relaxed text-ink-1">
-              {category.tagline}
-            </p>
-
-            <div
-              className={`grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] bg-[var(--panel-border)] ${
-                colsClass[category.services.length] ??
-                "sm:grid-cols-2 lg:grid-cols-4"
-              }`}
-            >
-              {category.services.map((s) => (
-                <a
-                  key={s.title}
-                  href="#kontak"
-                  className="group flex h-full flex-col justify-between bg-panel p-6 transition-colors duration-300 hover:bg-panel-2"
-                >
-                  <div>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
-                      <s.icon size={17} strokeWidth={1.75} />
-                    </span>
-                    <div className="mt-5 font-display text-[16px] font-medium text-ink-0">
-                      {s.title}
-                    </div>
-                    <p className="mt-2.5 text-[13px] leading-relaxed text-ink-2">
-                      {s.desc}
-                    </p>
-                  </div>
-
-                  <span className="mt-6 flex items-center gap-1.5 text-[12.5px] font-medium text-signal-teal opacity-80 transition-opacity group-hover:opacity-100">
-                    Learn More
-                    <ArrowRight
-                      size={13}
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    />
-                  </span>
-                </a>
-              ))}
-            </div>
-          </motion.div>
-        </AnimatePresence>
       </div>
     </section>
   );

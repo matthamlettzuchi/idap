@@ -35,7 +35,12 @@ export type ServiceIconName =
   | "Map"
   | "Lightbulb";
 
-export type ServiceItem = { icon: ServiceIconName; title: string; desc: string };
+export type ServiceItem = {
+  icon: ServiceIconName;
+  title: string;
+  desc: string;
+};
+
 export type ServiceProcessStep = {
   icon: ServiceIconName;
   step: string;
@@ -52,7 +57,10 @@ export type ServiceDetail = {
   accent: string;
   heroTitle: string;
   heroDesc: string;
-  heroFloatIcons?: ServiceIconName[];
+  // Iconify icon identifiers (e.g. "logos:react") shown as floating badges
+  // in the hero. Sourced from this service's own techStack where one is
+  // defined; otherwise from technologies confirmed elsewhere in this file.
+  heroFloatIcons?: string[];
   highlights?: ServiceItem[];
   gridSection?: {
     label: string;
@@ -74,64 +82,73 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "custom-software-development": {
     slug: "custom-software-development",
     code: "CSD",
-    heroFloatIcons: ["Settings2", "ShieldCheck", "Layers", "Code2", "CheckCircle2"],
+    // No dedicated techStack defined for this service; reusing the
+    // technologies confirmed in this company's other service stacks
+    // (.NET, Node.js, SQL Server, React) rather than inventing a new stack.
+    heroFloatIcons: [
+      "logos:dotnet",
+      "logos:nodejs-icon",
+      "logos:microsoft-sql-server",
+      "logos:react",
+      "logos:javascript",
+    ],
     name: "Custom Software Development",
     icon: "Code2",
     accent: "#2f4bd0",
-    heroTitle: "Solusi Software yang Dibangun Khusus untuk Bisnis Anda",
+    heroTitle: "Software Solutions Built Specifically for Your Business",
     heroDesc:
-      "Kami merancang dan mengembangkan software yang disesuaikan dengan proses bisnis, kebutuhan operasional, dan strategi pertumbuhan perusahaan Anda.",
+      "We design and develop software tailored to your business processes, operational needs, and company growth strategy.",
     highlights: [
       {
         icon: "Settings2",
         title: "Tailored Solution",
-        desc: "Setiap sistem dibangun sesuai kebutuhan unik bisnis Anda.",
+        desc: "Every system is built to match your business's unique requirements.",
       },
       {
         icon: "ShieldCheck",
         title: "Secure & Reliable",
-        desc: "Keamanan dan stabilitas sistem menjadi prioritas utama.",
+        desc: "System security and stability are our top priorities.",
       },
       {
         icon: "Layers",
         title: "Scalable Architecture",
-        desc: "Siap berkembang seiring pertumbuhan perusahaan.",
+        desc: "Built to grow alongside your company.",
       },
     ],
     gridSection: {
-      label: "Cakupan Layanan",
-      title: "Jenis Custom Software",
-      desc: "Solusi yang dirancang khusus untuk meningkatkan efisiensi, kontrol, dan pertumbuhan bisnis Anda.",
+      label: "Service Scope",
+      title: "Types of Custom Software",
+      desc: "Solutions specifically designed to improve efficiency, control, and business growth.",
       items: [
         {
           icon: "Building2",
           title: "Enterprise & Internal Systems",
-          desc: "Sistem internal untuk operasional, manajemen, dan kontrol bisnis.",
+          desc: "Internal systems for business operations, management, and control.",
         },
         {
           icon: "Workflow",
           title: "Business Process Automation",
-          desc: "Otomatisasi proses manual agar lebih cepat dan minim error.",
+          desc: "Automating manual processes to make them faster and reduce errors.",
         },
         {
           icon: "BarChart3",
           title: "Financial & Reporting Systems",
-          desc: "Pelaporan keuangan dan analitik yang akurat dan real-time.",
+          desc: "Accurate, real-time financial reporting and analytics.",
         },
         {
           icon: "LayoutDashboard",
           title: "Customer Portal & Dashboard",
-          desc: "Portal interaktif untuk pelanggan, partner, atau manajemen.",
+          desc: "Interactive portals for customers, partners, or management.",
         },
         {
           icon: "Link2",
           title: "System Integration & API",
-          desc: "Menghubungkan sistem lama dan baru secara seamless.",
+          desc: "Seamlessly connecting legacy and new systems.",
         },
         {
           icon: "RefreshCw",
           title: "Legacy System Modernization",
-          desc: "Upgrade sistem lama menjadi modern, scalable, dan aman.",
+          desc: "Upgrading legacy systems into modern, scalable, and secure platforms.",
         },
       ],
     },
@@ -140,25 +157,25 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         icon: "Search",
         step: "01",
         title: "Requirement Analysis",
-        desc: "Memahami proses bisnis dan kebutuhan sistem secara mendalam.",
+        desc: "Understanding business processes and system requirements in depth.",
       },
       {
         icon: "PenTool",
         step: "02",
         title: "System Design",
-        desc: "Perancangan arsitektur dan UX yang terstruktur.",
+        desc: "Structured architecture and UX design.",
       },
       {
         icon: "Code2",
         step: "03",
         title: "Development",
-        desc: "Implementasi sistem dengan standar kualitas tinggi.",
+        desc: "System implementation to a high quality standard.",
       },
       {
         icon: "CheckCircle2",
         step: "04",
         title: "Testing & Deployment",
-        desc: "Pengujian menyeluruh sebelum sistem digunakan.",
+        desc: "Thorough testing before the system goes live.",
       },
     ],
   },
@@ -166,76 +183,95 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "web-application-development": {
     slug: "web-application-development",
     code: "WEB",
-    heroFloatIcons: ["Zap", "ShieldCheck", "Users2", "Globe", "BarChart3"],
+    // Pulled directly from this service's own techStack below.
+    heroFloatIcons: [
+      "logos:react",
+      "logos:dotnet",
+      "logos:nodejs-icon",
+      "logos:postgresql",
+      "logos:docker-icon",
+    ],
     name: "Web Development",
     icon: "Globe",
     accent: "#0e9488",
-    heroTitle: "Web Application yang Scalable, Secure & User-Focused",
+    heroTitle: "Scalable, Secure & User-Focused Web Applications",
     heroDesc:
-      "Kami mengembangkan web application modern yang mendukung operasional bisnis, meningkatkan efisiensi, dan memberikan pengalaman pengguna terbaik.",
+      "We develop modern web applications that support business operations, improve efficiency, and deliver the best user experience.",
     highlights: [
       {
         icon: "Zap",
         title: "High Performance",
-        desc: "Optimasi kecepatan dan performa untuk pengguna skala besar.",
+        desc: "Speed and performance optimized for large-scale users.",
       },
       {
         icon: "ShieldCheck",
         title: "Secure by Design",
-        desc: "Keamanan sistem sejak tahap arsitektur hingga deployment.",
+        desc: "Security built in from the architecture stage through to deployment.",
       },
       {
         icon: "Users2",
         title: "User-Centric Experience",
-        desc: "UX yang intuitif agar aplikasi mudah digunakan dan efektif.",
+        desc: "Intuitive UX that makes the application easy and effective to use.",
       },
     ],
     gridSection: {
-      label: "Cakupan Layanan",
-      title: "Jenis Web Application",
-      desc: "Solusi web application yang kami bangun dirancang fleksibel, scalable, dan siap mendukung pertumbuhan bisnis.",
+      label: "Service Scope",
+      title: "Types of Web Applications",
+      desc: "The web application solutions we build are designed to be flexible, scalable, and ready to support business growth.",
       items: [
         {
           icon: "Building2",
           title: "Enterprise Web Application",
-          desc: "Aplikasi skala perusahaan untuk operasional dan manajemen bisnis.",
+          desc: "Enterprise-scale applications for business operations and management.",
         },
         {
           icon: "BarChart3",
           title: "Dashboard & Analytics System",
-          desc: "Visualisasi data dan monitoring performa secara real-time.",
+          desc: "Data visualization and real-time performance monitoring.",
         },
         {
           icon: "Users2",
           title: "Customer & Partner Portal",
-          desc: "Portal interaktif untuk pelanggan, mitra, dan stakeholder.",
+          desc: "Interactive portals for customers, partners, and stakeholders.",
         },
         {
           icon: "Cloud",
           title: "SaaS Platform",
-          desc: "Platform berbasis subscription dengan arsitektur scalable.",
+          desc: "Subscription-based platforms with scalable architecture.",
         },
         {
           icon: "Settings2",
           title: "Internal Management System",
-          desc: "Sistem internal untuk otomasi dan efisiensi proses bisnis.",
+          desc: "Internal systems for automating and streamlining business processes.",
         },
         {
           icon: "Link2",
           title: "API-Driven Web Application",
-          desc: "Web app terintegrasi dengan sistem lain melalui API.",
+          desc: "Web applications integrated with other systems via API.",
         },
       ],
     },
     techStack: {
       label: "Technology Stack",
-      title: "Teknologi yang Kami Gunakan",
-      desc: "Stack modern yang terbukti stabil, aman, dan siap scale.",
+      title: "Technologies We Use",
+      desc: "A modern stack proven to be stable, secure, and scale-ready.",
       groups: [
-        { label: "Frontend", items: ["React", "Blazor", "HTML5", "Tailwind", "Bootstrap"] },
-        { label: "Backend", items: [".NET", "Node.js", "REST API", "Microservices"] },
-        { label: "Database", items: ["SQL Server", "PostgreSQL", "MySQL", "Redis"] },
-        { label: "Deployment", items: ["Docker", "CI/CD", "Cloud Hosting", "On Premise"] },
+        {
+          label: "Frontend",
+          items: ["React", "Blazor", "HTML5", "Tailwind", "Bootstrap"],
+        },
+        {
+          label: "Backend",
+          items: [".NET", "Node.js", "REST API", "Microservices"],
+        },
+        {
+          label: "Database",
+          items: ["SQL Server", "PostgreSQL", "MySQL", "Redis"],
+        },
+        {
+          label: "Deployment",
+          items: ["Docker", "CI/CD", "Cloud Hosting", "On Premise"],
+        },
       ],
     },
   },
@@ -243,42 +279,56 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "full-stack-development": {
     slug: "full-stack-development",
     code: "FSD",
-    heroFloatIcons: ["Monitor", "Palette", "Layers", "Code2", "Workflow"],
+    // Pulled directly from this service's own techStack below.
+    heroFloatIcons: [
+      "logos:dotnet",
+      "logos:react",
+      "logos:nextjs-icon",
+      "logos:nodejs-icon",
+      "logos:docker-icon",
+    ],
     name: "Full Stack Development",
     icon: "Layers",
     accent: "#7c3aed",
     heroTitle: "Backend, Frontend & Full Stack Solutions",
     heroDesc:
-      "Kami membangun sistem end-to-end dengan arsitektur modern, performa tinggi, dan siap scale sesuai kebutuhan bisnis.",
+      "We build end-to-end systems with modern architecture, high performance, and ready to scale to your business needs.",
     gridSection: {
-      label: "Layanan Full Stack",
-      title: "Disesuaikan dengan Kompleksitas Sistem dan Tim Anda",
+      label: "Full Stack Services",
+      title: "Tailored to Your System's Complexity and Team",
       items: [
         {
           icon: "Monitor",
           title: "Backend Development",
-          desc: "API, database, security, dan business logic yang scalable.",
+          desc: "APIs, databases, security, and scalable business logic.",
         },
         {
           icon: "Palette",
           title: "Frontend Development",
-          desc: "UI modern, responsif, dan fokus pada user experience.",
+          desc: "Modern, responsive UI focused on user experience.",
         },
         {
           icon: "Layers",
           title: "Full Stack Development",
-          desc: "Solusi end-to-end dari database hingga UI.",
+          desc: "End-to-end solutions from database to UI.",
         },
       ],
     },
     techStack: {
       label: "Technology Stack",
-      title: "Teknologi yang Kami Gunakan",
-      desc: "Stack modern yang terbukti stabil, aman, dan siap scale.",
+      title: "Technologies We Use",
+      desc: "A modern stack proven to be stable, secure, and scale-ready.",
       groups: [
         {
           label: "Backend Stack",
-          items: [".NET Core", "ASP.NET", "Node.js", "REST API", "Microservices", "SQL Server"],
+          items: [
+            ".NET Core",
+            "ASP.NET",
+            "Node.js",
+            "REST API",
+            "Microservices",
+            "SQL Server",
+          ],
         },
         {
           label: "Frontend Stack",
@@ -290,70 +340,83 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         },
       ],
     },
-    closingCtaTitle: "Siap Bangun Sistem Full Stack?",
+    closingCtaTitle: "Ready to Build a Full Stack System?",
   },
 
   "mobile-app-development": {
     slug: "mobile-app-development",
     code: "MOB",
-    heroFloatIcons: ["Smartphone", "Tablet", "Layers", "Gauge", "Lock"],
+    // Pulled directly from this service's own techStack below.
+    heroFloatIcons: [
+      "logos:flutter",
+      "logos:firebase",
+      "logos:dotnet",
+      "logos:nodejs-icon",
+      "logos:android-icon",
+    ],
     name: "Mobile App Development",
     icon: "Smartphone",
     accent: "#059669",
-    heroTitle: "Aplikasi Mobile Android & iOS yang Scalable",
+    heroTitle: "Scalable Android & iOS Mobile Applications",
     heroDesc:
-      "Kami merancang dan membangun aplikasi mobile dengan performa tinggi, UI modern, dan arsitektur yang siap tumbuh bersama bisnis Anda.",
+      "We design and build mobile applications with high performance, modern UI, and an architecture ready to grow with your business.",
     highlights: [
       {
         icon: "Smartphone",
         title: "Android App",
-        desc: "Aplikasi Android native dan cross-platform dengan performa optimal.",
+        desc: "Native and cross-platform Android applications with optimal performance.",
       },
       {
         icon: "Tablet",
         title: "iOS App",
-        desc: "Aplikasi iOS dengan standar Apple Human Interface Guidelines.",
+        desc: "iOS applications built to Apple's Human Interface Guidelines.",
       },
       {
         icon: "Layers",
         title: "Cross Platform",
-        desc: "Satu codebase untuk Android dan iOS, lebih cepat dan efisien.",
+        desc: "A single codebase for Android and iOS — faster and more efficient.",
       },
     ],
     gridSection: {
-      label: "Keunggulan",
-      title: "Kenapa Aplikasi Kami Berbeda",
+      label: "Advantages",
+      title: "Why Our Applications Stand Out",
       items: [
         {
           icon: "Gauge",
-          title: "Performa Tinggi",
-          desc: "Optimasi kecepatan dan responsivitas aplikasi.",
+          title: "High Performance",
+          desc: "Optimized speed and app responsiveness.",
         },
         {
           icon: "Lock",
-          title: "Keamanan Data",
-          desc: "Enkripsi, autentikasi, dan proteksi data pengguna.",
+          title: "Data Security",
+          desc: "Encryption, authentication, and user data protection.",
         },
         {
           icon: "Palette",
-          title: "UI/UX Modern",
-          desc: "Desain intuitif dan ramah pengguna.",
+          title: "Modern UI/UX",
+          desc: "Intuitive, user-friendly design.",
         },
         {
           icon: "Link2",
-          title: "Integrasi Backend",
-          desc: "Terhubung langsung dengan API dan sistem backend.",
+          title: "Backend Integration",
+          desc: "Connected directly to APIs and backend systems.",
         },
       ],
     },
     techStack: {
       label: "Technology",
-      title: "Teknologi Mobile",
-      desc: "Stack terbaik untuk performa, stabilitas, dan kemudahan maintenance.",
+      title: "Mobile Technology",
+      desc: "The best stack for performance, stability, and ease of maintenance.",
       groups: [
         { label: "Mobile Framework", items: ["Flutter", "Capacitor JS"] },
-        { label: "Backend & API", items: ["REST API", ".NET Core", "Node.js", "Firebase"] },
-        { label: "Deployment & Tools", items: ["Google Play", "App Store", "CI/CD", "Analytics"] },
+        {
+          label: "Backend & API",
+          items: ["REST API", ".NET Core", "Node.js", "Firebase"],
+        },
+        {
+          label: "Deployment & Tools",
+          items: ["Google Play", "App Store", "CI/CD", "Analytics"],
+        },
       ],
     },
   },
@@ -361,61 +424,74 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "software-maintenance-support": {
     slug: "software-maintenance-support",
     code: "SUP",
-    heroFloatIcons: ["Bug", "RefreshCw", "ShieldCheck", "Headset", "Clock"],
+    // Pulled directly from this service's own techStack below.
+    heroFloatIcons: [
+      "logos:dotnet",
+      "logos:php",
+      "logos:react",
+      "logos:flutter",
+      "logos:postgresql",
+    ],
     name: "Software Maintenance & Support",
     icon: "Wrench",
     accent: "#b45309",
-    heroTitle: "Software Maintenance & Support Berkelanjutan",
+    heroTitle: "Ongoing Software Maintenance & Support",
     heroDesc:
-      "Menjaga sistem Anda tetap stabil, aman, dan optimal melalui layanan maintenance dan support profesional.",
+      "Keeping your systems stable, secure, and optimized through professional maintenance and support services.",
     gridSection: {
-      label: "Layanan Maintenance",
-      title: "Dukungan Teknis yang Memastikan Sistem Berjalan Tanpa Hambatan",
+      label: "Maintenance Services",
+      title: "Technical Support That Keeps Your System Running Smoothly",
       items: [
         {
           icon: "Bug",
           title: "Bug Fixing",
-          desc: "Identifikasi dan perbaikan bug secara cepat dan tepat.",
+          desc: "Fast, precise identification and resolution of bugs.",
         },
         {
           icon: "RefreshCw",
           title: "System Update",
-          desc: "Update fitur, dependency, dan peningkatan performa.",
+          desc: "Feature updates, dependency updates, and performance improvements.",
         },
         {
           icon: "ShieldCheck",
           title: "Security Patch",
-          desc: "Proteksi sistem dari celah keamanan terbaru.",
+          desc: "Protecting your system against the latest security vulnerabilities.",
         },
         {
           icon: "Headset",
           title: "Technical Support",
-          desc: "Respon cepat untuk kendala teknis dan operasional.",
+          desc: "Fast response for technical and operational issues.",
         },
         {
           icon: "Clock",
-          title: "SLA Terukur",
-          desc: "Waktu respon dan penyelesaian sesuai kesepakatan.",
+          title: "Measured SLA",
+          desc: "Response and resolution times aligned with agreed terms.",
         },
         {
           icon: "ActivitySquare",
           title: "Performance Monitoring",
-          desc: "Pemantauan sistem secara berkala dan proaktif.",
+          desc: "Regular, proactive system monitoring.",
         },
         {
           icon: "ClipboardList",
-          title: "Report Berkala",
-          desc: "Laporan maintenance dan status sistem secara rutin.",
+          title: "Regular Reporting",
+          desc: "Routine maintenance and system status reports.",
         },
       ],
     },
     techStack: {
       label: "Coverage",
-      title: "Lingkup Sistem yang Kami Support",
-      desc: "Berbagai platform dan teknologi yang kami tangani.",
+      title: "Systems We Support",
+      desc: "The range of platforms and technologies we handle.",
       groups: [
-        { label: "Web Application", items: ["ASP.NET", "PHP", "Node.js", "React"] },
-        { label: "Mobile Application", items: ["Android", "iOS", "Flutter", "React Native"] },
+        {
+          label: "Web Application",
+          items: ["ASP.NET", "PHP", "Node.js", "React"],
+        },
+        {
+          label: "Mobile Application",
+          items: ["Android", "iOS", "Flutter", "React Native"],
+        },
         {
           label: "Server & Database",
           items: ["SQL Server", "PostgreSQL", "Cloud Server", "Monitoring"],
@@ -427,64 +503,67 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "ui-ux-design-services": {
     slug: "ui-ux-design-services",
     code: "UIX",
-    heroFloatIcons: ["Eye", "Palette", "Users2", "PenTool", "Layers"],
+    // This service's real tools are Figma and Adobe XD (confirmed by the
+    // page's own "Tools yang Kami Gunakan" section). No fabricated tools
+    // added — the badge loop simply cycles between these two.
+    heroFloatIcons: ["logos:figma", "logos:adobe-xd"],
     name: "UI/UX Design Services",
     icon: "Palette",
     accent: "#db2777",
-    heroTitle: "Desain UI/UX yang Fungsional dan Berorientasi Pengguna",
+    heroTitle: "Functional, User-Oriented UI/UX Design",
     heroDesc:
-      "Kami merancang pengalaman antarmuka yang intuitif, konsisten, dan selaras dengan tujuan bisnis Anda — dari riset hingga desain siap implementasi.",
+      "We design interfaces that are intuitive, consistent, and aligned with your business goals — from research through to implementation-ready designs.",
     highlights: [
       {
         icon: "Eye",
-        title: "Riset Berbasis Data",
-        desc: "Keputusan desain didukung riset dan pemahaman pengguna nyata.",
+        title: "Data-Driven Research",
+        desc: "Design decisions backed by real research and user understanding.",
       },
       {
         icon: "Palette",
-        title: "Visual Konsisten",
-        desc: "Design system yang seragam di seluruh produk Anda.",
+        title: "Consistent Visuals",
+        desc: "A unified design system across all of your products.",
       },
       {
         icon: "Users2",
         title: "User-Centered",
-        desc: "Setiap alur dirancang agar mudah dan nyaman digunakan.",
+        desc: "Every flow designed to be easy and comfortable to use.",
       },
     ],
     gridSection: {
-      label: "Cakupan Layanan",
-      title: "Cakupan Layanan UI/UX",
-      desc: "Proses desain menyeluruh dari riset hingga siap diserahkan ke tim development.",
+      label: "Service Scope",
+      title: "UI/UX Service Scope",
+      desc: "A comprehensive design process, from research through to development handoff.",
       items: [
         {
           icon: "Search",
           title: "User Research",
-          desc: "Memahami kebutuhan dan perilaku pengguna target.",
+          desc: "Understanding the needs and behavior of your target users.",
         },
         {
           icon: "PenTool",
           title: "Wireframing",
-          desc: "Struktur alur dan layout dasar sebelum masuk visual.",
+          desc: "Basic flow and layout structure before moving into visual design.",
         },
         {
           icon: "Layers",
           title: "UI Design System",
-          desc: "Komponen dan gaya visual yang konsisten dan reusable.",
+          desc: "Consistent, reusable visual components and styles.",
         },
         {
           icon: "Smartphone",
           title: "Responsive Design",
-          desc: "Tampilan optimal di berbagai perangkat dan ukuran layar.",
+          desc: "Optimal display across a range of devices and screen sizes.",
         },
         {
           icon: "Eye",
           title: "Usability Testing",
-          desc: "Validasi desain langsung bersama pengguna nyata.",
+          desc: "Validating designs directly with real users.",
         },
         {
           icon: "Code2",
           title: "Design Handoff",
-          desc: "Spesifikasi siap pakai untuk tim development.",
+          desc: "Ready-to-use specifications for the development team.",
         },
       ],
     },
@@ -493,25 +572,25 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         icon: "Search",
         step: "01",
         title: "Discovery",
-        desc: "Riset kebutuhan bisnis dan pengguna.",
+        desc: "Researching business goals and user needs.",
       },
       {
         icon: "PenTool",
         step: "02",
         title: "Wireframe",
-        desc: "Menyusun struktur dan alur pengguna.",
+        desc: "Structuring the user flow.",
       },
       {
         icon: "Palette",
         step: "03",
         title: "Visual Design",
-        desc: "Menerapkan visual, warna, dan tipografi.",
+        desc: "Applying visuals, color, and typography.",
       },
       {
         icon: "CheckCircle2",
         step: "04",
         title: "Testing & Handoff",
-        desc: "Validasi desain dan serah terima ke tim development.",
+        desc: "Validating the design and handing it off to the development team.",
       },
     ],
   },
@@ -519,64 +598,73 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "mvp-software-development": {
     slug: "mvp-software-development",
     code: "MVP",
-    heroFloatIcons: ["Rocket", "Wallet", "TrendingUp", "Code2", "Map"],
+    // No dedicated techStack defined for this service; reusing the
+    // technologies confirmed in this company's other service stacks
+    // (.NET, Node.js, React, SQL Server) rather than inventing a new stack.
+    heroFloatIcons: [
+      "logos:react",
+      "logos:nodejs-icon",
+      "logos:dotnet",
+      "logos:microsoft-sql-server",
+      "logos:docker-icon",
+    ],
     name: "MVP Software Development",
     icon: "Rocket",
     accent: "#ea580c",
-    heroTitle: "Bangun Produk Lebih Cepat dengan MVP",
+    heroTitle: "Build Products Faster With an MVP",
     heroDesc:
-      "Kami membantu startup dan perusahaan memvalidasi ide bisnis melalui MVP yang cepat, efisien, dan siap dikembangkan.",
+      "We help startups and companies validate business ideas through an MVP that's fast, efficient, and ready to be developed further.",
     highlights: [
       {
         icon: "Rocket",
-        title: "Lebih Cepat ke Market",
-        desc: "Validasi ide dan rilis produk tanpa menunggu sistem kompleks.",
+        title: "Faster to Market",
+        desc: "Validate ideas and launch products without waiting for a complex system.",
       },
       {
         icon: "Wallet",
-        title: "Hemat Biaya",
-        desc: "Fokus ke fitur inti yang benar-benar dibutuhkan pengguna.",
+        title: "Cost-Effective",
+        desc: "Focus on the core features users actually need.",
       },
       {
         icon: "TrendingUp",
-        title: "Siap Dikembangkan",
-        desc: "Arsitektur MVP dirancang agar mudah scale ke full product.",
+        title: "Ready to Scale",
+        desc: "MVP architecture designed to scale smoothly into the full product.",
       },
     ],
     gridSection: {
-      label: "Cakupan Layanan",
-      title: "Cakupan MVP",
-      desc: "Fokus pada fitur inti untuk memvalidasi value bisnis sebelum masuk ke tahap pengembangan lanjutan.",
+      label: "Service Scope",
+      title: "MVP Scope",
+      desc: "Focused on core features to validate business value before moving into further development.",
       items: [
         {
           icon: "Search",
           title: "Business & Product Validation",
-          desc: "Analisis kebutuhan dan validasi solusi terhadap market.",
+          desc: "Needs analysis and solution validation against the market.",
         },
         {
           icon: "PenTool",
           title: "UI/UX & Prototyping",
-          desc: "Wireframe dan desain dasar untuk validasi user experience.",
+          desc: "Wireframes and basic design to validate the user experience.",
         },
         {
           icon: "Code2",
           title: "Core Feature Development",
-          desc: "Pengembangan fitur inti yang merepresentasikan value produk.",
+          desc: "Building the core features that represent your product's value.",
         },
         {
           icon: "Lock",
           title: "Basic Security",
-          desc: "Authentication dan proteksi dasar untuk aplikasi MVP.",
+          desc: "Authentication and basic protection for the MVP application.",
         },
         {
           icon: "Cloud",
           title: "Cloud Deployment",
-          desc: "Deploy MVP ke cloud agar siap diuji oleh pengguna.",
+          desc: "Deploying the MVP to the cloud so it's ready for user testing.",
         },
         {
           icon: "Map",
           title: "Future Roadmap",
-          desc: "Rekomendasi pengembangan lanjutan menuju full product.",
+          desc: "Recommendations for further development toward the full product.",
         },
       ],
     },
@@ -585,25 +673,25 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         icon: "Lightbulb",
         step: "01",
         title: "Ideation",
-        desc: "Diskusi tujuan bisnis dan value utama produk.",
+        desc: "Discussing business goals and the product's core value.",
       },
       {
         icon: "PenTool",
         step: "02",
         title: "Design",
-        desc: "Wireframe & UI sederhana untuk validasi cepat.",
+        desc: "Simple wireframes and UI for rapid validation.",
       },
       {
         icon: "Code2",
         step: "03",
         title: "Development",
-        desc: "Build fitur inti dengan teknologi modern.",
+        desc: "Building core features with modern technology.",
       },
       {
         icon: "Rocket",
         step: "04",
         title: "Launch",
-        desc: "Deploy MVP dan siap diuji oleh pengguna.",
+        desc: "Deploying the MVP, ready for user testing.",
       },
     ],
   },
