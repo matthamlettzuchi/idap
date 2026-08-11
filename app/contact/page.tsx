@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer";
 import { Reveal } from "@/components/ui/reveal";
 import Image from "next/image";
 
-const ACCENT_LIME = "#227ed1";
+const ACCENT_BLUE = "#2f6fe0";
 
 const officeLocations = [
   {
@@ -84,16 +84,14 @@ export default function ContactPage() {
           <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
 
           <div className="relative z-10 flex min-h-full flex-col justify-between gap-10 px-6 pb-10 pt-36 sm:px-10 lg:px-14 lg:pb-8 lg:pt-60">
-            {/* copy + form */}
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-8">
-              {/* LEFT — copy */}
               <div className="max-w-xl">
                 <motion.span
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="font-mono text-[13px] font-semibold tracking-[0.12em]"
-                  style={{ color: "darkblue" }}
+                  style={{ color: "#9fc4ff" }}
                 >
                   (CONTACT)
                 </motion.span>
@@ -137,13 +135,13 @@ export default function ContactPage() {
                   delay: 0.2,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="w-full rounded-3xl bg-white p-6 shadow-[0_30px_70px_-24px_rgba(10,30,80,0.45)] sm:p-8 lg:max-h-[calc(100vh-240px)]"
+                className="w-full rounded-3xl bg-white p-7 shadow-[0_30px_70px_-24px_rgba(10,30,80,0.45)] sm:p-9 lg:max-h-[calc(100vh-240px)]"
               >
                 {submitted ? (
                   <div className="flex min-h-105 flex-col items-center justify-center text-center">
                     <span
-                      className="flex h-14 w-14 items-center justify-center rounded-full text-[24px] font-bold text-[#12141c]"
-                      style={{ background: ACCENT_LIME }}
+                      className="flex h-14 w-14 items-center justify-center rounded-full text-[24px] font-bold text-white"
+                      style={{ background: ACCENT_BLUE }}
                     >
                       ✓
                     </span>
@@ -156,13 +154,14 @@ export default function ContactPage() {
                     </p>
                     <button
                       onClick={() => setSubmitted(false)}
-                      className="mt-6 text-[13.5px] font-semibold text-[#2f6fe0] underline underline-offset-4"
+                      className="mt-6 text-[13.5px] font-semibold underline underline-offset-4"
+                      style={{ color: ACCENT_BLUE }}
                     >
                       Send another message
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                       <div>
                         <FieldLabel>First Name</FieldLabel>
@@ -237,8 +236,8 @@ export default function ContactPage() {
 
                     <button
                       type="submit"
-                      className=" w-full rounded-full py-4 text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5"
-                      style={{ background: ACCENT_LIME }}
+                      className="w-full rounded-full py-4 text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5"
+                      style={{ background: ACCENT_BLUE }}
                     >
                       Submit
                     </button>
@@ -259,7 +258,7 @@ export default function ContactPage() {
             >
               <span
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                style={{ background: ACCENT_LIME, color: "#12141c" }}
+                style={{ background: ACCENT_BLUE, color: "#ffffff" }}
               >
                 <MapPin size={16} strokeWidth={2} />
               </span>

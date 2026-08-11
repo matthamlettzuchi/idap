@@ -2,7 +2,12 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, useMotionValueEvent, useScroll } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
 import {
   ChevronDown,
   Menu,
@@ -29,74 +34,74 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 
 const softwareDevServices = [
-  { 
-    title: "Custom Software Development", 
-    slug: "custom-software-development", 
-    icon: Code2, 
-    desc: "Bespoke systems tailored to your business regulations." 
+  {
+    title: "Custom Software Development",
+    slug: "custom-software-development",
+    icon: Code2,
+    desc: "Bespoke systems tailored to your business regulations.",
   },
-  { 
-    title: "Web Application Development", 
-    slug: "web-application-development", 
-    icon: Globe, 
-    desc: "Large-scale enterprise web applications." 
+  {
+    title: "Web Application Development",
+    slug: "web-application-development",
+    icon: Globe,
+    desc: "Large-scale enterprise web applications.",
   },
-  { 
-    title: "Full Stack Development", 
-    slug: "full-stack-development", 
-    icon: Layers, 
-    desc: "End-to-end frontend & backend solutions." 
+  {
+    title: "Full Stack Development",
+    slug: "full-stack-development",
+    icon: Layers,
+    desc: "End-to-end frontend & backend solutions.",
   },
-  { 
-    title: "Mobile App Development", 
-    slug: "mobile-app-development", 
-    icon: Smartphone, 
-    desc: "High-performance iOS & Android applications." 
+  {
+    title: "Mobile App Development",
+    slug: "mobile-app-development",
+    icon: Smartphone,
+    desc: "High-performance iOS & Android applications.",
   },
-  { 
-    title: "Software Maintenance & Support", 
-    slug: "software-maintenance-support", 
-    icon: Wrench, 
-    desc: "Routine maintenance & guaranteed SLA." 
+  {
+    title: "Software Maintenance & Support",
+    slug: "software-maintenance-support",
+    icon: Wrench,
+    desc: "Routine maintenance & guaranteed SLA.",
   },
-  { 
-    title: "UI/UX Design Services", 
-    slug: "ui-ux-design-services", 
-    icon: Palette, 
-    desc: "Intuitive interface design for financial services." 
+  {
+    title: "UI/UX Design Services",
+    slug: "ui-ux-design-services",
+    icon: Palette,
+    desc: "Intuitive interface design for financial services.",
   },
-  { 
-    title: "MVP Software Development", 
-    slug: "mvp-software-development", 
-    icon: Rocket, 
-    desc: "Validate business ideas with fast time-to-market." 
+  {
+    title: "MVP Software Development",
+    slug: "mvp-software-development",
+    icon: Rocket,
+    desc: "Validate business ideas with fast time-to-market.",
   },
 ];
 
 const infrastructureServices = [
-  { 
-    title: "Cloud Architecture & Hosting", 
-    slug: "cloud-architecture-hosting", 
-    icon: Cloud, 
-    desc: "Secure & scalable cloud infrastructure." 
+  {
+    title: "Cloud Architecture & Hosting",
+    slug: "cloud-architecture-hosting",
+    icon: Cloud,
+    desc: "Secure & scalable cloud infrastructure.",
   },
-  { 
-    title: "Network Security & Compliance", 
-    slug: "network-security-compliance", 
-    icon: ShieldCheck, 
-    desc: "Banking-grade system protection." 
+  {
+    title: "Network Security & Compliance",
+    slug: "network-security-compliance",
+    icon: ShieldCheck,
+    desc: "Banking-grade system protection.",
   },
-  { 
-    title: "Server Setup & Virtualization", 
-    slug: "server-setup-virtualization", 
-    icon: Server, 
-    desc: "Physical & virtual server management." 
+  {
+    title: "Server Setup & Virtualization",
+    slug: "server-setup-virtualization",
+    icon: Server,
+    desc: "Physical & virtual server management.",
   },
-  { 
-    title: "System Integration & API", 
-    slug: "system-integration-api", 
-    icon: Network, 
-    desc: "Seamless inter-system connectivity." 
+  {
+    title: "System Integration & API",
+    slug: "system-integration-api",
+    icon: Network,
+    desc: "Seamless inter-system connectivity.",
   },
 ];
 
@@ -142,9 +147,15 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
-  const [activeDropdown, setActiveDropdown] = React.useState<"services" | "products" | null>(null);
-  const [activeCategory, setActiveCategory] = React.useState<"sw" | "infra">("sw");
-  const [mobileAccordion, setMobileAccordion] = React.useState<"services" | "products" | null>(null);
+  const [activeDropdown, setActiveDropdown] = React.useState<
+    "services" | "products" | null
+  >(null);
+  const [activeCategory, setActiveCategory] = React.useState<"sw" | "infra">(
+    "sw",
+  );
+  const [mobileAccordion, setMobileAccordion] = React.useState<
+    "services" | "products" | null
+  >(null);
 
   const { scrollY } = useScroll();
 
@@ -152,8 +163,6 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
     setScrolled(latest > 24);
   });
 
-  // when overlayHero is on and we're still at the top, links go light so
-  // they read against the photo; once scrolled, revert to normal styling
   const isLight = overlayHero && !scrolled;
   const linkClass = isLight
     ? "text-white/90 transition-colors hover:text-white"
@@ -170,8 +179,32 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
         }`}
       >
         <div className="container-x flex h-18 items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <Logo className="h-12 w-32" />
+          <Link href="/" className="relative flex h-12 w-32 items-center">
+            <AnimatePresence mode="wait" initial={false}>
+              {isLight ? (
+                <motion.img
+                  key="light-logo"
+                  src="/logo-light.png"
+                  alt="Logo"
+                  className="absolute h-12 w-32 object-contain"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                />
+              ) : (
+                <motion.img
+                  key="dark-logo"
+                  src="/logo.png"
+                  alt="Logo"
+                  className="absolute h-12 w-32 object-contain"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                />
+              )}
+            </AnimatePresence>
           </Link>
 
           <nav className="hidden items-center gap-9 md:flex">
@@ -188,7 +221,9 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               onMouseEnter={() => setActiveDropdown("products")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className={`flex items-center gap-1.5 py-6 text-[14.5px] font-medium ${linkClass}`}>
+              <button
+                className={`flex items-center gap-1.5 py-6 text-[14.5px] font-medium ${linkClass}`}
+              >
                 Products{" "}
                 <ChevronDown
                   size={14}
@@ -242,7 +277,9 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               onMouseEnter={() => setActiveDropdown("services")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className={`flex items-center gap-1.5 py-6 text-[14.5px] font-medium ${linkClass}`}>
+              <button
+                className={`flex items-center gap-1.5 py-6 text-[14.5px] font-medium ${linkClass}`}
+              >
                 Services{" "}
                 <ChevronDown
                   size={14}
@@ -277,7 +314,9 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                         <ArrowRight
                           size={14}
                           className={
-                            activeCategory === "sw" ? "text-signal-teal" : "opacity-0"
+                            activeCategory === "sw"
+                              ? "text-signal-teal"
+                              : "opacity-0"
                           }
                         />
                       </button>
@@ -417,7 +456,9 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
             <div>
               <button
                 onClick={() =>
-                  setMobileAccordion(mobileAccordion === "products" ? null : "products")
+                  setMobileAccordion(
+                    mobileAccordion === "products" ? null : "products",
+                  )
                 }
                 className="flex w-full items-center justify-between font-display text-[18px] font-medium text-ink-0"
               >
@@ -450,7 +491,9 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
             <div>
               <button
                 onClick={() =>
-                  setMobileAccordion(mobileAccordion === "services" ? null : "services")
+                  setMobileAccordion(
+                    mobileAccordion === "services" ? null : "services",
+                  )
                 }
                 className="flex w-full items-center justify-between font-display text-[18px] font-medium text-ink-0"
               >
@@ -464,7 +507,9 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               </button>
               {mobileAccordion === "services" && (
                 <div className="mt-3 flex flex-col gap-3 border-l border-(--panel-border) pl-4">
-                  <div className="mono-label text-[11px]">Software Development</div>
+                  <div className="mono-label text-[11px]">
+                    Software Development
+                  </div>
                   {softwareDevServices.map((item) => (
                     <Link
                       key={item.slug}
