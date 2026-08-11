@@ -244,7 +244,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     slug: "full-stack-development",
     code: "FSD",
     heroFloatIcons: ["Monitor", "Palette", "Layers", "Code2", "Workflow"],
-    name: "Full Stack Solution",
+    name: "Full Stack Development",
     icon: "Layers",
     accent: "#7c3aed",
     heroTitle: "Backend, Frontend & Full Stack Solutions",
@@ -424,10 +424,6 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     },
   },
 
-  // NOTE: konten asli yang dikirim untuk "UI/UX Design Services" ternyata
-  // duplikat dari "Software Maintenance & Support" (kemungkinan salah paste).
-  // Di bawah ini placeholder sementara dengan struktur yang sama seperti
-  // service lain — silakan diganti teksnya kapan saja.
   "ui-ux-design-services": {
     slug: "ui-ux-design-services",
     code: "UIX",

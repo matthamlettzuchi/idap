@@ -263,7 +263,6 @@ export function ServiceDetailView({
       <Nav />
 
       <main className="pt-28">
-        {/* ================= HERO ================= */}
         <section className="relative overflow-hidden py-16 lg:py-24">
           <div className="ledger-lines-texture pointer-events-none absolute inset-0" />
 
@@ -376,7 +375,7 @@ export function ServiceDetailView({
 
               <Reveal>
                 <h1 className="font-display text-[clamp(32px,5.4vw,52px)] font-bold leading-[1.05] tracking-tight text-ink-0">
-                  Building {displayTitle} has never been easier
+                  Building <span style={{color: accent}}>{displayTitle}</span> Has Never Been Easier
                 </h1>
               </Reveal>
               <Reveal delay={0.08}>
@@ -387,8 +386,8 @@ export function ServiceDetailView({
               </Reveal>
               <Reveal delay={0.14}>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                  <Button asChild size="default">
-                    <a href="#kontak">
+                  <Button asChild size="default" style={{backgroundColor: accent}}>
+                    <a href="/contact">
                       Get Started <ArrowRight size={15} />
                     </a>
                   </Button>
@@ -456,8 +455,8 @@ export function ServiceDetailView({
                   {["D", "S", "A", "B", "M"].map((initial, i) => (
                     <span
                       key={i}
-                      style={{ marginLeft: i === 0 ? 0 : -10 }}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-panel bg-[image:var(--grad-signal)] text-[12px] font-semibold text-white"
+                      style={{ marginLeft: i === 0 ? 0 : -10, backgroundColor: accent }}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-panel text-[12px] font-semibold text-white"
                     >
                       {initial}
                     </span>
@@ -475,7 +474,8 @@ export function ServiceDetailView({
                       whileInView={{ width: "72%" }}
                       viewport={{ once: true, margin: "-10% 0px" }}
                       transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                      className="h-full rounded-full bg-[image:var(--grad-signal)]"
+                      style={{backgroundColor: accent}}
+                      className="h-full rounded-full"
                     />
                   </div>
                 </div>
@@ -608,7 +608,7 @@ export function ServiceDetailView({
                       }}
                       className="w-full rounded-sm"
                       style={{
-                        background: "linear-gradient(180deg, #2fe0c2, #4b64ff)",
+                        background: `linear-gradient(180deg, ${accent}, #4b64ff)`,
                         opacity: 0.85,
                       }}
                     />
@@ -735,7 +735,7 @@ export function ServiceDetailView({
                 sprint, release, and support ticket — wherever your team is
                 working from.
               </p>
-              <Button asChild size="default" className="mt-8">
+              <Button asChild size="default" style={{backgroundColor: accent}} className="mt-8">
                 <a href="#kontak">
                   Get Started <ArrowRight size={15} />
                 </a>

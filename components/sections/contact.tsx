@@ -16,7 +16,7 @@ export function Contact() {
         aria-hidden
         animate={{ opacity: [0.12, 0.25, 0.12] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-140 w-140 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[120px]"
         style={{
           background:
             "radial-gradient(circle, rgba(14,148,136,.22), transparent 65%)",
@@ -46,7 +46,7 @@ export function Contact() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          <div className="panel divide-y divide-[var(--panel-border)] p-2">
+          <div className="panel divide-y divide-(--panel-border) p-2">
             <ContactRow icon={<MapPin size={17} />} label="Location">
               <p className="text-[15px] font-medium leading-snug text-ink-0">
                 {contact.address}
@@ -91,11 +91,11 @@ function ContactRow({
 }) {
   return (
     <div className="group flex gap-4 rounded-[calc(var(--radius)-6px)] p-6 transition-colors hover:bg-panel-2">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors group-hover:border-[var(--panel-border-strong)]">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-(--panel-border) text-signal-teal transition-colors group-hover:border-(--panel-border-strong)">
         {icon}
       </span>
       <div>
-        <div className="mono-label !text-[10.5px]">{label}</div>
+        <div className="mono-label text-[10.5px]!">{label}</div>
         <div className="mt-1.5">{children}</div>
       </div>
     </div>

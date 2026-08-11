@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { ServiceDetailView } from "@/components/services/services-view-details";
+import { serviceDetails } from "@/lib/service-details";
 
 interface PageProps {
   params: Promise<{
@@ -8,15 +9,13 @@ interface PageProps {
 }
 
 export default async function ServiceDetailPage({ params }: PageProps) {
-  // Unwrap Promise params using await
   const { slug } = await params;
 
-  if (!slug) {
+  const service = serviceDetails[slug];
+
+  if (!service) {
     notFound();
   }
 
-  // Formatting slug (e.g. "custom-software-development" -> "custom software development")
-  const title = slug.replace(/-/g, " ");
-
-  return <ServiceDetailView slug={slug} title={title} />;
+  return <ServiceDetailView slug={slug} title={service.name} />;
 }
