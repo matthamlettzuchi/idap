@@ -52,6 +52,7 @@ export type ServiceDetail = {
   accent: string;
   heroTitle: string;
   heroDesc: string;
+  heroFloatIcons?: ServiceIconName[];
   highlights?: ServiceItem[];
   gridSection?: {
     label: string;
@@ -73,6 +74,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "custom-software-development": {
     slug: "custom-software-development",
     code: "CSD",
+    heroFloatIcons: ["Settings2", "ShieldCheck", "Layers", "Code2", "CheckCircle2"],
     name: "Custom Software Development",
     icon: "Code2",
     accent: "#2f4bd0",
@@ -164,6 +166,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "web-application-development": {
     slug: "web-application-development",
     code: "WEB",
+    heroFloatIcons: ["Zap", "ShieldCheck", "Users2", "Globe", "BarChart3"],
     name: "Web Development",
     icon: "Globe",
     accent: "#0e9488",
@@ -240,6 +243,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "full-stack-development": {
     slug: "full-stack-development",
     code: "FSD",
+    heroFloatIcons: ["Monitor", "Palette", "Layers", "Code2", "Workflow"],
     name: "Full Stack Solution",
     icon: "Layers",
     accent: "#7c3aed",
@@ -292,6 +296,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "mobile-app-development": {
     slug: "mobile-app-development",
     code: "MOB",
+    heroFloatIcons: ["Smartphone", "Tablet", "Layers", "Gauge", "Lock"],
     name: "Mobile App Development",
     icon: "Smartphone",
     accent: "#059669",
@@ -356,6 +361,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "software-maintenance-support": {
     slug: "software-maintenance-support",
     code: "SUP",
+    heroFloatIcons: ["Bug", "RefreshCw", "ShieldCheck", "Headset", "Clock"],
     name: "Software Maintenance & Support",
     icon: "Wrench",
     accent: "#b45309",
@@ -425,6 +431,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "ui-ux-design-services": {
     slug: "ui-ux-design-services",
     code: "UIX",
+    heroFloatIcons: ["Eye", "Palette", "Users2", "PenTool", "Layers"],
     name: "UI/UX Design Services",
     icon: "Palette",
     accent: "#db2777",
@@ -516,6 +523,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
   "mvp-software-development": {
     slug: "mvp-software-development",
     code: "MVP",
+    heroFloatIcons: ["Rocket", "Wallet", "TrendingUp", "Code2", "Map"],
     name: "MVP Software Development",
     icon: "Rocket",
     accent: "#ea580c",

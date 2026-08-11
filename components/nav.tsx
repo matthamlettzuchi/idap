@@ -1,4 +1,3 @@
-// components/navbar.tsx
 "use client";
 
 import * as React from "react";
@@ -29,50 +28,48 @@ import {
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 
-// --- DATA STRUCTURES WITH SLUGS ---
-
 const softwareDevServices = [
   { 
     title: "Custom Software Development", 
     slug: "custom-software-development", 
     icon: Code2, 
-    desc: "Sistem khusus sesuai regulasi bisnis Anda." 
+    desc: "Bespoke systems tailored to your business regulations." 
   },
   { 
     title: "Web Application Development", 
     slug: "web-application-development", 
     icon: Globe, 
-    desc: "Aplikasi web enterprise berskala besar." 
+    desc: "Large-scale enterprise web applications." 
   },
   { 
     title: "Full Stack Development", 
     slug: "full-stack-development", 
     icon: Layers, 
-    desc: "Solusi end-to-end frontend & backend." 
+    desc: "End-to-end frontend & backend solutions." 
   },
   { 
     title: "Mobile App Development", 
     slug: "mobile-app-development", 
     icon: Smartphone, 
-    desc: "Aplikasi iOS & Android performa tinggi." 
+    desc: "High-performance iOS & Android applications." 
   },
   { 
     title: "Software Maintenance & Support", 
     slug: "software-maintenance-support", 
     icon: Wrench, 
-    desc: "Pemeliharaan rutin & SLA terjamin." 
+    desc: "Routine maintenance & guaranteed SLA." 
   },
   { 
     title: "UI/UX Design Services", 
     slug: "ui-ux-design-services", 
     icon: Palette, 
-    desc: "Desain antarmuka intuitif untuk finansial." 
+    desc: "Intuitive interface design for financial services." 
   },
   { 
     title: "MVP Software Development", 
     slug: "mvp-software-development", 
     icon: Rocket, 
-    desc: "Validasi ide bisnis dengan time-to-market cepat." 
+    desc: "Validate business ideas with fast time-to-market." 
   },
 ];
 
@@ -81,25 +78,25 @@ const infrastructureServices = [
     title: "Cloud Architecture & Hosting", 
     slug: "cloud-architecture-hosting", 
     icon: Cloud, 
-    desc: "Infrastruktur cloud aman & scalable." 
+    desc: "Secure & scalable cloud infrastructure." 
   },
   { 
     title: "Network Security & Compliance", 
     slug: "network-security-compliance", 
     icon: ShieldCheck, 
-    desc: "Proteksi sistem tingkat perbankan." 
+    desc: "Banking-grade system protection." 
   },
   { 
     title: "Server Setup & Virtualization", 
     slug: "server-setup-virtualization", 
     icon: Server, 
-    desc: "Manajemen server fisik & virtual." 
+    desc: "Physical & virtual server management." 
   },
   { 
     title: "System Integration & API", 
     slug: "system-integration-api", 
     icon: Network, 
-    desc: "Konektivitas antar-sistem tanpa hambatan." 
+    desc: "Seamless inter-system connectivity." 
   },
 ];
 
@@ -107,35 +104,35 @@ const productList = [
   {
     code: "FISCUS MF",
     name: "FISCUS Multifinance",
-    desc: "Core system pembiayaan konsumen & kendaraan.",
+    desc: "Core financing system for consumer & vehicle loans.",
     icon: Building2,
     href: "/products/multifinance",
   },
   {
     code: "FISCUS FC",
     name: "FISCUS Factoring",
-    desc: "Manajemen anjak piutang & tagihan bisnis.",
+    desc: "Factoring & business invoice management.",
     icon: TrendingUp,
     href: "/products/factoring",
   },
   {
     code: "FISCUS AC",
     name: "FISCUS Accounting",
-    desc: "Pembukuan terintegrasi standar perbankan.",
+    desc: "Integrated accounting meeting banking standards.",
     icon: Calculator,
     href: "/products/accounting",
   },
   {
     code: "OJK REPORT",
     name: "SLIK / SILARAS Reporting",
-    desc: "Pelaporan otomatis sesuai regulasi OJK & BI.",
+    desc: "Automated reporting aligned with OJK & BI regulations.",
     icon: FileSpreadsheet,
     href: "/products/slik-silaras",
   },
   {
     code: "PLANTA",
     name: "Planta Enterprise",
-    desc: "Solusi ERP khusus sektor perkebunan & kelapa sawit.",
+    desc: "Specialized ERP solution for the plantation & palm oil sector.",
     icon: Sprout,
     href: "/products/planta",
   },
@@ -284,7 +281,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                           }
                         />
                       </button>
-                      <button
+                      {/* <button
                         onMouseEnter={() => setActiveCategory("infra")}
                         className={`mt-2 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
                           activeCategory === "infra"
@@ -301,7 +298,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                             activeCategory === "infra" ? "text-signal-teal" : "opacity-0"
                           }
                         />
-                      </button>
+                      </button> */}
                     </div>
 
                     <div className="flex-1 p-6">
@@ -373,6 +370,13 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               className={`text-[14.5px] font-medium ${linkClass}`}
             >
               Credit Simulation
+            </Link>
+
+            <Link
+              href="/contact"
+              className={`text-[14.5px] font-medium ${linkClass}`}
+            >
+              Contact
             </Link>
           </nav>
 
@@ -472,7 +476,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                       <span>{item.title}</span>
                     </Link>
                   ))}
-                  <div className="mono-label mt-2 text-[11px]">Infrastructure</div>
+                  {/* <div className="mono-label mt-2 text-[11px]">Infrastructure</div>
                   {infrastructureServices.map((item) => (
                     <Link
                       key={item.slug}
@@ -483,7 +487,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                       <item.icon size={16} className="text-signal-teal" />
                       <span>{item.title}</span>
                     </Link>
-                  ))}
+                  ))} */}
                 </div>
               )}
             </div>
@@ -494,6 +498,14 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               className="font-display text-[18px] font-medium text-ink-0"
             >
               Credit Simulation
+            </Link>
+
+            <Link
+              href="/contact"
+              onClick={() => setOpen(false)}
+              className="font-display text-[18px] font-medium text-ink-0"
+            >
+              Contact
             </Link>
 
             <Button asChild variant="primary" className="mt-4 w-full">

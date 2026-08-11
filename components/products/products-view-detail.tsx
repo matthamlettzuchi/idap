@@ -76,10 +76,8 @@ export function ProductDetailView({
     offset: ["start start", "end start"],
   });
 
-  // background bergerak pelan (parallax jauh)
   const bgY = useTransform(heroScrollProgress, [0, 1], ["0%", "14%"]);
   const bgScale = useTransform(heroScrollProgress, [0, 1], [1, 1.1]);
-  // subjek orang bergerak sedikit lebih cepat -> kesan "di depan" background
   const personY = useTransform(heroScrollProgress, [0, 1], ["9%", "26%"]);
   const contentOpacity = useTransform(heroScrollProgress, [0, 0.7], [1, 0]);
 
@@ -88,9 +86,6 @@ export function ProductDetailView({
       <Nav overlayHero />
 
       <main>
-        {/* HERO — full-bleed background, subjek ditumpuk di atasnya */}
-        {/* HERO — full-bleed background, teks center-right, subjek besar */}
-        {/* HERO — full-bleed background, teks kiri, subjek besar di kanan */}
         <div
           ref={heroRef}
           className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen min-h-[900px] overflow-hidden"
@@ -113,7 +108,6 @@ export function ProductDetailView({
           <div className="absolute inset-0 bg-gradient-to-r from-black/72 via-black/30 to-transparent" />
           <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/15" />
 
-          {/* subjek orang: kanan-bawah, dikasih ruang napas dari tepi viewport */}
           <motion.div
             className="absolute inset-x-0 bottom-0 flex justify-end pb-8 pr-[4%] sm:pb-10 sm:pr-[7%]"
             style={{ y: personY }}
@@ -135,7 +129,6 @@ export function ProductDetailView({
               style={{ transformOrigin: "bottom center" }}
               className="relative flex h-[64%] w-[320px] items-end justify-center sm:h-[72%] sm:w-[420px] lg:w-[500px]"
             >
-              {/* contact shadow */}
               <div
                 aria-hidden
                 className="pointer-events-none absolute bottom-4 left-1/2 h-[30px] w-[68%] -translate-x-1/2 rounded-full bg-black/45 blur-xl"
@@ -179,7 +172,6 @@ export function ProductDetailView({
             </motion.div>
           </motion.div>
 
-          {/* konten teks — kiri, center vertikal */}
           <motion.div
             style={{
               opacity: contentOpacity,
@@ -258,13 +250,13 @@ export function ProductDetailView({
                   className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-[14px] font-medium text-white transition-transform hover:-translate-y-0.5"
                   style={{ background: accent }}
                 >
-                  Konsultasi Sekarang <ArrowRight size={15} />
+                  Consult Now <ArrowRight size={15} />
                 </a>
                 <Link
                   href="/#produk"
                   className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3 text-[14px] font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20"
                 >
-                  Lihat Produk Lain
+                  Explore Other Products
                 </Link>
               </motion.div>
 
@@ -291,7 +283,6 @@ export function ProductDetailView({
             </div>
           </motion.div>
 
-          {/* scroll cue */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -312,7 +303,6 @@ export function ProductDetailView({
           </motion.div>
         </div>
 
-        {/* OVERVIEW */}
         <section className="relative border-t border-[var(--panel-border)] py-20">
           <div className="container-x grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <Reveal>
@@ -329,7 +319,6 @@ export function ProductDetailView({
             </Reveal>
 
             <Reveal delay={0.1} className="relative">
-              {/* aksen orbit yang dipindah dari hero */}
               <div
                 aria-hidden
                 className="pointer-events-none absolute -right-6 -top-10 hidden h-[120px] w-[120px] items-center justify-center lg:flex"
@@ -360,7 +349,7 @@ export function ProductDetailView({
               </div>
 
               <div className="rounded-2xl border border-[var(--panel-border)] bg-panel p-7">
-                <div className="mono-label">Ringkasan Sistem</div>
+                <div className="mono-label">System Summary</div>
                 <ul className="mt-5 space-y-4">
                   {product.quickFacts.map((fact) => (
                     <li key={fact} className="flex items-start gap-3">
@@ -378,16 +367,15 @@ export function ProductDetailView({
                   ))}
                 </ul>
                 <div className="mt-7 flex items-center gap-2 border-t border-[var(--panel-border)] pt-5 font-mono text-[12px] text-ink-2">
-                  Modul terintegrasi
+                  Integrated modules
                   <ArrowUpRight size={13} style={{ color: accent }} />
-                  Platform FISCUS
+                  FISCUS Platform
                 </div>
               </div>
             </Reveal>
           </div>
         </section>
 
-        {/* ADVANTAGES */}
         <section
           className="relative overflow-hidden border-t border-[var(--panel-border)] py-20"
           style={{ background: hexToRgba(accent, 0.04) }}
@@ -395,10 +383,10 @@ export function ProductDetailView({
           <div className="container-x">
             <Reveal className="max-w-xl">
               <span className="mono-label" style={{ color: accent }}>
-                Keunggulan
+                Benefits
               </span>
               <h2 className="mt-3 text-[clamp(26px,3vw,36px)] font-semibold text-ink-0">
-                Kenapa {product.name} unggul.
+                Why is {product.name} beneficial.
               </h2>
             </Reveal>
 
@@ -482,15 +470,14 @@ export function ProductDetailView({
           </section>
         )}
 
-        {/* FEATURES */}
         <section className="relative border-t border-[var(--panel-border)] py-20">
           <div className="container-x">
             <Reveal className="max-w-2xl">
               <span className="mono-label" style={{ color: accent }}>
-                Fitur Utama
+                Core Features
               </span>
               <h2 className="mt-3 text-[clamp(26px,3vw,36px)] font-semibold text-ink-0">
-                Apa yang Anda dapatkan.
+                What you will get.
               </h2>
               {product.featuresIntro && (
                 <p className="mt-4 text-[14.5px] leading-relaxed text-ink-1">
@@ -528,13 +515,12 @@ export function ProductDetailView({
           </div>
         </section>
 
-        {/* RELATED PRODUCTS */}
         <section className="relative border-t border-[var(--panel-border)] py-20">
           <div className="container-x">
             <Reveal className="mb-10 max-w-xl">
-              <span className="mono-label">Produk Lainnya</span>
+              <span className="mono-label">Other Products</span>
               <h2 className="mt-3 text-[clamp(24px,2.6vw,32px)] font-semibold text-ink-0">
-                Jelajahi ekosistem FISCUS lainnya.
+                Explore other FISCUS ecosystems.
               </h2>
             </Reveal>
 
@@ -562,7 +548,7 @@ export function ProductDetailView({
                         </div>
                       </div>
                       <span className="mt-6 flex items-center gap-1 text-[12px] font-medium text-ink-2 opacity-0 transition-opacity group-hover:opacity-100">
-                        Lihat detail <ArrowUpRight size={12} />
+                        See detail <ArrowUpRight size={12} />
                       </span>
                     </Link>
                   </Reveal>

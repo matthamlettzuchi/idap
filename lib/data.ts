@@ -1,9 +1,7 @@
 export const nav = [
-  { label: "About Us", href: "#tentang" },
-  { label: "Products", href: "#produk" },
-  { label: "Services", href: "#service" },
-  { label: "Credit Simulation", href: "#simulasi" },
-  { label: "Contact", href: "#kontak" },
+  { label: "About Us", href: "/about" },
+  { label: "Credit Simulation", href: "/credit-simulation" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export type Testimonial = {
@@ -191,6 +189,7 @@ export const clients = [
 
 export type Product = {
   id: string;
+  link: string;
   code: string;
   name: string;
   summary: string;
@@ -202,6 +201,7 @@ export type Product = {
 export const products: Product[] = [
   {
     id: "fiscus-multifinance",
+    link: "multifinance",
     code: "FIS-MF",
     name: "FISCUS Multifinance",
     summary: "Customer financing and payments within a single core system.",
@@ -220,6 +220,7 @@ export const products: Product[] = [
   },
   {
     id: "fiscus-factoring",
+    link: "factoring",
     code: "FIS-FC",
     name: "FISCUS Factoring",
     summary: "Factoring with invoice backing, fully tracked.",
@@ -238,6 +239,7 @@ export const products: Product[] = [
   },
   {
     id: "fiscus-accounting",
+    link: "accounting",
     code: "FIS-AC",
     name: "FISCUS Accounting",
     summary: "Corporate bookkeeping with no gaps across general ledgers.",
@@ -251,6 +253,7 @@ export const products: Product[] = [
   },
   {
     id: "planta",
+    link: "planta",
     code: "PLN",
     name: "Planta",
     summary: "Palm oil plantation operations, from field to mill.",
@@ -269,6 +272,7 @@ export const products: Product[] = [
   },
   {
     id: "slik-silaras",
+    link: "slik-silaras",
     code: "SLK-SR",
     name: "SLIK / SILARAS Report",
     summary: "Direct reporting bridge to regulatory systems.",

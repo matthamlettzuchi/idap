@@ -56,59 +56,59 @@ const whyChooseIcons = [
 
 const journey = [
   {
-    era: "Titik Awal",
-    title: "Fondasi sistem inti",
-    body: "Intidata memulai dari kebutuhan paling mendasar bagi institusi keuangan: pencatatan yang akurat dan proses operasional yang bisa diandalkan setiap hari.",
+    era: "Starting Point",
+    title: "Core System Foundation",
+    body: "Intidata started from the most fundamental need of financial institutions: accurate record-keeping and reliable daily operational processes.",
   },
   {
-    era: "Spesialisasi",
-    title: "Fokus ke sektor multifinance",
-    body: "Pengalaman lapangan mendalam di industri pembiayaan menjadi cetak biru lahirnya FISCUS — sistem inti yang dirancang khusus untuk siklus kontrak, angsuran, hingga penagihan.",
+    era: "Specialization",
+    title: "Focus on the Multifinance Sector",
+    body: "Deep field experience in the financing industry became the blueprint for FISCUS — a core system specially designed for contract lifecycles, installments, and collections.",
   },
   {
-    era: "Perluasan Layanan",
-    title: "Dari factoring hingga perkebunan",
-    body: "Ekosistem berkembang ke Factoring, Accounting, hingga Planta — membuktikan arsitektur modular kami bisa diadaptasi lintas industri tanpa dibangun ulang dari nol.",
+    era: "Service Expansion",
+    title: "From Factoring to Plantation Management",
+    body: "The ecosystem expanded into Factoring, Accounting, and Planta — proving that our modular architecture can adapt across industries without being rebuilt from scratch.",
   },
   {
-    era: "Standarisasi",
-    title: "Terhubung langsung ke regulator",
-    body: "Modul SLIK/SILARAS Report dibangun agar validasi format dan jadwal pelaporan ke OJK berjalan otomatis, bukan pekerjaan manual di akhir periode.",
+    era: "Standardization",
+    title: "Direct Regulatory Connectivity",
+    body: "The SLIK/SILARAS Report module was built so format validation and reporting schedules to OJK run automatically, rather than being manual tasks at period-end.",
   },
   {
-    era: "Hari Ini",
-    title: "Mitra skala enterprise",
-    body: "Lebih dari 30 tahun kemudian, Intidata mendampingi puluhan institusi lokal dan multinasional — dari kantor cabang tunggal hingga grup korporasi besar.",
+    era: "Present Day",
+    title: "Enterprise-Scale Partner",
+    body: "More than 30 years later, Intidata supports dozens of local and multinational institutions — from single branch offices to large corporate groups.",
   },
 ];
 
 const missionPoints = [
-  "Merancang sistem yang mengurangi proses manual dan mempercepat siklus operasional harian.",
-  "Menjadikan kepatuhan regulasi berjalan otomatis, bukan pekerjaan tambahan di akhir bulan.",
-  "Membangun kemitraan jangka panjang dengan klien, bukan sekadar transaksi proyek.",
-  "Mendampingi pertumbuhan skala bisnis klien tanpa memaksa mereka membangun ulang sistem dari nol.",
+  "Designing systems that minimize manual processes and accelerate daily operational cycles.",
+  "Making regulatory compliance run automatically, rather than being an extra burden at month-end.",
+  "Building long-term partnerships with clients rather than treating projects as one-off transactions.",
+  "Supporting client business growth without forcing them to rebuild systems from scratch.",
 ];
 
 const processSteps = [
   {
     icon: Search,
-    label: "Discovery & Konsultasi",
-    body: "Memetakan proses operasional dan tantangan spesifik klien sebelum satu baris kode pun ditulis.",
+    label: "Discovery & Consultation",
+    body: "Mapping operational processes and client-specific challenges before writing a single line of code.",
   },
   {
     icon: PenTool,
-    label: "Rancang & Bangun",
-    body: "Arsitektur modular yang disesuaikan dengan alur kerja bisnis Anda, bukan template siap pakai.",
+    label: "Design & Build",
+    body: "A modular architecture customized to your business workflow, not a off-the-shelf template.",
   },
   {
     icon: Workflow,
-    label: "Integrasi & Pengujian",
-    body: "Menghubungkan sistem baru dengan infrastruktur yang sudah berjalan, termasuk jalur pelaporan ke OJK.",
+    label: "Integration & Testing",
+    body: "Connecting new systems with existing infrastructure, including regulatory reporting pathways to OJK.",
   },
   {
     icon: Rocket,
-    label: "Peluncuran & Pendampingan",
-    body: "Go-live bertahap, didampingi tim support yang responsif untuk jangka panjang.",
+    label: "Launch & Ongoing Support",
+    body: "Phased go-live supported by a responsive team for the long term.",
   },
 ];
 
@@ -116,27 +116,27 @@ const industries = [
   {
     icon: Building2,
     title: "Multifinance & Leasing",
-    body: "Core system pembiayaan konsumen dan kendaraan dari akuisisi kontrak hingga penagihan.",
+    body: "Consumer and vehicle financing core system, covering contract acquisition to collections.",
   },
   {
     icon: TrendingUp,
-    title: "Factoring & Anjak Piutang",
-    body: "Pelacakan invoice, disbursement dana, dan manajemen risiko konsentrasi debitur.",
+    title: "Factoring & Receivables",
+    body: "Invoice tracking, fund disbursement, and debtor concentration risk management.",
   },
   {
     icon: Calculator,
-    title: "Akuntansi Korporat",
-    body: "Pembukuan terintegrasi — general ledger, AR/AP, hingga aset tetap dalam satu sumber data.",
+    title: "Corporate Accounting",
+    body: "Integrated bookkeeping — general ledger, AR/AP, and fixed assets within a single source of truth.",
   },
   {
     icon: Sprout,
-    title: "Perkebunan & Agribisnis",
-    body: "Manajemen operasional kebun sawit, dari data lapangan hingga produksi pabrik.",
+    title: "Plantation & Agribusiness",
+    body: "Operational management for palm oil plantations, from field data to factory processing.",
   },
   {
     icon: Landmark,
-    title: "Pelaporan Regulator",
-    body: "Jembatan pelaporan langsung ke sistem OJK — SLIK dan SILARAS — yang selalu patuh format terbaru.",
+    title: "Regulatory Reporting",
+    body: "A direct reporting bridge to OJK systems — SLIK and SILARAS — always compliant with latest formats.",
   },
 ];
 
@@ -157,9 +157,8 @@ export default function AboutPage() {
   const heroContentY = useTransform(heroScrollProgress, [0, 1], ["0%", "25%"]);
   const heroContentOpacity = useTransform(heroScrollProgress, [0, 0.7], [1, 0]);
 
-  // headline dipecah per kata biar bisa muncul staggered
-  const headlineLine1 = "Membangun Fondasi".split(" ");
-  const headlineLine2 = "Digital Enterprise Sejak 30+ Tahun.".split(" ");
+  const headlineLine1 = "Building Digital Enterprise".split(" ");
+  const headlineLine2 = "Foundations for 30+ Years.".split(" ");
 
   function StatCounter({
     value,
@@ -202,56 +201,53 @@ export default function AboutPage() {
 
   const coreValues = [
     {
-      title: "Kerja Keras & Dedikasi",
-      desc: "Komitmen penuh memberikan hasil presisi tinggi untuk setiap skema bisnis.",
+      title: "Hard Work & Dedication",
+      desc: "Full commitment to delivering high-precision outcomes for every business scheme.",
     },
     {
-      title: "Teknologi Terkini",
-      desc: "Mengadopsi stack arsitektur modern berbasis open-source & cloud native.",
+      title: "Cutting-Edge Technology",
+      desc: "Adopting modern open-source and cloud-native architecture stacks.",
     },
     {
-      title: "Kolaborasi Tim",
-      desc: "Sinergi pakar teknologi & analis finansial yang berpengalaman.",
+      title: "Team Collaboration",
+      desc: "A synergy of experienced tech experts and financial analysts.",
     },
     {
-      title: "Kemitraan Jangka Panjang",
-      desc: "Mendampingi pertumbuhan sistem enterprise dari skala UMKM hingga korporasi.",
+      title: "Long-Term Partnerships",
+      desc: "Guiding enterprise system growth from SMEs to large corporations.",
     },
   ];
 
   const solutions = [
-    "Sistem MultiFinance (LOS & LMS)",
+    "MultiFinance System (LOS & LMS)",
     "Factoring & Supply Chain Finance",
-    "Akuntansi Enterprise (GL/AR/AP)",
+    "Enterprise Accounting (GL/AR/AP)",
     "Payroll & Human Resource ERP",
-    "Sistem Agribisnis & Perkebunan",
-    "Software License & Cyber Security",
+    "Agribusiness & Plantation System",
+    "Software Licensing & Cybersecurity",
   ];
 
   return (
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal relative overflow-hidden">
       <Nav overlayHero />
 
-      {/* Decorative Background Glows */}
       <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[600px] w-full max-w-7xl -translate-x-1/2 opacity-30 blur-[120px]">
         <div className="h-full w-full bg-gradient-to-tr from-signal-teal/30 via-signal-blue/20 to-transparent" />
       </div>
       <div className="pointer-events-none absolute -top-40 right-0 -z-10 h-96 w-96 rounded-full bg-signal-teal/10 blur-[100px]" />
 
       <main className="pt-28 pb-24">
-        {/* HERO SECTION — full-bleed, sits behind the transparent nav */}
         <div
           ref={heroRef}
           className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen h-screen overflow-hidden"
         >
-          {/* layer foto: parallax + Ken Burns zoom saat pertama masuk */}
           <motion.div
             className="absolute inset-0"
             style={{ y: heroImageY, scale: heroImageScale }}
           >
             <motion.img
               src="/table.png"
-              alt="Tim Intidata berdiskusi"
+              alt="Intidata team discussion"
               initial={{ scale: 1.18, opacity: 0, filter: "blur(10px)" }}
               animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
               transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
@@ -265,7 +261,6 @@ export default function AboutPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-          {/* light sweep tipis lewat foto sekali di awal */}
           <motion.div
             aria-hidden
             className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent"
@@ -318,12 +313,10 @@ export default function AboutPage() {
               }}
               className="mt-6 max-w-2xl text-[15px] leading-relaxed text-white/80 md:text-base"
             >
-              Penyedia solusi terpadu rekayasa perangkat lunak, otomatisasi
-              infrastruktur IT, dan pengembangan platform keuangan teregistrasi
-              yang tepercaya di Indonesia.
+              A trusted end-to-end software engineering, IT infrastructure automation,
+              and registered financial platform development partner in Indonesia.
             </motion.p>
 
-            {/* scroll cue */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -367,13 +360,12 @@ export default function AboutPage() {
                     <Award size={22} />
                   </motion.div>
                   <h3 className="text-2xl font-bold text-ink-0">
-                    30+ Tahun Pengalaman Industri
+                    30+ Years of Industry Experience
                   </h3>
                   <p className="text-sm text-ink-1 leading-relaxed">
-                    Sejak berdiri, Intidata terus tumbuh mendampingi ratusan
-                    instansi lokal maupun multinasional. Kami memadukan keahlian
-                    teknik mendalam dengan pemahaman domain bisnis yang matang
-                    untuk menghadirkan perangkat lunak yang andal.
+                    Since its inception, Intidata has grown to support hundreds of local
+                    and multinational institutions. We combine deep technical expertise
+                    with mature domain knowledge to deliver reliable software.
                   </p>
                 </div>
 
@@ -381,7 +373,7 @@ export default function AboutPage() {
                   <StatCounter
                     value={30}
                     suffix="+"
-                    label="Tahun Rekam Jejak"
+                    label="Years Track Record"
                   />
                   <div className="h-8 w-[1px] bg-[var(--panel-border)]" />
                   <StatCounter
@@ -426,14 +418,11 @@ export default function AboutPage() {
                   <Code2 size={22} />
                 </motion.div>
                 <h3 className="text-xl font-bold text-ink-0 mb-2">
-                  Fleksibilitas Custom Software
+                  Custom Software Flexibility
                 </h3>
                 <p className="text-sm text-ink-1 leading-relaxed">
-                  Setiap bisnis memiliki tantangan unik. Kami membangun
-                  perangkat lunak terpesan (*tailor-made*) yang disesuaikan
-                  secara presisi dengan alur operasional internal Anda—hal yang
-                  sering kali tidak dapat dipenuhi oleh software pasaran
-                  (*readymade*).
+                  Every business faces unique challenges. We build tailor-made
+                  software explicitly tailored to your internal operational workflows—something off-the-shelf software often fails to address.
                 </p>
               </motion.div>
 
@@ -452,7 +441,7 @@ export default function AboutPage() {
                     <Layers size={22} />
                   </div>
                   <h3 className="text-xl font-bold text-ink-0">
-                    Cakupan Solusi Enterprise
+                    Enterprise Solution Scope
                   </h3>
                 </div>
 
@@ -482,15 +471,12 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* ================= 2 — DARK — VISI & MISI ================= */}
-        {/* ================= 2 — DARK — VISI & MISI ================= */}
         <section
           style={sectionTones.dark}
           className="relative overflow-hidden bg-void py-36 border-t border-[var(--panel-border)] lg:pt-20"
         >
           <div className="circuit-texture pointer-events-none absolute inset-0 opacity-50" />
 
-          {/* glow di belakang karakter, biar overlap-nya kerasa sengaja */}
           <div
             aria-hidden
             className="pointer-events-none absolute -left-10 -top-6 hidden h-[300px] w-[300px] rounded-full blur-[90px] lg:block"
@@ -501,24 +487,21 @@ export default function AboutPage() {
             }}
           />
 
-          {/* karakter — pojok kiri atas */}
           <CarryingPersonIllustration className="pointer-events-none absolute top-21 left-4 z-20 hidden h-[280px] w-[280px] lg:block" />
 
-          {/* compass/radar — pojok kanan atas, nyambung tema "arah" */}
           <DirectionCompass className="pointer-events-none absolute top-15 right-20 z-20 hidden h-[170px] w-[170px] lg:block" />
 
           <div className="container-x max-w-6xl relative z-10">
             <Reveal className="text-center max-w-xl mx-auto mb-12">
               <span className="mono-label inline-flex items-center rounded-full border border-[var(--panel-border-strong)] bg-panel-2 px-3 py-1 !text-[11px] font-semibold tracking-[0.16em] text-signal-teal">
-                VISI & MISI
+                VISION & MISSION
               </span>
               <h2 className="mt-4 text-2xl font-bold text-ink-0 md:text-3xl">
-                Arah yang kami tuju.
+                The direction we are headed.
               </h2>
             </Reveal>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {/* ============ VISI ============ */}
               <Reveal className="relative">
                 <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
                   <div className="flex items-center gap-3">
@@ -526,29 +509,23 @@ export default function AboutPage() {
                       <Eye size={19} />
                     </div>
                     <h3 className="font-display text-[20px] font-semibold text-ink-0">
-                      Visi
+                      Vision
                     </h3>
                   </div>
 
-                  {/* tagline besar sebagai focal point */}
                   <p className="mt-3 font-display text-[19px] font-medium leading-snug text-ink-0 sm:text-[21px]">
-                    Mitra teknologi tepercaya untuk keputusan bisnis berbasis
-                    data.
+                    A trusted technology partner for data-driven business decisions.
                   </p>
 
                   <p className="mt-4 text-[14.5px] leading-relaxed text-ink-0/75">
-                    Menjadi mitra teknologi utama bagi institusi keuangan dan
-                    korporasi di Indonesia — memungkinkan setiap keputusan
-                    bisnis dibuat di atas data yang akurat, real-time, dan patuh
-                    regulasi.
+                    To be the primary technology partner for financial institutions and corporations in Indonesia — enabling every business decision to be made on accurate, real-time, and regulatory-compliant data.
                   </p>
 
-                  {/* mini-stat, biar densitas sepadan sama list Misi */}
                   <div className="mt-auto grid grid-cols-3 gap-3 border-t border-[var(--panel-border)] pt-6">
                     {[
-                      { value: "25+", label: "Tahun Pengalaman" },
-                      { value: "17+", label: "Klien Aktif" },
-                      { value: "5", label: "Sistem Inti" },
+                      { value: "25+", label: "Years Experience" },
+                      { value: "17+", label: "Active Clients" },
+                      { value: "5", label: "Core Systems" },
                     ].map((s) => (
                       <div key={s.label}>
                         <div className="font-display text-[18px] font-semibold text-signal-teal">
@@ -563,7 +540,6 @@ export default function AboutPage() {
                 </div>
               </Reveal>
 
-              {/* ============ MISI ============ */}
               <Reveal delay={0.08}>
                 <div className="h-full rounded-2xl border border-[var(--panel-border)] bg-panel p-8">
                   <div className="flex items-center gap-3">
@@ -571,7 +547,7 @@ export default function AboutPage() {
                       <Compass size={19} />
                     </div>
                     <h3 className="font-display text-[20px] font-semibold text-ink-0">
-                      Misi
+                      Mission
                     </h3>
                   </div>
                   <ul className="mt-5 space-y-5">
@@ -592,23 +568,18 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* ================= 3 — LIGHT — PERJALANAN KAMI ================= */}
         <section
           style={sectionTones.light}
           className="relative bg-void py-24 border-t border-[var(--panel-border)]"
         >
           <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
-              <span className="mono-label">Perjalanan Kami</span>
+              <span className="mono-label">Our Journey</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
-                Tiga dekade, satu komitmen yang sama.
+                Three decades, the same single commitment.
               </h2>
             </Reveal>
 
-            {/* FIX: kolom trail dilebarin dari 120px -> 240px, dan gap ditambah
-        biar trail punya ruang buat melengkung lebih jauh ke kanan dan
-        beneran "mengisi" sisi kanan section, bukan cuma mepet sempit
-        di ujung. */}
             <div className="relative grid grid-cols-1 gap-10 pl-8 sm:pl-10 lg:grid-cols-[1fr_240px] lg:items-stretch lg:gap-20">
               <div className="relative">
                 <div
@@ -640,7 +611,6 @@ export default function AboutPage() {
                 </div>
               </div>
 
-              {/* trail kanan — hidden di mobile, muncul & tergambar seiring scroll di desktop */}
               <JourneyTrail
                 steps={journey.length}
                 className="relative hidden lg:block"
@@ -648,7 +618,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* ================= 4 — DARK — CARA KERJA ================= */}
         <section
           style={sectionTones.dark}
           className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
@@ -656,9 +625,9 @@ export default function AboutPage() {
           <div className="chevron-texture pointer-events-none absolute inset-0 opacity-40" />
           <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
-              <span className="mono-label">Cara Kerja</span>
+              <span className="mono-label">How We Work</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
-                Bagaimana kami membangun sistem Anda.
+                How we build your system.
               </h2>
             </Reveal>
 
@@ -686,16 +655,15 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* ================= 5 — LIGHT — CORE VALUES ================= */}
         <section
           style={sectionTones.light}
           className="relative bg-void py-24 border-t border-[var(--panel-border)]"
         >
           <div className="container-x max-w-6xl relative">
             <Reveal className="text-center max-w-xl mx-auto mb-12">
-              <span className="mono-label">Pilar Keunggulan</span>
+              <span className="mono-label">Pillars of Excellence</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
-                Nilai-Nilai Utama Kami
+                Our Core Values
               </h2>
             </Reveal>
 
@@ -716,7 +684,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* ================= 6 — DARK — MENGAPA MEMILIH INTIDATA ================= */}
         <section
           style={sectionTones.dark}
           className="relative overflow-hidden bg-void py-24 border-t border-[var(--panel-border)]"
@@ -724,9 +691,9 @@ export default function AboutPage() {
           <div className="wave-stream-texture pointer-events-none absolute inset-0 opacity-80" />
           <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
-              <span className="mono-label">Mengapa Memilih Kami</span>
+              <span className="mono-label">Why Choose Us</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
-                Alasan klien bertahan bersama kami.
+                Why clients stay with us.
               </h2>
             </Reveal>
 
@@ -752,16 +719,15 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* ================= 7 — LIGHT — SEKTOR YANG KAMI LAYANI ================= */}
         <section
           style={sectionTones.light}
           className="relative bg-void py-24 border-t border-[var(--panel-border)]"
         >
           <div className="container-x max-w-6xl relative">
             <Reveal className="max-w-xl mb-12">
-              <span className="mono-label">Cakupan Industri</span>
+              <span className="mono-label">Industry Scope</span>
               <h2 className="mt-2 text-2xl font-bold text-ink-0 md:text-3xl">
-                Sektor yang kami layani.
+                Sectors we serve.
               </h2>
             </Reveal>
 
@@ -784,10 +750,9 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* ================= TRUSTED BY STRIP ================= */}
         <div className="border-t border-[var(--panel-border)] pt-16">
           <Reveal className="container-x max-w-6xl text-center mb-8">
-            <span className="mono-label">Dipercaya Oleh</span>
+            <span className="mono-label">Trusted By</span>
           </Reveal>
           <TrustedBy />
         </div>

@@ -112,6 +112,14 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+const defaultHeroFloatIcons: ServiceIconName[] = [
+  "Settings2",
+  "ShieldCheck",
+  "Layers",
+  "Code2",
+  "CheckCircle2",
+];
+
 const defaultFeatureCards: { icon: LucideIcon; title: string; desc: string }[] =
   [
     {
@@ -248,6 +256,8 @@ export function ServiceDetailView({
       }))
     : defaultFeatureCards;
 
+  const heroIcons = detail?.heroFloatIcons ?? defaultHeroFloatIcons;
+
   return (
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal">
       <Nav />
@@ -259,56 +269,67 @@ export function ServiceDetailView({
 
           <div className="container-x relative">
             <div className="relative mx-auto max-w-2xl py-10 text-center lg:py-16">
-              {heroFloatCards.map((c, i) => (
-                <motion.div
-                  key={i}
-                  aria-hidden
-                  initial={{ opacity: 0, y: 14, rotate: 0 }}
-                  animate={{
-                    opacity: 1,
-                    y: [0, -9, 0],
-                    rotate: c.rotate,
-                  }}
-                  transition={{
-                    opacity: {
-                      duration: 0.7,
-                      delay: c.delay,
-                      ease: [0.16, 1, 0.3, 1],
-                    },
-                    rotate: {
-                      duration: 0.7,
-                      delay: c.delay,
-                      ease: [0.16, 1, 0.3, 1],
-                    },
-                    y: {
-                      duration: 4.5 + i * 0.4,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: c.delay + 0.7,
-                    },
-                  }}
-                  className={`pointer-events-none absolute hidden overflow-hidden rounded-[20px] border border-[var(--panel-border)] bg-panel lg:block ${
-                    c.isAnchor
-                      ? "shadow-[0_24px_48px_-18px_rgba(17,24,39,0.3)]"
-                      : "shadow-[0_16px_34px_-16px_rgba(17,24,39,0.22)]"
-                  }`}
-                  style={{
-                    top: c.top,
-                    left: c.left,
-                    width: c.width,
-                    height: c.height,
-                    transform: `translate(-50%, -50%) rotate(${c.rotate}deg)`,
-                  }}
-                >
-                  <img
-                    src={placeholder(c.width * 2, c.height * 2, c.label)}
-                    alt=""
-                    width={c.width}
-                    height={c.height}
-                    className="h-full w-full object-cover opacity-90 [filter:saturate(0.82)_contrast(0.96)]"
-                  />
-                </motion.div>
-              ))}
+              {heroFloatCards.map((c, i) => {
+                const FloatIcon =
+                  serviceIconMap[heroIcons[i % heroIcons.length]];
+                const badgeSize = Math.round(
+                  Math.min(c.width, c.height) * 0.68,
+                );
+
+                return (
+                  <motion.div
+                    key={i}
+                    aria-hidden
+                    initial={{ opacity: 0, y: 14, rotate: 0 }}
+                    animate={{
+                      opacity: 1,
+                      y: [0, -9, 0],
+                      rotate: c.rotate,
+                    }}
+                    transition={{
+                      opacity: {
+                        duration: 0.7,
+                        delay: c.delay,
+                        ease: [0.16, 1, 0.3, 1],
+                      },
+                      rotate: {
+                        duration: 0.7,
+                        delay: c.delay,
+                        ease: [0.16, 1, 0.3, 1],
+                      },
+                      y: {
+                        duration: 4.5 + i * 0.4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: c.delay + 0.7,
+                      },
+                    }}
+                    className="pointer-events-none absolute hidden lg:flex"
+                    style={{
+                      top: c.top,
+                      left: c.left,
+                      width: c.width,
+                      height: c.height,
+                      transform: `translate(-50%, -50%) rotate(${c.rotate}deg)`,
+                    }}
+                  >
+                    <span
+                      className={`flex items-center justify-center rounded-[20px] border border-white/25 text-white ${
+                        c.isAnchor
+                          ? "shadow-[0_24px_48px_-18px_rgba(17,24,39,0.35)]"
+                          : "shadow-[0_16px_34px_-16px_rgba(17,24,39,0.25)]"
+                      }`}
+                      style={{
+                        width: c.width,
+                        height: c.height,
+                        background: `linear-gradient(135deg, ${accent}, ${hexToRgba(accent, 0.55)})`,
+                      }}
+                    >
+                      <FloatIcon size={badgeSize} strokeWidth={1.6} />
+                    </span>
+                  </motion.div>
+                );
+              })}
 
               <motion.div
                 aria-hidden
@@ -380,7 +401,6 @@ export function ServiceDetailView({
           </div>
         </section>
 
-        {/* ================= TRUSTED BY ================= */}
         <section className="relative border-y border-[var(--panel-border)] bg-surface py-10">
           <Reveal className="container-x mb-6 text-center">
             <p className="text-[13px] font-medium text-ink-2">
@@ -391,7 +411,6 @@ export function ServiceDetailView({
           <Marquee items={clientLogos} />
         </section>
 
-        {/* ================= WHY US — 3 CARDS ================= */}
         <section className="relative bg-void py-24">
           <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-60" />
           <div className="container-x relative">
@@ -428,7 +447,6 @@ export function ServiceDetailView({
           </div>
         </section>
 
-        {/* ================= TRACK PROGRESS — MOCKUP + TEXT ================= */}
         <section className="relative overflow-hidden bg-surface py-24">
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
             <Reveal>
@@ -505,7 +523,6 @@ export function ServiceDetailView({
           </div>
         </section>
 
-        {/* ================= SPECIALIST — TEXT + PHOTO ================= */}
         <section className="relative overflow-hidden bg-void py-24">
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
             <Reveal>
@@ -545,7 +562,6 @@ export function ServiceDetailView({
 
             <Reveal delay={0.1} className="relative">
               <div className="relative isolate mx-auto max-w-sm">
-                {/* quarter-circle nongol dari belakang sudut kanan-atas foto */}
                 <div
                   aria-hidden
                   className="pointer-events-none absolute -right-3 -top-3 z-10 h-16 w-16"
@@ -553,7 +569,7 @@ export function ServiceDetailView({
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
                   <img
-                    src={placeholder(520, 640, "Team+Photo")}
+                    src="/teamwork.jpg"
                     alt="Placeholder"
                     className="h-[420px] w-full object-cover grayscale"
                   />
@@ -643,12 +659,10 @@ export function ServiceDetailView({
           </div>
         </section>
 
-        {/* ================= OUR FEATURE — PHOTO + TEXT ================= */}
         <section className="relative overflow-hidden bg-void py-24">
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
             <Reveal className="relative order-2 lg:order-1">
               <div className="relative isolate mx-auto max-w-sm">
-                {/* quarter-circle nongol dari belakang sudut kiri-bawah foto */}
                 <div
                   aria-hidden
                   className="pointer-events-none absolute -left-3 -bottom-3 z-10 h-16 w-16"
@@ -656,7 +670,7 @@ export function ServiceDetailView({
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
                   <img
-                    src={placeholder(520, 640, "Feature+Photo")}
+                    src="/futu.jpg"
                     alt="Placeholder"
                     className="h-[420px] w-full object-cover grayscale"
                   />
@@ -730,96 +744,6 @@ export function ServiceDetailView({
           </div>
         </section>
 
-        {/* ================= CTA BANNER ================= */}
-        <section className="relative overflow-hidden bg-signal-blue py-24">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-              backgroundSize: "56px 56px",
-            }}
-          />
-          <div className="container-x relative grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
-            <Reveal>
-              <h2 className="text-[clamp(28px,3.6vw,42px)] font-semibold leading-tight text-white">
-                We are here to help you
-                <br />
-                grow your business.
-              </h2>
-            </Reveal>
-
-            <Reveal delay={0.1}>
-              <div className="mx-auto max-w-sm rounded-2xl border border-[var(--panel-border)] bg-panel p-7 shadow-[0_30px_60px_-20px_rgba(17,24,39,0.4)]">
-                <div className="space-y-4">
-                  <div>
-                    <label className="mono-label !text-[10px]">Name</label>
-                    <input
-                      type="text"
-                      placeholder="Full Name"
-                      className="mt-2 w-full rounded-lg border border-[var(--panel-border)] bg-panel-2 px-3.5 py-2.5 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="mono-label !text-[10px]">Email</label>
-                    <input
-                      type="email"
-                      placeholder="Your Email Address"
-                      className="mt-2 w-full rounded-lg border border-[var(--panel-border)] bg-panel-2 px-3.5 py-2.5 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal"
-                      readOnly
-                    />
-                  </div>
-                  <div>
-                    <label className="mono-label !text-[10px]">Message</label>
-                    <input
-                      type="text"
-                      placeholder="Tell us about your project"
-                      className="mt-2 w-full rounded-lg border border-[var(--panel-border)] bg-panel-2 px-3.5 py-2.5 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal"
-                      readOnly
-                    />
-                  </div>
-                  <Button
-                    asChild
-                    variant="primary"
-                    className="mt-2 w-full justify-center"
-                  >
-                    <a href="#kontak">Send Message</a>
-                  </Button>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ================= DOWNLOAD / RESOURCES ================= */}
-        <section className="relative bg-void py-24 text-center">
-          <div className="container-x relative">
-            <Reveal className="mx-auto max-w-xl">
-              <span className="mono-label">Get Started</span>
-              <h2 className="mt-4 text-[clamp(26px,3.2vw,38px)] font-semibold text-ink-0">
-                Download our free {title} guide.
-              </h2>
-              <p className="mt-5 text-[15px] leading-relaxed text-ink-1">
-                End-to-end {title} and technical execution in a single solution.
-                Meet the team ready to help you realize it.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <Button asChild size="default">
-                  <a href="#kontak">
-                    <Download size={15} /> Download Brochure
-                  </a>
-                </Button>
-                <Button asChild variant="ghost" size="default">
-                  <a href="#kontak">
-                    <FileText size={15} /> Request Demo
-                  </a>
-                </Button>
-              </div>
-            </Reveal>
-          </div>
-        </section>
       </main>
 
       <Contact />
