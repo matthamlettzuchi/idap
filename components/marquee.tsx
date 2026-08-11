@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 type MarqueeItem = string | { name: string; logo: string };
 
 export function Marquee({
@@ -32,10 +34,12 @@ export function Marquee({
               {item}
             </span>
           ) : (
-            <img
+            <Image
               key={i}
               src={item.logo}
               alt={item.name}
+              height={16}
+              width={800}
               className="h-16 w-auto shrink-0 object-contain opacity-60 grayscale transition-all hover:opacity-100 hover:grayscale-0"
             />
           )

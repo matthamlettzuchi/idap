@@ -38,7 +38,6 @@ export function NetworkCanvas() {
       styles.getPropertyValue("--panel-border-strong").trim() ||
       "rgba(75,100,255,0.22)";
 
-    // ...
 
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -116,7 +115,6 @@ export function NetworkCanvas() {
         ctx!.shadowBlur = 0;
       });
 
-      // traveling packets
       if (!reduced) {
         packets.forEach((p) => {
           p.t = (p.t + p.speed * 0.016) % 1;

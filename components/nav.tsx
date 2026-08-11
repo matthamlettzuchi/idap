@@ -382,7 +382,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
 
           <div className="hidden items-center gap-3 md:flex">
             <Button asChild size="sm" variant="primary">
-              <Link href="/contact">Hubungi Kami</Link>
+              <Link href="https://wa.me/622155958058">Hubungi Kami</Link>
             </Button>
           </div>
 

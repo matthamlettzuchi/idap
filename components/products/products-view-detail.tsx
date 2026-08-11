@@ -33,6 +33,7 @@ import { Footer } from "@/components/footer";
 import { Contact } from "@/components/sections/contact";
 import { Reveal } from "@/components/ui/reveal";
 import type { ProductDetail, ProductIconName } from "@/lib/product-details";
+import Image from "next/image";
 
 const productIconMap: Record<ProductIconName, typeof Building2> = {
   Building2,
@@ -133,9 +134,11 @@ export function ProductDetailView({
                 aria-hidden
                 className="pointer-events-none absolute bottom-4 left-1/2 h-7.5 w-[68%] -translate-x-1/2 rounded-full bg-black/45 blur-xl"
               />
-              <img
+              <Image
                 src={product.personImage}
                 alt={`Tim ${product.name}`}
+                height={420}
+                width={800}
                 className="relative z-10 h-full w-auto select-none object-contain object-bottom drop-shadow-[0_28px_32px_rgba(0,0,0,0.4)]"
                 draggable={false}
                 onError={(e) => {

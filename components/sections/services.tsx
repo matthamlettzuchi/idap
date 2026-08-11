@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
   Settings2,
   Layers,
@@ -113,21 +113,29 @@ const handshakeBadges: {
   { icon: Server, top: "60%", left: "96%", delay: 0.62, depth: "mid" },
 ];
 
-// where the hands meet in the source image, in % of the container
 const HANDSHAKE_ORIGIN = { top: "62%", left: "50%" };
 
 function HandshakeVisual() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
+  // Continuously tracks whether the visual is on screen so the infinite
+  // float/glow loops actually stop once scrolled away, instead of running
+  // forever in the background and eating into scroll frame time.
+  const inViewNow = useInView(containerRef, {
+    margin: "-20% 0px",
+    once: false,
+  });
 
   return (
     <motion.div
+      ref={containerRef}
       onViewportEnter={() => setActive(true)}
       viewport={{ once: true, margin: "-10% 0px" }}
       className="relative mx-auto mt-8 aspect-[4/3] w-full max-w-md lg:mx-0 lg:ml-auto"
     >
       <motion.div
         aria-hidden
-        animate={active ? { opacity: [0.2, 0.4, 0.2] } : { opacity: 0 }}
+        animate={inViewNow ? { opacity: [0.2, 0.4, 0.2] } : { opacity: 0 }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         className="pointer-events-none absolute h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-[80px]"
         style={{
@@ -190,7 +198,7 @@ function HandshakeVisual() {
             }}
           >
             <motion.span
-              animate={active ? { y: [0, -7, 0] } : {}}
+              animate={inViewNow ? { y: [0, -7, 0] } : { y: 0 }}
               transition={{
                 duration: 3.2,
                 delay: b.delay + 0.9,
@@ -230,7 +238,6 @@ export function Services() {
       />
       <div className="container-x relative mb-14">
         {" "}
-        {/* LEFT CONTENT */}
         <div className="max-w-[640px]">
           <Reveal>
             <span className="mono-label">Our Services</span>
@@ -242,7 +249,6 @@ export function Services() {
             </h2>
           </Reveal>
         </div>
-        {/* RIGHT VISUAL */}
         <div className="pointer-events-none absolute right-20 top-[-60px] hidden w-[560px] lg:block">
           <Reveal delay={0.08}>
             <HandshakeVisual />
@@ -251,7 +257,6 @@ export function Services() {
       </div>
 
       <div className="container-x">
-        {/* tab switcher */}
         <Reveal delay={0.1}>
           <div className="mb-8 inline-flex gap-2 rounded-full border border-[var(--panel-border)] bg-panel-2 p-1.5">
             {serviceCategories.map((c) => (

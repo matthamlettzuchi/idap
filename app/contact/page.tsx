@@ -6,6 +6,7 @@ import { MapPin } from "lucide-react";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Reveal } from "@/components/ui/reveal";
+import Image from "next/image";
 
 const ACCENT_LIME = "#227ed1";
 
@@ -66,9 +67,11 @@ export default function ContactPage() {
 
       <main>
         <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen lg:h-screen lg:min-h-225 overflow-hidden">
-          <img
+          <Image
             src="/skaiskrepers.jpg"
             alt=""
+            height={420}
+            width={800}
             aria-hidden
             onError={(e) => {
               const target = e.target as HTMLImageElement;

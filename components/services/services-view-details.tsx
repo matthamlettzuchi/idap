@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import {
   ArrowRight,
   ArrowDownRight,
@@ -54,6 +55,7 @@ import { Reveal } from "@/components/ui/reveal";
 import { Marquee } from "@/components/marquee";
 import { clientLogos } from "@/lib/data";
 import { serviceDetails, type ServiceIconName } from "@/lib/service-details";
+import Image from "next/image";
 
 function toTitleCase(s: string) {
   return s.replace(/\b\w/g, (c) => c.toUpperCase());
@@ -258,12 +260,31 @@ export function ServiceDetailView({
 
   const heroIcons = detail?.heroFloatIcons ?? defaultHeroFloatIcons;
 
+  // Every section below has its own ref + useInView so its infinite
+  // (repeat: Infinity) float-badge animations only run while that section
+  // is actually on screen. Previously these ran for the entire time the
+  // page was open, all at once, which was the main cause of scroll jank
+  // and occasional freezes.
+  const heroRef = useRef<HTMLElement>(null);
+  const heroInView = useInView(heroRef, { margin: "-20% 0px 0px 0px" });
+
+  const specialistsRef = useRef<HTMLDivElement>(null);
+  const specialistsInView = useInView(specialistsRef, {
+    margin: "-20% 0px",
+  });
+
+  const featureRef = useRef<HTMLDivElement>(null);
+  const featureInView = useInView(featureRef, { margin: "-20% 0px" });
+
   return (
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal">
       <Nav />
 
       <main className="pt-28">
-        <section className="relative overflow-hidden py-16 lg:py-24">
+        <section
+          ref={heroRef}
+          className="relative overflow-hidden py-16 lg:py-24"
+        >
           <div className="ledger-lines-texture pointer-events-none absolute inset-0" />
 
           <div className="container-x relative">
@@ -282,7 +303,7 @@ export function ServiceDetailView({
                     initial={{ opacity: 0, y: 14, rotate: 0 }}
                     animate={{
                       opacity: 1,
-                      y: [0, -9, 0],
+                      y: heroInView ? [0, -9, 0] : 0,
                       rotate: c.rotate,
                     }}
                     transition={{
@@ -332,7 +353,7 @@ export function ServiceDetailView({
 
               <motion.div
                 aria-hidden
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: heroInView ? [0, -8, 0] : 0 }}
                 transition={{
                   duration: 3.5,
                   repeat: Infinity,
@@ -353,7 +374,7 @@ export function ServiceDetailView({
 
               <motion.div
                 aria-hidden
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: heroInView ? [0, -8, 0] : 0 }}
                 transition={{
                   duration: 3.8,
                   repeat: Infinity,
@@ -561,23 +582,25 @@ export function ServiceDetailView({
             </Reveal>
 
             <Reveal delay={0.1} className="relative">
-              <div className="relative isolate mx-auto max-w-sm">
+              <div ref={specialistsRef} className="relative isolate mx-auto max-w-sm">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute -right-3 -top-3 z-10 h-16 w-16"
                   style={{ background: accent, borderTopRightRadius: "100%" }}
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
-                  <img
+                  <Image
                     src="/teamwork.jpg"
                     alt="Placeholder"
+                    height={420}
+                    width={800}
                     className="h-[420px] w-full object-cover grayscale"
                   />
                 </div>
               </div>
 
               <motion.div
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: specialistsInView ? [0, -8, 0] : 0 }}
                 transition={{
                   duration: 4,
                   repeat: Infinity,
@@ -662,23 +685,25 @@ export function ServiceDetailView({
         <section className="relative overflow-hidden bg-void py-24">
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-center">
             <Reveal className="relative order-2 lg:order-1">
-              <div className="relative isolate mx-auto max-w-sm">
+              <div ref={featureRef} className="relative isolate mx-auto max-w-sm">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute -left-3 -bottom-3 z-10 h-16 w-16"
                   style={{ background: accent, borderBottomLeftRadius: "100%" }}
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
-                  <img
+                  <Image
                     src="/futu.jpg"
                     alt="Placeholder"
+                    height={420}
+                    width={800}
                     className="h-[420px] w-full object-cover grayscale"
                   />
                 </div>
               </div>
 
               <motion.div
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: featureInView ? [0, -8, 0] : 0 }}
                 transition={{
                   duration: 3.6,
                   repeat: Infinity,
@@ -701,7 +726,7 @@ export function ServiceDetailView({
               </motion.div>
 
               <motion.div
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: featureInView ? [0, -8, 0] : 0 }}
                 transition={{
                   duration: 4,
                   repeat: Infinity,
