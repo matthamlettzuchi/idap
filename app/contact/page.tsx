@@ -66,7 +66,7 @@ export default function ContactPage() {
       <Nav overlayHero />
 
       <main>
-        <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen lg:h-screen lg:min-h-225 overflow-hidden">
+        <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen pb-6 lg:min-h-screen overflow-hidden">
           <Image
             src="/skaiskrepers.jpg"
             alt=""
@@ -82,15 +82,14 @@ export default function ContactPage() {
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
-
-          <div className="relative z-10 flex min-h-full flex-col justify-between gap-10 px-6 pb-10 pt-36 sm:px-10 lg:px-14 lg:pb-8 lg:pt-60">
+          <div className="relative z-10 flex flex-col gap-10 px-6 pb-16 pt-36 sm:px-10 lg:px-14 lg:pb-14 lg:pt-60">
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-8">
               <div className="max-w-xl">
                 <motion.span
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                  className="font-mono text-[13px] font-semibold tracking-[0.12em]"
+                  className="sm:hidden md:hidden lg:block font-mono text-[13px] font-semibold tracking-[0.12em]"
                   style={{ color: "#9fc4ff" }}
                 >
                   (CONTACT)
@@ -125,6 +124,36 @@ export default function ContactPage() {
                   feedback, or want to explore working together, our team is
                   here to listen.
                 </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: 0.3,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="mt-8 flex items-center gap-4 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur-md w-fit"
+                >
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
+                    style={{ background: ACCENT_BLUE, color: "#ffffff" }}
+                  >
+                    <MapPin size={16} strokeWidth={2} />
+                  </span>
+
+                  {officeLocations.map((office) => (
+                    <div key={office.region}>
+                      <div className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white/60">
+                        {office.region}
+                      </div>
+
+                      <div className="text-[13.5px] font-medium text-white">
+                        {office.address}
+                      </div>
+                    </div>
+                  ))}
+                </motion.div>
               </div>
 
               <motion.div
@@ -135,7 +164,7 @@ export default function ContactPage() {
                   delay: 0.2,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="w-full rounded-3xl bg-white p-7 shadow-[0_30px_70px_-24px_rgba(10,30,80,0.45)] sm:p-9 lg:max-h-[calc(100vh-240px)]"
+                className="w-full rounded-3xl bg-white p-7 shadow-[0_30px_70px_-24px_rgba(10,30,80,0.45)] sm:p-9"
               >
                 {submitted ? (
                   <div className="flex min-h-105 flex-col items-center justify-center text-center">
@@ -245,34 +274,6 @@ export default function ContactPage() {
                 )}
               </motion.div>
             </div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                delay: 0.35,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="hidden items-center gap-4 rounded-2xl border border-white/20 bg-white/10 px-6 py-3 backdrop-blur-md lg:flex lg:w-fit"
-            >
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
-                style={{ background: ACCENT_BLUE, color: "#ffffff" }}
-              >
-                <MapPin size={16} strokeWidth={2} />
-              </span>
-              {officeLocations.map((office) => (
-                <div key={office.region}>
-                  <div className="font-mono text-[10.5px] font-semibold uppercase tracking-[0.14em] text-white/60">
-                    {office.region}
-                  </div>
-                  <div className="text-[13.5px] font-medium text-white">
-                    {office.address}
-                  </div>
-                </div>
-              ))}
-            </motion.div>
           </div>
         </div>
       </main>
