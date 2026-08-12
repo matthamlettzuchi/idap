@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRef } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useScroll, useTransform } from "framer-motion";
-import { FloatingActions } from "@/components/floating-actions";
 import {
   Building2,
   TrendingUp,
@@ -33,8 +32,10 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Contact } from "@/components/sections/contact";
 import { Reveal } from "@/components/ui/reveal";
+import { BalancedGrid } from "@/components/ui/balanced-grid";
 import type { ProductDetail, ProductIconName } from "@/lib/product-details";
 import Image from "next/image";
+import { FloatingActions } from "@/components/floating-actions";
 
 const productIconMap: Record<ProductIconName, typeof Building2> = {
   Building2,
@@ -490,31 +491,35 @@ export function ProductDetailView({
               )}
             </Reveal>
 
-            <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {product.features.map((f, i) => {
-                const FIcon = featureIcons[i % featureIcons.length];
-                return (
-                  <Reveal key={f.title} delay={i * 0.06}>
-                    <div className="h-full rounded-xl border border-(--panel-border) bg-panel p-6 transition-colors hover:bg-panel-2">
-                      <span
-                        className="flex h-10 w-10 items-center justify-center rounded-lg border"
-                        style={{
-                          borderColor: hexToRgba(accent, 0.3),
-                          color: accent,
-                        }}
-                      >
-                        <FIcon size={17} strokeWidth={1.75} />
-                      </span>
-                      <h4 className="mt-5 font-display text-[14.5px] font-medium text-ink-0">
-                        {f.title}
-                      </h4>
-                      <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-2">
-                        {f.body}
-                      </p>
-                    </div>
-                  </Reveal>
-                );
-              })}
+            <div className="mt-12">
+              <BalancedGrid
+                items={product.features}
+                baseCols={4}
+                renderItem={(f, i) => {
+                  const FIcon = featureIcons[i % featureIcons.length];
+                  return (
+                    <Reveal key={f.title} delay={i * 0.06}>
+                      <div className="h-full rounded-xl border border-(--panel-border) bg-panel p-6 transition-colors hover:bg-panel-2">
+                        <span
+                          className="flex h-10 w-10 items-center justify-center rounded-lg border"
+                          style={{
+                            borderColor: hexToRgba(accent, 0.3),
+                            color: accent,
+                          }}
+                        >
+                          <FIcon size={17} strokeWidth={1.75} />
+                        </span>
+                        <h4 className="mt-5 font-display text-[14.5px] font-medium text-ink-0">
+                          {f.title}
+                        </h4>
+                        <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink-2">
+                          {f.body}
+                        </p>
+                      </div>
+                    </Reveal>
+                  );
+                }}
+              />
             </div>
           </div>
         </section>

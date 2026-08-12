@@ -50,6 +50,7 @@ import { Footer } from "@/components/footer";
 import { Contact } from "@/components/sections/contact";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
+import { BalancedGrid } from "@/components/ui/balanced-grid";
 import { Marquee } from "@/components/marquee";
 import { clientLogos } from "@/lib/data";
 import { serviceDetails, type ServiceIconName } from "@/lib/service-details";
@@ -616,30 +617,36 @@ export function ServiceDetailView({
               </p>
             </Reveal>
 
-            <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {featureCards.map((c, i) => (
-                <Reveal key={c.title} delay={i * 0.06}>
-                  <div className="flex h-full flex-col justify-between rounded-2xl border border-[var(--panel-border)] bg-panel p-6">
-                    <span
-                      className="flex h-10 w-10 items-center justify-center rounded-lg"
-                      style={{
-                        background: hexToRgba(accent, 0.12),
-                        color: accent,
-                      }}
-                    >
-                      <c.icon size={17} strokeWidth={1.75} />
-                    </span>
-                    <div className="mt-6">
-                      <div className="font-display text-[15px] font-medium text-ink-0">
-                        {c.title}
+            <div className="mt-12">
+              <BalancedGrid
+                items={featureCards}
+                baseCols={4}
+                gapClassName="gap-5"
+                gapRem={1.25}
+                renderItem={(c, i) => (
+                  <Reveal key={c.title} delay={i * 0.06}>
+                    <div className="flex h-full flex-col justify-between rounded-2xl border border-[var(--panel-border)] bg-panel p-6">
+                      <span
+                        className="flex h-10 w-10 items-center justify-center rounded-lg"
+                        style={{
+                          background: hexToRgba(accent, 0.12),
+                          color: accent,
+                        }}
+                      >
+                        <c.icon size={17} strokeWidth={1.75} />
+                      </span>
+                      <div className="mt-6">
+                        <div className="font-display text-[15px] font-medium text-ink-0">
+                          {c.title}
+                        </div>
+                        <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
+                          {c.desc}
+                        </p>
                       </div>
-                      <p className="mt-2 text-[12.5px] leading-relaxed text-ink-2">
-                        {c.desc}
-                      </p>
                     </div>
-                  </div>
-                </Reveal>
-              ))}
+                  </Reveal>
+                )}
+              />
             </div>
           </div>
         </section>
