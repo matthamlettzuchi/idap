@@ -48,9 +48,10 @@ export function Contact() {
         <Reveal delay={0.1}>
           <div className="panel divide-y divide-(--panel-border) p-2">
             <ContactRow icon={<MapPin size={17} />} label="Location">
-              <p className="text-[15px] font-medium leading-snug text-ink-0">
+              <a href={`https://maps.app.goo.gl/GXq2KH6mLug3ehDi8`}
+               className="text-[15px] font-medium leading-snug text-ink-0">
                 {contact.address}
-              </p>
+              </a>
             </ContactRow>
             <ContactRow icon={<Mail size={17} />} label="Email">
               <a
@@ -65,7 +66,7 @@ export function Contact() {
                 {contact.phones.map((p) => (
                   <a
                     key={p}
-                    href={`tel:${p.replace(/-/g, "")}`}
+                    href={`tel:${p.replace(/[^\d+]/g, "")}`}
                     className="text-[15px] font-medium text-ink-0 transition-colors hover:text-signal-teal"
                   >
                     {p}

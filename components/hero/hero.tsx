@@ -251,7 +251,7 @@ export function Hero() {
   const [activeTheme, setActiveTheme] = useState<HeroTheme | null>(null);
 
   useEffect(() => {
-    setActiveTheme(getActiveHeroTheme(new Date("2026-12-25")));
+    setActiveTheme(getActiveHeroTheme(new Date("2026-03-30")));
   }, []);
 
   return (
@@ -347,21 +347,6 @@ export function Hero() {
                 "radial-gradient(circle at 35% 30%, var(--signal-blue-light), var(--signal-blue) 70%)",
             }}
           />
-
-          {activeTheme && (
-            <motion.span
-              initial={{ opacity: 0, y: -8, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                duration: 0.5,
-                delay: 0.4,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="absolute -top-2 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-[var(--panel-border)] bg-panel px-4 py-1.5 text-[12.5px] font-medium text-ink-0 shadow-[0_12px_28px_-12px_rgba(17,24,39,0.35)] sm:-top-4"
-            >
-              {activeTheme.greeting}
-            </motion.span>
-          )}
 
           <motion.img
             key={activeTheme?.id ?? "default"}

@@ -15,8 +15,6 @@ export type SeasonalTheme = {
   envelopeMessage: string;
 };
 
-// CATATAN: Imlek & Ramadan mengikuti kalender lunar, jadi tanggalnya
-// bergeser tiap tahun — update startMonth/startDay/endMonth/endDay setiap tahun.
 export const seasonalThemes: SeasonalTheme[] = [
   {
     id: "imlek",

@@ -7,6 +7,7 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Reveal } from "@/components/ui/reveal";
 import Image from "next/image";
+import { FloatingActions } from "@/components/floating-actions";
 
 const ACCENT_BLUE = "#2f6fe0";
 
@@ -18,20 +19,16 @@ const officeLocations = [
 ];
 
 type FormState = {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   phone: string;
   email: string;
-  business: string;
   message: string;
 };
 
 const initialForm: FormState = {
-  firstName: "",
-  lastName: "",
+  fullName: "",
   phone: "",
   email: "",
-  business: "",
   message: "",
 };
 
@@ -66,7 +63,7 @@ export default function ContactPage() {
       <Nav overlayHero />
 
       <main>
-        <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen pb-6 lg:min-h-screen overflow-hidden">
+        <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen min-h-screen pt-28 overflow-hidden">
           <Image
             src="/skaiskrepers.jpg"
             alt=""
@@ -82,7 +79,7 @@ export default function ContactPage() {
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/10 to-transparent" />
-          <div className="relative z-10 flex flex-col gap-10 px-6 pb-16 pt-36 sm:px-10 lg:px-14 lg:pb-14 lg:pt-60">
+          <div className="relative z-10 flex min-h-screen flex-col justify-center gap-10 px-6 pb-16 pt-36 sm:px-10 lg:px-14 lg:pb-14 lg:pt-32">
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-8">
               <div className="max-w-xl">
                 <motion.span
@@ -154,6 +151,27 @@ export default function ContactPage() {
                     </div>
                   ))}
                 </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    delay: 0.38,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="mt-5 w-full max-w-md overflow-hidden rounded-2xl border border-white/20"
+                >
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.950810276371!2d106.72611791065869!3d-6.137311360143064!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6a1d55c3cea385%3A0x84c60065b48649f!2sPT%20Intidata%20Anugrah%20Pratama!5e0!3m2!1sen!2sid!4v1786522775801!5m2!1sen!2sid"
+                    width="100%"
+                    height="220"
+                    style={{ border: 0, display: "block" }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Intidata office location"
+                  />
+                </motion.div>
               </div>
 
               <motion.div
@@ -191,29 +209,16 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                      <div>
-                        <FieldLabel>First Name</FieldLabel>
-                        <input
-                          type="text"
-                          placeholder="Your first name"
-                          value={form.firstName}
-                          onChange={(e) => update("firstName", e.target.value)}
-                          className={inputClass}
-                          required
-                        />
-                      </div>
-                      <div>
-                        <FieldLabel>Last Name</FieldLabel>
-                        <input
-                          type="text"
-                          placeholder="Your last name"
-                          value={form.lastName}
-                          onChange={(e) => update("lastName", e.target.value)}
-                          className={inputClass}
-                          required
-                        />
-                      </div>
+                    <div>
+                      <FieldLabel>Full Name</FieldLabel>
+                      <input
+                        type="text"
+                        placeholder="Your full name"
+                        value={form.fullName}
+                        onChange={(e) => update("fullName", e.target.value)}
+                        className={inputClass}
+                        required
+                      />
                     </div>
 
                     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -238,17 +243,6 @@ export default function ContactPage() {
                           required
                         />
                       </div>
-                    </div>
-
-                    <div>
-                      <FieldLabel>Business Name</FieldLabel>
-                      <input
-                        type="text"
-                        placeholder="Your business name"
-                        value={form.business}
-                        onChange={(e) => update("business", e.target.value)}
-                        className={inputClass}
-                      />
                     </div>
 
                     <div>
@@ -279,6 +273,7 @@ export default function ContactPage() {
       </main>
 
       <Footer />
+      <FloatingActions />
     </div>
   );
 }

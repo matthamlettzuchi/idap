@@ -312,3 +312,14 @@ h1, h2, h3, h4 {
     scroll-behavior: auto !important;
   }
 }
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-transform: capitalize;
+}
+
+p {
+  text-align: justify;
+}

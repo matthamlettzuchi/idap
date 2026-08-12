@@ -9,9 +9,9 @@ import { sectionTones } from "@/lib/section-tones";
 const year = new Date().getFullYear();
 
 const socials = [
-  { icon: FaFacebook, label: "Facebook", href: "#" },
-  { icon: FaInstagram, label: "Instagram", href: "#" },
-  { icon: FaLinkedinIn, label: "LinkedIn", href: "#" },
+  { icon: FaFacebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61550206097624" },
+  { icon: FaInstagram, label: "Instagram", href: "https://www.instagram.com/fiscus_intidata?" },
+  { icon: FaLinkedinIn, label: "LinkedIn", href: "https://id.linkedin.com/company/pt.-intidata-anugrah-pratama" },
 ];
 
 export function Footer() {
@@ -70,7 +70,7 @@ export function Footer() {
               {contact.phones.map((p) => (
                 <li key={p}>
                   <a
-                    href={`tel:${p.replace(/-/g, "")}`}
+                    href={`tel:${p.replace(/[^\d+]/g, "")}`}
                     className="text-[14px] text-ink-1 transition-colors hover:text-ink-0"
                   >
                     {p}

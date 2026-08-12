@@ -42,6 +42,7 @@ import { TrustedBy } from "@/components/sections/trusted-by";
 import { Reveal } from "@/components/ui/reveal";
 import { principles } from "@/lib/data";
 import { sectionTones } from "@/lib/section-tones";
+import { FloatingActions } from "@/components/floating-actions";
 
 const EASE_OUT: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -767,6 +768,7 @@ export default function AboutPage() {
 
       <Contact />
       <Footer />
+      <FloatingActions />
     </div>
   );
 }

@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
 import { X } from "lucide-react";
 import {
   getActiveSeasonalTheme,
@@ -72,78 +77,101 @@ function EnvelopeClosedIcon({ theme }: { theme: SeasonalTheme }) {
 export function SeasonalEnvelope() {
   const [theme, setTheme] = useState<SeasonalTheme | null>(null);
   const [open, setOpen] = useState(false);
+  const [hiddenByScroll, setHiddenByScroll] = useState(false);
+
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setHiddenByScroll(latest > 80);
+    if (latest > 80) setOpen(false);
+  });
 
   useEffect(() => {
-    setTheme(getActiveSeasonalTheme(new Date("2026-12-25")));
+    setTheme(getActiveSeasonalTheme(new Date("2026-03-30")));
   }, []);
 
   if (!theme) return null;
 
   return (
-    <div className="fixed bottom-6 right-24 z-40 sm:bottom-8 sm:right-28">
-      <AnimatePresence mode="wait">
-        {open ? (
-          <motion.div
-            key="card"
-            initial={{ opacity: 0, y: 16, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.9 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute bottom-0 right-0 w-72 rounded-2xl border p-5 shadow-[0_24px_50px_-20px_rgba(17,24,39,0.35)]"
-            style={{
-              background: "var(--panel)",
-              borderColor: `${theme.accent}40`,
-            }}
-          >
-            <button
-              onClick={() => setOpen(false)}
-              aria-label="Tutup"
-              className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-panel-2 hover:text-ink-0"
-            >
-              <X size={14} />
-            </button>
-            <div className="mono-label" style={{ color: theme.accent }}>
-              {theme.label}
-            </div>
-            <h4 className="mt-2 font-display text-[17px] font-semibold text-ink-0">
-              {theme.envelopeTitle}
-            </h4>
-            <p className="mt-3 text-[13.5px] leading-relaxed text-ink-1">
-              {theme.envelopeMessage}
-            </p>
-          </motion.div>
-        ) : (
-          <motion.button
-            key="closed"
-            onClick={() => setOpen(true)}
-            aria-label="Buka ucapan"
-            initial={{ opacity: 0, scale: 0.6, rotate: -18 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              rotate: -14,
-              y: [0, -8, 0],
-            }}
-            transition={{
-              opacity: { duration: 0.4 },
-              scale: { duration: 0.4 },
-              rotate: { duration: 0.4 },
-              y: { duration: 2.6, delay: 0.8, repeat: Infinity, ease: "easeInOut" },
-            }}
-            whileHover={{
-              scale: 1.28,
-              rotate: -4,
-              y: -6,
-              transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] },
-            }}
-            whileTap={{ scale: 1.1 }}
-            style={{ transformOrigin: "bottom right" }}
-            className="relative flex h-50 w-50 items-end justify-end"
-          >
-            <EnvelopeClosedIcon theme={theme} />
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </div>
+    <AnimatePresence>
+      {!hiddenByScroll && (
+        <motion.div
+          key="envelope-root"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed bottom-6 right-24 lg:bottom-4 lg:right-18 z-40 sm:bottom-8 sm:right-28"
+        >
+          <AnimatePresence mode="wait">
+            {open ? (
+              <motion.div
+                key="card"
+                initial={{ opacity: 0, y: 16, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 16, scale: 0.9 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className="absolute bottom-0 right-0 w-72 rounded-2xl border p-5 shadow-[0_24px_50px_-20px_rgba(17,24,39,0.35)]"
+                style={{
+                  background: "var(--panel)",
+                  borderColor: `${theme.accent}40`,
+                }}
+              >
+                <button
+                  onClick={() => setOpen(false)}
+                  aria-label="Tutup"
+                  className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-panel-2 hover:text-ink-0"
+                >
+                  <X size={14} />
+                </button>
+                <div className="mono-label" style={{ color: theme.accent }}>
+                  {theme.label}
+                </div>
+                <h4 className="mt-2 font-display text-[17px] font-semibold text-ink-0">
+                  {theme.envelopeTitle}
+                </h4>
+                <p className="mt-3 text-[13.5px] leading-relaxed text-ink-1">
+                  {theme.envelopeMessage}
+                </p>
+              </motion.div>
+            ) : (
+              <motion.button
+                key="closed"
+                onClick={() => setOpen(true)}
+                aria-label="Buka ucapan"
+                initial={{ opacity: 0, scale: 0.6, rotate: -18 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  rotate: -14,
+                  y: [0, -8, 0],
+                }}
+                transition={{
+                  opacity: { duration: 0.4 },
+                  scale: { duration: 0.4 },
+                  rotate: { duration: 0.4 },
+                  y: {
+                    duration: 2.6,
+                    delay: 0.8,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  },
+                }}
+                whileHover={{
+                  scale: 1.28,
+                  rotate: -4,
+                  y: -6,
+                  transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] },
+                }}
+                whileTap={{ scale: 1.1 }}
+                style={{ transformOrigin: "bottom right" }}
+                className="relative flex h-50 w-50 items-end justify-end"
+              >
+                <EnvelopeClosedIcon theme={theme} />
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

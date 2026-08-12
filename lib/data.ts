@@ -355,5 +355,5 @@ export const contact = {
     "Taman Palem Lestari Complex Block H/61, Outer Ringroad, Jakarta 11730, Indonesia",
   email: "admin@intidatasolution.com",
   phones: ["+62 (21) 5595-2979", "+62 (21) 5595-8058"],
-  whatsapp: "https://wa.me/622155958058",
+  whatsapp: "https://wa.me/+6282211581769",
 };

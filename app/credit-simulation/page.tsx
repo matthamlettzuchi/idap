@@ -7,6 +7,7 @@ import { Calculator, DollarSign, Calendar, Percent, ShieldCheck, ArrowRight } fr
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
+import { FloatingActions } from "@/components/floating-actions";
 
 // Maximum Loan Limit: 100 Trillion (100,000,000,000,000)
 const MAX_AMOUNT = 100000000000000;
@@ -270,6 +271,7 @@ export default function CreditSimulationPage() {
       </main>
 
       <Footer />
+      <FloatingActions />
     </div>
   );
 }

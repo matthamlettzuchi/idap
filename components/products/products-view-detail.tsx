@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useScroll, useTransform } from "framer-motion";
+import { FloatingActions } from "@/components/floating-actions";
 import {
   Building2,
   TrendingUp,
@@ -564,6 +565,7 @@ export function ProductDetailView({
 
       <Contact />
       <Footer />
+      <FloatingActions />
     </div>
   );
 }

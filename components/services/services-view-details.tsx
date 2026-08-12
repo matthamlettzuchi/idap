@@ -54,6 +54,7 @@ import { Marquee } from "@/components/marquee";
 import { clientLogos } from "@/lib/data";
 import { serviceDetails, type ServiceIconName } from "@/lib/service-details";
 import Image from "next/image";
+import { FloatingActions } from "@/components/floating-actions";
 
 function toTitleCase(s: string) {
   return s.replace(/\b\w/g, (c) => c.toUpperCase());
@@ -741,6 +742,7 @@ export function ServiceDetailView({
 
       <Contact />
       <Footer />
+      <FloatingActions />
     </div>
   );
 }

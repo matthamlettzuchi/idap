@@ -84,7 +84,7 @@ export function NavSeasonalDecor() {
   const [theme, setTheme] = useState<SeasonalTheme | null>(null);
 
   useEffect(() => {
-    setTheme(getActiveSeasonalTheme(new Date("2026-12-25")));
+    setTheme(getActiveSeasonalTheme(new Date("2026-03-30")));
   }, []);
 
   if (!theme) return null;
@@ -190,6 +190,14 @@ export function NavSeasonalDecor() {
             animate={{ opacity: 1, rotate: -8, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute -left-2 top-0 h-20 w-20 sm:h-24 sm:w-24"
+          >
+            <Image src="/holly.png" alt="" fill className="object-contain rotate-270" />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, rotate: -10, y: -10 }}
+            animate={{ opacity: 1, rotate: -8, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute -right-2 top-0 h-20 w-20 sm:h-24 sm:w-24"
           >
             <Image src="/holly.png" alt="" fill className="object-contain" />
           </motion.div>
