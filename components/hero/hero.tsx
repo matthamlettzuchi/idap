@@ -9,8 +9,6 @@ import {
   Users2,
   FileText,
   Landmark,
-  Percent,
-  Activity,
   Bell,
 } from "lucide-react";
 import { heroStats } from "@/lib/data";
@@ -26,6 +24,7 @@ const kpiMetrics = [
     up: false,
     accent: "#0e9488",
     progress: 86,
+    footnote: "1 new customers this month",
   },
   {
     icon: FileText,
@@ -35,6 +34,7 @@ const kpiMetrics = [
     up: false,
     accent: "#d97706",
     progress: 91,
+    footnote: "3 contracts disbursed this month",
   },
   {
     icon: Landmark,
@@ -44,6 +44,7 @@ const kpiMetrics = [
     up: false,
     accent: "#ca8a04",
     progress: 91,
+    footnote: "Avg. Ticket: IDR 0M",
   },
   {
     icon: ArrowUpRight,
@@ -53,24 +54,7 @@ const kpiMetrics = [
     up: false,
     accent: "#16a34a",
     progress: 91,
-  },
-  {
-    icon: Percent,
-    label: "NPL Ratio",
-    value: "0.01%",
-    trend: "+1.1%",
-    up: true,
-    accent: "#db2777",
-    progress: 91,
-  },
-  {
-    icon: Activity,
-    label: "Collection Rate",
-    value: "0.0%",
-    trend: "+1.1%",
-    up: true,
-    accent: "#0e9488",
-    progress: 91,
+    footnote: "Avg. Disb: IDR 0M",
   },
 ];
 
@@ -83,8 +67,30 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-// Landscape dashboard card: wider max-width + 3-column KPI grid (2 rows x 3 cols)
-// instead of the previous portrait 2-column / 3-row layout.
+// Decorative trend line under each metric, matching the live Fiscus
+// dashboard's thin sparkline.
+function MiniSparkline({ color }: { color: string }) {
+  return (
+    <svg
+      viewBox="0 0 100 24"
+      className="mt-2 h-5 w-full"
+      preserveAspectRatio="none"
+    >
+      <motion.path
+        d="M0 15 C 12 17, 22 8, 34 12 S 56 20, 68 13 S 88 6, 100 11"
+        fill="none"
+        stroke={color}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeOpacity="0.7"
+        initial={{ pathLength: 0, opacity: 0 }}
+        animate={{ pathLength: 1, opacity: 1 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      />
+    </svg>
+  );
+}
+
 function HeroDashboardCard() {
   const [activeMetric, setActiveMetric] = useState<string | null>(null);
 
@@ -94,7 +100,7 @@ function HeroDashboardCard() {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-      className="relative z-10 w-full max-w-[520px] overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-[0_30px_60px_-20px_rgba(17,24,39,0.35)] sm:max-w-[600px] lg:w-[1080px]"
+      className="relative z-10 w-full max-w-[800px] overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-[0_30px_60px_-20px_rgba(17,24,39,0.35)] sm:max-w-[640px] lg:w-[1500px] xl:w-[1800px]"
     >
       {/* window chrome */}
       <div className="flex items-center gap-2.5 border-b border-[var(--panel-border)] bg-panel-2 px-5 py-4">
@@ -115,14 +121,14 @@ function HeroDashboardCard() {
         </motion.button>
       </div>
 
-      <div className="p-6">
+      <div className="p-7">
         {/* header */}
-        <div className="mb-6 flex items-start justify-between">
+        <div className="mb-7 flex items-start justify-between">
           <div>
-            <div className="font-display text-[20px] font-semibold text-ink-0">
+            <div className="font-display text-[22px] font-semibold text-ink-0">
               Dashboard Overview
             </div>
-            <div className="mt-1 font-mono text-[12px] text-ink-2">
+            <div className="mt-1 font-mono text-[12.5px] text-ink-2">
               Fiscus &rsaquo; Dashboard
             </div>
           </div>
@@ -145,20 +151,20 @@ function HeroDashboardCard() {
           </motion.button>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-5">
           {kpiMetrics.map((m, i) => (
             <motion.button
               type="button"
               key={m.label}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 + i * 0.07, duration: 0.4 }}
+              transition={{ delay: 0.5 + i * 0.08, duration: 0.4 }}
               onClick={() =>
                 setActiveMetric((prev) => (prev === m.label ? null : m.label))
               }
-              whileHover={{ y: -2, scale: 1.03 }}
-              whileTap={{ scale: 0.96 }}
-              className={`relative overflow-hidden rounded-xl border p-8 text-left transition-colors ${
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              className={`relative overflow-hidden rounded-xl border px-8 py-6 text-left transition-colors ${
                 activeMetric === m.label
                   ? "border-signal-teal bg-panel"
                   : "border-[var(--panel-border)] bg-panel-2 hover:border-[var(--panel-border-strong)]"
@@ -168,44 +174,61 @@ function HeroDashboardCard() {
                 className="absolute inset-x-0 top-0 h-[3px]"
                 style={{ background: m.accent }}
               />
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-4">
                 <span
-                  className="flex h-8 w-16 items-center justify-center rounded-lg"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                   style={{
                     background: hexToRgba(m.accent, 0.14),
                     color: m.accent,
                   }}
                 >
-                  <m.icon size={16} />
+                  <m.icon size={17} />
                 </span>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                    m.up
-                      ? "bg-signal-teal/10 text-signal-teal"
-                      : "bg-panel text-ink-2"
-                  }`}
-                >
-                  {m.trend}
-                </span>
+                <div className="text-right">
+                  <span
+                    className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+                      m.up
+                        ? "bg-signal-teal/10 text-signal-teal"
+                        : "bg-panel text-ink-2"
+                    }`}
+                  >
+                    {m.trend}
+                  </span>
+                  <div className="mt-1 whitespace-nowrap text-[10px] text-ink-3">
+                    vs last month
+                  </div>
+                </div>
               </div>
-              <div className="mt-3 truncate text-[10px] uppercase tracking-wide text-ink-2">
+              <div className="mt-3 whitespace-nowrap text-[11px] uppercase tracking-wide text-ink-2">
                 {m.label}
               </div>
-              <div className="mt-1 truncate font-display text-[17px] font-semibold text-ink-0">
+              <div className="mt-1 font-display text-[22px] font-semibold text-ink-0">
                 {m.value}
               </div>
-              <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-panel">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${m.progress}%` }}
-                  transition={{
-                    duration: 0.7,
-                    delay: 0.8 + i * 0.07,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="h-full rounded-full"
-                  style={{ background: m.accent }}
-                />
+
+              <MiniSparkline color={m.accent} />
+
+              <div className="mt-2 whitespace-nowrap text-[11px] text-ink-3">
+                {m.footnote}
+              </div>
+
+              <div className="mt-2.5 flex items-center gap-2.5">
+                <div className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-panel">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${m.progress}%` }}
+                    transition={{
+                      duration: 0.7,
+                      delay: 0.7 + i * 0.08,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="h-full rounded-full"
+                    style={{ background: m.accent }}
+                  />
+                </div>
+                <span className="shrink-0 whitespace-nowrap text-[11px] font-medium text-ink-2">
+                  {m.progress}% <span className="text-ink-3">of target</span>
+                </span>
               </div>
             </motion.button>
           ))}
@@ -297,7 +320,7 @@ export function Hero() {
         </div>
 
         {/* right: dashboard only, enlarged to fill the column */}
-        <div className="relative z-20 order-3 flex flex-col lg:order-3 lg:w-[36%] lg:mr-[-24px] lg:items-end lg:justify-start">
+        <div className="relative z-20 order-3 flex flex-col lg:order-3 lg:w-[36%] lg:mr-[-340px] lg:items-end lg:justify-start">
           <div className="mt-8 hidden justify-center lg:mt-0 lg:flex lg:w-full lg:justify-end">
             <HeroDashboardCard />
           </div>
