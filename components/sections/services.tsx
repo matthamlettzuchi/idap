@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { Icon } from "@iconify/react";
 import {
   Settings2,
   Globe,
@@ -14,7 +13,6 @@ import {
   ShieldCheck,
   Network,
   ArrowRight,
-  Code2,
   Wifi,
   Database,
   Cloud,
@@ -69,6 +67,13 @@ const softwareServices = [
     href: "/services/mvp-software-development",
   },
 ];
+
+// Baris 1: 4 layanan pertama. Baris 2: 3 sisanya, di-offset setengah kolom
+// (brick layout) biar posisinya "menyelip" di antara dua kartu di atasnya —
+// bukan cuma disejajarkan rapi seperti grid biasa.
+const firstRow = softwareServices.slice(0, 4);
+const secondRow = softwareServices.slice(4);
+
 type Depth = "far" | "mid" | "near";
 
 const depthStyle: Record<
@@ -198,6 +203,41 @@ function HandshakeVisual() {
   );
 }
 
+function ServiceCard({
+  s,
+  className = "",
+}: {
+  s: (typeof softwareServices)[number];
+  className?: string;
+}) {
+  return (
+    <a
+      href={s.href}
+      className={`group col-span-1 flex h-full flex-col justify-between rounded-2xl border border-[var(--panel-border)] bg-panel p-6 transition-colors duration-300 hover:bg-panel-2 ${className}`}
+    >
+      <div>
+        <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+          <s.icon size={17} strokeWidth={1.75} />
+        </span>
+        <div className="mt-5 font-display text-[16px] font-medium text-ink-0">
+          {s.title}
+        </div>
+        <p className="mt-2.5 text-[13px] leading-relaxed text-ink-2">
+          {s.desc}
+        </p>
+      </div>
+
+      <span className="mt-6 flex items-center gap-1.5 text-[12.5px] font-medium text-signal-teal opacity-80 transition-opacity group-hover:opacity-100">
+        Learn More
+        <ArrowRight
+          size={13}
+          className="transition-transform duration-300 group-hover:translate-x-1"
+        />
+      </span>
+    </a>
+  );
+}
+
 export function Services() {
   return (
     <section
@@ -242,33 +282,23 @@ export function Services() {
             the first line of code to ongoing support.
           </p>
 
-          <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] bg-[var(--panel-border)] sm:grid-cols-2 lg:grid-cols-4">
-            {softwareServices.map((s) => (
-              <a
-                key={s.title}
-                href={s.href}
-                className="group flex h-full flex-col justify-between bg-panel p-6 transition-colors duration-300 hover:bg-panel-2"
-              >
-                <div>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
-                    <s.icon size={17} strokeWidth={1.75} />
-                  </span>
-                  <div className="mt-5 font-display text-[16px] font-medium text-ink-0">
-                    {s.title}
-                  </div>
-                  <p className="mt-2.5 text-[13px] leading-relaxed text-ink-2">
-                    {s.desc}
-                  </p>
-                </div>
+          {/* baris 1: 4 kartu, grid 8 kolom (tiap kartu = 2 kolom) supaya
+              lurus dengan sistem offset baris 2 di bawahnya */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-8">
+            {firstRow.map((s) => (
+              <ServiceCard key={s.title} s={s} className="lg:col-span-2" />
+            ))}
+          </div>
 
-                <span className="mt-6 flex items-center gap-1.5 text-[12.5px] font-medium text-signal-teal opacity-80 transition-opacity group-hover:opacity-100">
-                  Learn More
-                  <ArrowRight
-                    size={13}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </span>
-              </a>
+          {/* baris 2: 3 kartu, digeser 1 kolom (col-start-2) supaya tiap
+              kartu "nyelip" di antara dua kartu di baris atas — brick layout */}
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-8">
+            {secondRow.map((s, i) => (
+              <ServiceCard
+                key={s.title}
+                s={s}
+                className={`lg:col-span-2 ${i === 0 ? "lg:col-start-2" : ""}`}
+              />
             ))}
           </div>
         </Reveal>

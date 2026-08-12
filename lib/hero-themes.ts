@@ -5,6 +5,8 @@ export type HeroTheme = {
   startDay: number;
   endMonth: number;
   endDay: number;
+  scale: number;
+  imageOffsetY: number;
   backgroundImage?: string;
   backgroundWash: string;
   characterImage: string;
@@ -36,6 +38,8 @@ export const heroThemes: HeroTheme[] = [
     startDay: 28,
     endMonth: 2,
     endDay: 2,
+    scale: 1.3,
+    imageOffsetY: -25,
     characterImage: "/cny.png",
     characterAlt: "Financial analyst celebrating Chinese New Year",
     blobGradient: "radial-gradient(circle at 35% 30%, #fb7185, #b91c1c 70%)",
@@ -51,6 +55,8 @@ export const heroThemes: HeroTheme[] = [
     startDay: 30,
     endMonth: 4,
     endDay: 5,
+    scale: 1.2,
+    imageOffsetY: 20,
     characterImage: "/ramadhan.png",
     characterAlt: "Financial analyst celebrating Eid al-Fitr",
     blobGradient: "radial-gradient(circle at 35% 30%, #34d399, #047857 70%)",
@@ -81,6 +87,8 @@ export const heroThemes: HeroTheme[] = [
     startDay: 20,
     endMonth: 12,
     endDay: 27,
+    scale: 1.3,
+    imageOffsetY: -10,
     characterImage: "/christmas.png",
     characterAlt: "Financial analyst celebrating Christmas",
     blobGradient: "radial-gradient(circle at 35% 30%, #f87171, #991b1b 70%)",

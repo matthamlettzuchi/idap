@@ -1,9 +1,11 @@
 "use client";
 
-import { Compass, Code2, Link2, ShieldCheck } from "lucide-react";
+import { Compass, Code2, Link2, ShieldCheck, ArrowRight } from "lucide-react";
 import { Reveal } from "@/components/ui/reveal";
 import { sectionTones } from "@/lib/section-tones";
 import { motion } from "framer-motion";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const capabilities = [
   {
@@ -966,6 +968,11 @@ export function About() {
               that create real value.
             </p>
 
+            <Button asChild variant="primary" size="sm" className="mt-7">
+              <Link href="/about">
+                Learn More <ArrowRight size={15} />
+              </Link>
+            </Button>
             {/* Accent Stats */}
             {/* <div className="mt-10 flex gap-10 border-t border-[var(--panel-border)] pt-8">
               <div>

@@ -11,11 +11,15 @@ import {
   FileText,
   Landmark,
   Bell,
+  Clock,
+  Building2,
+  Layers,
 } from "lucide-react";
 import { heroStats } from "@/lib/data";
 import { Counter } from "@/components/ui/counter";
 import { Button } from "@/components/ui/button";
 
+const statIcons = [Clock, Building2, Layers];
 const kpiMetrics = [
   {
     icon: Users2,
@@ -152,7 +156,6 @@ function HeroDashboardCard() {
           </motion.button>
         </div>
 
-        {/* 2-column grid with compact vertical layout */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {kpiMetrics.map((m, i) => (
             <motion.button
@@ -248,12 +251,14 @@ export function Hero() {
   const [activeTheme, setActiveTheme] = useState<HeroTheme | null>(null);
 
   useEffect(() => {
-    setActiveTheme(getActiveHeroTheme(new Date()));
+    setActiveTheme(getActiveHeroTheme(new Date("2026-02-01")));
   }, []);
 
   return (
     <section className="relative w-full overflow-hidden bg-void pb-16 pt-40 lg:pt-36">
-      <div className="ledger-lines-texture pointer-events-none absolute inset-0" />
+      <div
+        className={`${activeTheme?.backgroundImage == null ? "ledger-lines-texture" : ""} pointer-events-none absolute inset-0`}
+      />
 
       <AnimatePresence>
         {activeTheme && (
@@ -365,7 +370,17 @@ export function Hero() {
               activeTheme?.characterAlt ?? "Financial analyst monitoring data"
             }
             initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
+            style={{
+              maskImage:
+                "linear-gradient(to bottom, black 95%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, black 95%, transparent 100%)",
+            }}
+            animate={{
+              opacity: 1,
+              y: activeTheme?.imageOffsetY ?? 0,
+              scale: activeTheme?.scale ?? 1,
+            }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.35 }}
             className="relative lg:right-4 z-10 h-[340px] w-auto object-contain object-bottom sm:h-[440px] lg:h-[560px]"
             onError={(e) => {
@@ -385,23 +400,55 @@ export function Hero() {
       </div>
 
       {/* stats row */}
-      <div className="container-x relative mt-16 flex flex-wrap items-center justify-center gap-10 border-t border-[var(--panel-border)] pt-8 lg:justify-between">
-        {heroStats.map((s, i) => (
+      <div className="container-x relative mt-16">
+        <div className="relative overflow-hidden left-5 rounded-2xl border border-[var(--panel-border)] bg-panel">
+          <div className="grid-texture pointer-events-none absolute inset-0 opacity-40" />
           <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1 + i * 0.1 }}
-            className="text-center lg:text-left"
-          >
-            <Counter
-              value={s.value}
-              suffix={s.suffix}
-              className="font-display text-[28px] font-semibold text-ink-0"
-            />
-            <div className="mt-1 text-[12.5px] text-ink-2">{s.label}</div>
-          </motion.div>
-        ))}
+            aria-hidden
+            animate={{ opacity: [0.15, 0.3, 0.15] }}
+            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+            className="pointer-events-none absolute -left-10 top-1/2 h-[220px] w-[220px] -translate-y-1/2 rounded-full blur-[90px]"
+            style={{
+              background:
+                "radial-gradient(circle, rgba(47,75,208,.35), transparent 65%)",
+            }}
+          />
+
+          <div className="relative grid grid-cols-1 divide-y divide-[var(--panel-border)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {heroStats.map((s, i) => {
+              const Icon = statIcons[i % statIcons.length];
+              return (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-10% 0px" }}
+                  transition={{
+                    duration: 0.5,
+                    delay: i * 0.1,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  whileHover={{ y: -2 }}
+                  className="group flex items-center gap-4 px-7 py-7 transition-colors duration-300 hover:bg-panel-2 sm:px-8"
+                >
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                    <Icon size={20} strokeWidth={1.75} />
+                  </span>
+                  <div>
+                    <Counter
+                      value={s.value}
+                      suffix={s.suffix}
+                      className="font-display text-[26px] font-semibold text-ink-0"
+                    />
+                    <div className="mt-0.5 text-[12.5px] text-ink-2">
+                      {s.label}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );

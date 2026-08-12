@@ -718,7 +718,7 @@ export function Products() {
 
   return (
     <section id="produk" className="relative overflow-hidden bg-surface py-32">
-      <div className="chevron-texture pointer-events-none absolute inset-0 opacity-50" />
+      <div className="chevron-texture pointer-events-none absolute inset-0 opacity-100" />
       <div className="container-x relative">
         <div className="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-end">
           <Reveal>
