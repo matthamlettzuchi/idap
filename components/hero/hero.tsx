@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getActiveHeroTheme, type HeroTheme } from "@/lib/hero-themes";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
   ArrowDownRight,
@@ -100,14 +101,14 @@ function HeroDashboardCard() {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-      className="relative z-10 w-full max-w-[800px] overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-[0_30px_60px_-20px_rgba(17,24,39,0.35)] sm:max-w-[640px] lg:w-[1500px] xl:w-[1800px]"
+      className="relative z-10 w-full max-w-[900px] overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel shadow-[0_30px_60px_-20px_rgba(17,24,39,0.35)]"
     >
       {/* window chrome */}
-      <div className="flex items-center gap-2.5 border-b border-[var(--panel-border)] bg-panel-2 px-5 py-4">
-        <span className="h-3 w-3 rounded-full bg-ink-3/60" />
-        <span className="h-3 w-3 rounded-full bg-ink-3/60" />
-        <span className="h-3 w-3 rounded-full bg-ink-3/60" />
-        <span className="ml-3 flex-1 truncate rounded-full border border-[var(--panel-border)] bg-panel px-4 py-1.5 font-mono text-[13px] text-ink-2">
+      <div className="flex items-center gap-2.5 border-b border-[var(--panel-border)] bg-panel-2 px-5 py-2.5">
+        <span className="h-2.5 w-2.5 rounded-full bg-ink-3/60" />
+        <span className="h-2.5 w-2.5 rounded-full bg-ink-3/60" />
+        <span className="h-2.5 w-2.5 rounded-full bg-ink-3/60" />
+        <span className="ml-3 flex-1 truncate rounded-full border border-[var(--panel-border)] bg-panel px-4 py-1 font-mono text-[12px] text-ink-2">
           app.intidata.id
         </span>
         <motion.button
@@ -117,18 +118,18 @@ function HeroDashboardCard() {
           whileTap={{ scale: 0.9 }}
           className="text-ink-3"
         >
-          <Bell size={17} />
+          <Bell size={15} />
         </motion.button>
       </div>
 
-      <div className="p-7">
+      <div className="p-4 sm:p-5">
         {/* header */}
-        <div className="mb-7 flex items-start justify-between">
+        <div className="mb-3 flex items-center justify-between">
           <div>
-            <div className="font-display text-[22px] font-semibold text-ink-0">
+            <div className="font-display text-[18px] font-semibold text-ink-0">
               Dashboard Overview
             </div>
-            <div className="mt-1 font-mono text-[12.5px] text-ink-2">
+            <div className="font-mono text-[11px] text-ink-2">
               Fiscus &rsaquo; Dashboard
             </div>
           </div>
@@ -136,7 +137,7 @@ function HeroDashboardCard() {
             type="button"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex shrink-0 items-center gap-1.5 rounded-full bg-signal-teal/10 px-4 py-1.5 text-[12px] font-medium text-signal-teal"
+            className="flex shrink-0 items-center gap-1.5 rounded-full bg-signal-teal/10 px-3 py-1 text-[11px] font-medium text-signal-teal"
           >
             <motion.span
               animate={{ opacity: [1, 0.35, 1] }}
@@ -145,13 +146,14 @@ function HeroDashboardCard() {
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
-              className="h-2 w-2 rounded-full bg-signal-teal"
+              className="h-1.5 w-1.5 rounded-full bg-signal-teal"
             />
             Live
           </motion.button>
         </div>
 
-        <div className="grid grid-cols-2 gap-5">
+        {/* 2-column grid with compact vertical layout */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {kpiMetrics.map((m, i) => (
             <motion.button
               type="button"
@@ -162,9 +164,9 @@ function HeroDashboardCard() {
               onClick={() =>
                 setActiveMetric((prev) => (prev === m.label ? null : m.label))
               }
-              whileHover={{ y: -2, scale: 1.02 }}
+              whileHover={{ y: -2, scale: 1.01 }}
               whileTap={{ scale: 0.97 }}
-              className={`relative overflow-hidden rounded-xl border px-8 py-6 text-left transition-colors ${
+              className={`relative overflow-hidden rounded-xl border px-5 py-3.5 text-left transition-colors ${
                 activeMetric === m.label
                   ? "border-signal-teal bg-panel"
                   : "border-[var(--panel-border)] bg-panel-2 hover:border-[var(--panel-border-strong)]"
@@ -174,19 +176,19 @@ function HeroDashboardCard() {
                 className="absolute inset-x-0 top-0 h-[3px]"
                 style={{ background: m.accent }}
               />
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center justify-between gap-3">
                 <span
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
                   style={{
                     background: hexToRgba(m.accent, 0.14),
                     color: m.accent,
                   }}
                 >
-                  <m.icon size={17} />
+                  <m.icon size={15} />
                 </span>
                 <div className="text-right">
                   <span
-                    className={`inline-block whitespace-nowrap rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+                    className={`inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium ${
                       m.up
                         ? "bg-signal-teal/10 text-signal-teal"
                         : "bg-panel text-ink-2"
@@ -194,41 +196,45 @@ function HeroDashboardCard() {
                   >
                     {m.trend}
                   </span>
-                  <div className="mt-1 whitespace-nowrap text-[10px] text-ink-3">
+                  <div className="whitespace-nowrap text-[9.5px] text-ink-3">
                     vs last month
                   </div>
                 </div>
               </div>
-              <div className="mt-3 whitespace-nowrap text-[11px] uppercase tracking-wide text-ink-2">
-                {m.label}
-              </div>
-              <div className="mt-1 font-display text-[22px] font-semibold text-ink-0">
-                {m.value}
+
+              <div className="mt-1.5 flex items-baseline justify-between gap-2">
+                <span className="truncate text-[10px] font-medium uppercase tracking-wide text-ink-2">
+                  {m.label}
+                </span>
+                <span className="truncate font-display text-[18px] font-semibold text-ink-0">
+                  {m.value}
+                </span>
               </div>
 
               <MiniSparkline color={m.accent} />
 
-              <div className="mt-2 whitespace-nowrap text-[11px] text-ink-3">
-                {m.footnote}
-              </div>
-
-              <div className="mt-2.5 flex items-center gap-2.5">
-                <div className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-panel">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${m.progress}%` }}
-                    transition={{
-                      duration: 0.7,
-                      delay: 0.7 + i * 0.08,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="h-full rounded-full"
-                    style={{ background: m.accent }}
-                  />
-                </div>
-                <span className="shrink-0 whitespace-nowrap text-[11px] font-medium text-ink-2">
-                  {m.progress}% <span className="text-ink-3">of target</span>
+              <div className="mt-1 flex items-center justify-between gap-2">
+                <span className="truncate text-[10px] text-ink-3">
+                  {m.footnote}
                 </span>
+                <div className="flex items-center gap-1.5">
+                  <div className="h-1.5 w-12 shrink-0 overflow-hidden rounded-full bg-panel">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${m.progress}%` }}
+                      transition={{
+                        duration: 0.7,
+                        delay: 0.7 + i * 0.08,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className="h-full rounded-full"
+                      style={{ background: m.accent }}
+                    />
+                  </div>
+                  <span className="shrink-0 text-[10px] font-medium text-ink-2">
+                    {m.progress}%
+                  </span>
+                </div>
               </div>
             </motion.button>
           ))}
@@ -239,12 +245,46 @@ function HeroDashboardCard() {
 }
 
 export function Hero() {
+  const [activeTheme, setActiveTheme] = useState<HeroTheme | null>(null);
+
+  useEffect(() => {
+    setActiveTheme(getActiveHeroTheme(new Date()));
+  }, []);
+
   return (
     <section className="relative w-full overflow-hidden bg-void pb-16 pt-40 lg:pt-36">
       <div className="ledger-lines-texture pointer-events-none absolute inset-0" />
 
+      <AnimatePresence>
+        {activeTheme && (
+          <motion.div
+            key={activeTheme.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-0"
+          >
+            {activeTheme.backgroundImage && (
+              <img
+                src={activeTheme.backgroundImage}
+                alt=""
+                className="h-full w-full object-cover opacity-[0.18]"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            )}
+            <div
+              className="absolute inset-0"
+              style={{ background: activeTheme.backgroundWash }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="container-x relative flex flex-col lg:min-h-[72vh] lg:flex-row lg:items-stretch lg:gap-4">
-        {/* left: giant statement + copy + CTA, stacked together */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -286,7 +326,6 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* center: photo + blob */}
         <div className="relative order-1 mt-10 flex items-end justify-center lg:order-2 lg:mt-0 lg:w-[42%]">
           <motion.div
             initial={{ scale: 0.85, opacity: 0 }}
@@ -296,32 +335,50 @@ export function Hero() {
               ease: [0.22, 1, 0.36, 1],
               delay: 0.15,
             }}
-            className="absolute bottom-4 left-1/2 z-0 h-[280px] w-[280px] -translate-x-[200px] rounded-full sm:h-[360px] sm:w-[360px] lg:left-[38%] lg:h-[420px] lg:w-[420px]"
+            className="absolute bottom-4 left-72 sm:left-85 md:left-113 z-0 h-[280px] w-[280px] -translate-x-[200px] rounded-full sm:h-[360px] sm:w-[360px] lg:left-[42%] lg:h-[420px] lg:w-[420px]"
             style={{
               background:
+                activeTheme?.blobGradient ??
                 "radial-gradient(circle at 35% 30%, var(--signal-blue-light), var(--signal-blue) 70%)",
             }}
           />
 
+          {activeTheme && (
+            <motion.span
+              initial={{ opacity: 0, y: -8, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                duration: 0.5,
+                delay: 0.4,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="absolute -top-2 left-1/2 z-20 -translate-x-1/2 whitespace-nowrap rounded-full border border-[var(--panel-border)] bg-panel px-4 py-1.5 text-[12.5px] font-medium text-ink-0 shadow-[0_12px_28px_-12px_rgba(17,24,39,0.35)] sm:-top-4"
+            >
+              {activeTheme.greeting}
+            </motion.span>
+          )}
+
           <motion.img
-            src="/financeguy.png"
-            alt="Financial analyst monitoring data"
+            key={activeTheme?.id ?? "default"}
+            src={activeTheme?.characterImage ?? "/financeguy.png"}
+            alt={
+              activeTheme?.characterAlt ?? "Financial analyst monitoring data"
+            }
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.35 }}
-            className="relative z-10 h-[340px] w-auto object-contain grayscale object-bottom sm:h-[440px] lg:h-[560px]"
+            className="relative lg:right-4 z-10 h-[340px] w-auto object-contain object-bottom sm:h-[440px] lg:h-[560px]"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
-              target.src =
-                "https://placehold.co/500x700/2f4bd0/ffffff?text=Intidata";
+              target.src = "/financeguy.png";
             }}
           />
         </div>
 
         {/* right: dashboard only, enlarged to fill the column */}
-        <div className="relative z-20 order-3 flex flex-col lg:order-3 lg:w-[36%] lg:mr-[-340px] lg:items-end lg:justify-start">
-          <div className="mt-8 hidden justify-center lg:mt-0 lg:flex lg:w-full lg:justify-end">
+        <div className="relative z-20 order-3 flex flex-col lg:order-3 lg:w-[40%] lg:mr-[-150px] lg:items-end lg:justify-start">
+          <div className="mt-8 hidden justify-center lg:mt-7 lg:flex lg:w-full lg:justify-end">
             <HeroDashboardCard />
           </div>
         </div>
