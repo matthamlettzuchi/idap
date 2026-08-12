@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
+import { NavSeasonalDecor } from "@/components/nav-seasonal-decor";
+import { SeasonalEnvelope } from "@/components/seasonal-envelope";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -35,6 +37,8 @@ export default function RootLayout({
     <html lang="id" className={`${plusJakarta.variable} ${geistMono.variable}`}>
       <body className="min-h-full bg-void text-ink-0">
         <SmoothScroll>{children}</SmoothScroll>
+        <NavSeasonalDecor />
+        <SeasonalEnvelope />
       </body>
     </html>
   );

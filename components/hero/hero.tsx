@@ -251,7 +251,7 @@ export function Hero() {
   const [activeTheme, setActiveTheme] = useState<HeroTheme | null>(null);
 
   useEffect(() => {
-    setActiveTheme(getActiveHeroTheme(new Date("2026-02-01")));
+    setActiveTheme(getActiveHeroTheme(new Date("2026-12-25")));
   }, []);
 
   return (
@@ -294,7 +294,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-20 order-2 mt-8 flex flex-col items-center text-center lg:order-1 lg:mt-0 lg:w-[26%] lg:items-start lg:justify-center lg:pr-10 lg:text-left"
+          className="relative z-20 order-2 mt-8 flex flex-col items-center text-center lg lg:order-1 lg:mt-0 lg:w-[26%] lg:items-start lg:justify-center lg:pr-10 lg:-left-10 lg:text-left"
         >
           <h1 className="font-display text-[clamp(38px,6.6vw,84px)] font-bold leading-[0.88] tracking-tight text-ink-0">
             Solutions
