@@ -29,11 +29,11 @@ import {
   FileSpreadsheet,
   Sprout,
   ArrowRight,
-  LucideIcon,
+  type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
-import { ProductIconName } from "@/lib/products";
+import { supabase } from "@/lib/supabase";
 
 const softwareDevServices = [
   {
@@ -107,14 +107,9 @@ const infrastructureServices = [
   },
 ];
 
-export type NavProduct = {
-  code: string;
-  name: string;
-  desc: string;
-  icon: ProductIconName;
-  href: string;
-};
-
+// Maps the icon *name* stored in Supabase (row.icon, e.g. "Building2") to
+// the actual Lucide component. Add an entry here whenever a new icon name
+// is introduced in the products table.
 const navProductIconMap: Record<string, LucideIcon> = {
   Building2,
   TrendingUp,
@@ -123,54 +118,28 @@ const navProductIconMap: Record<string, LucideIcon> = {
   Sprout,
 };
 
-const productList = [
-  {
-    code: "FISCUS MF",
-    name: "FISCUS Multifinance",
-    desc: "Core financing system for consumer & vehicle loans.",
-    icon: Building2,
-    href: "/products/multifinance",
-  },
-  {
-    code: "FISCUS FC",
-    name: "FISCUS Factoring",
-    desc: "Factoring & business invoice management.",
-    icon: TrendingUp,
-    href: "/products/factoring",
-  },
-  {
-    code: "FISCUS AC",
-    name: "FISCUS Accounting",
-    desc: "Integrated accounting meeting banking standards.",
-    icon: Calculator,
-    href: "/products/accounting",
-  },
-  {
-    code: "OJK REPORT",
-    name: "SLIK / SILARAS Reporting",
-    desc: "Automated reporting aligned with OJK & BI regulations.",
-    icon: FileSpreadsheet,
-    href: "/products/slik-silaras",
-  },
-  {
-    code: "PLANTA",
-    name: "Planta Enterprise",
-    desc: "Specialized ERP solution for the plantation & palm oil sector.",
-    icon: Sprout,
-    href: "/products/planta",
-  },
-];
+type NavProduct = {
+  code: string;
+  name: string;
+  desc: string;
+  icon: string;
+  href: string;
+};
 
-export function Nav({
-  overlayHero = false,
-  products,
-}: {
-  overlayHero?: boolean;
-  products: NavProduct[];
-}) {
+type ProductRow = {
+  slug: string;
+  code: string;
+  name: string;
+  tagline: string;
+  icon: string;
+  sort_order: number;
+};
+
+export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  
+  const [productList, setProductList] = React.useState<NavProduct[]>([]);
+
   const [activeDropdown, setActiveDropdown] = React.useState<
     "services" | "products" | null
   >(null);
@@ -186,6 +155,34 @@ export function Nav({
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
   });
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      const { data, error } = await supabase
+        .from("products")
+        .select("slug, code, name, tagline, icon, sort_order")
+        .order("sort_order", { ascending: true });
+
+      if (error || !data || cancelled) return;
+
+      setProductList(
+        (data as ProductRow[]).map((row) => ({
+          code: row.code,
+          name: row.name,
+          desc: row.tagline,
+          icon: row.icon,
+          href: `/products/${row.slug}`,
+        })),
+      );
+    }
+
+    loadProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const isLight = overlayHero && !scrolled;
   const linkClass = isLight
@@ -268,27 +265,31 @@ export function Nav({
                   >
                     <div className="mono-label mb-4">Core Products Suite</div>
                     <div className="grid grid-cols-2 gap-3">
-                      {productList.map((prod) => (
-                        <Link
-                          key={prod.name}
-                          href={prod.href}
-                          className="group flex items-start gap-3.5 rounded-xl border border-transparent p-3 transition-colors hover:border-(--panel-border) hover:bg-panel-2"
-                        >
-                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-(--panel-border) text-signal-teal transition-colors group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
-                            <prod.icon size={18} />
-                          </span>
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <span className="font-display text-[14px] font-medium text-ink-0 group-hover:text-signal-teal">
-                                {prod.name}
-                              </span>
+                      {productList.map((prod) => {
+                        const ProdIcon =
+                          navProductIconMap[prod.icon] ?? Building2;
+                        return (
+                          <Link
+                            key={prod.name}
+                            href={prod.href}
+                            className="group flex items-start gap-3.5 rounded-xl border border-transparent p-3 transition-colors hover:border-(--panel-border) hover:bg-panel-2"
+                          >
+                            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-(--panel-border) text-signal-teal transition-colors group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                              <ProdIcon size={18} />
+                            </span>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="font-display text-[14px] font-medium text-ink-0 group-hover:text-signal-teal">
+                                  {prod.name}
+                                </span>
+                              </div>
+                              <p className="mt-1 text-[12px] leading-snug text-ink-2">
+                                {prod.desc}
+                              </p>
                             </div>
-                            <p className="mt-1 text-[12px] leading-snug text-ink-2">
-                              {prod.desc}
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </motion.div>
                 )}
@@ -344,24 +345,6 @@ export function Nav({
                           }
                         />
                       </button>
-                      {/* <button
-                        onMouseEnter={() => setActiveCategory("infra")}
-                        className={`mt-2 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors ${
-                          activeCategory === "infra"
-                            ? "border border-(--panel-border) bg-panel text-ink-0"
-                            : "text-ink-2 hover:text-ink-0"
-                        }`}
-                      >
-                        <span className="text-[13.5px] font-medium">
-                          Infrastructure
-                        </span>
-                        <ArrowRight
-                          size={14}
-                          className={
-                            activeCategory === "infra" ? "text-signal-teal" : "opacity-0"
-                          }
-                        />
-                      </button> */}
                     </div>
 
                     <div className="flex-1 p-6">
@@ -496,17 +479,20 @@ export function Nav({
               </button>
               {mobileAccordion === "products" && (
                 <div className="mt-3 flex flex-col gap-3 border-l border-(--panel-border) pl-4">
-                  {productList.map((prod) => (
-                    <Link
-                      key={prod.name}
-                      href={prod.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
-                    >
-                      <prod.icon size={16} className="text-signal-teal" />
-                      <span>{prod.name}</span>
-                    </Link>
-                  ))}
+                  {productList.map((prod) => {
+                    const ProdIcon = navProductIconMap[prod.icon] ?? Building2;
+                    return (
+                      <Link
+                        key={prod.name}
+                        href={prod.href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
+                      >
+                        <ProdIcon size={16} className="text-signal-teal" />
+                        <span>{prod.name}</span>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -545,18 +531,6 @@ export function Nav({
                       <span>{item.title}</span>
                     </Link>
                   ))}
-                  {/* <div className="mono-label mt-2 text-[11px]">Infrastructure</div>
-                  {infrastructureServices.map((item) => (
-                    <Link
-                      key={item.slug}
-                      href={`/services/${item.slug}`}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
-                    >
-                      <item.icon size={16} className="text-signal-teal" />
-                      <span>{item.title}</span>
-                    </Link>
-                  ))} */}
                 </div>
               )}
             </div>

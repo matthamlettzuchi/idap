@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaLinkedinIn, FaInstagram, FaFacebook } from "react-icons/fa";
-import { contact, nav, products } from "@/lib/data";
+import { contact, nav } from "@/lib/data";
 import { Logo } from "@/components/logo";
 import { sectionTones } from "@/lib/section-tones";
+import { supabase } from "@/lib/supabase";
 
 const year = new Date().getFullYear();
 
@@ -14,7 +16,33 @@ const socials = [
   { icon: FaLinkedinIn, label: "LinkedIn", href: "https://id.linkedin.com/company/pt.-intidata-anugrah-pratama" },
 ];
 
+type FooterProduct = {
+  slug: string;
+  name: string;
+};
+
 export function Footer() {
+  const [products, setProducts] = useState<FooterProduct[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProducts() {
+      const { data, error } = await supabase
+        .from("products")
+        .select("slug, name, sort_order")
+        .order("sort_order", { ascending: true });
+
+      if (error || !data || cancelled) return;
+      setProducts(data as FooterProduct[]);
+    }
+
+    loadProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <footer style={sectionTones.dark} className="relative overflow-hidden border-t border-(--panel-border) bg-surface pb-10 pt-24">
       <div className="constellation-texture pointer-events-none absolute inset-0 opacity-90" />
@@ -52,9 +80,9 @@ export function Footer() {
             <h5 className="mono-label">Products</h5>
             <ul className="mt-5 space-y-3.5">
               {products.map((p) => (
-                <li key={p.id}>
+                <li key={p.slug}>
                   <a
-                    href={`/products/${p.link}`}
+                    href={`/products/${p.slug}`}
                     className="text-[14px] text-ink-1 transition-colors hover:text-ink-0"
                   >
                     {p.name}

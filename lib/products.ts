@@ -1,13 +1,6 @@
 import { cache } from "react";
 import { supabase } from "@/lib/supabase";
-
-export type ProductIconName =
-  | "Building2" | "TrendingUp" | "Calculator" | "FileSpreadsheet" | "Sprout";
-  // tambahin di sini SEKALIGUS di productIconMap kalau nambah icon baru
-
-export type ProductAdvantage = { title: string; subtitle?: string };
-export type ProductFeature = { title: string; body: string };
-export type ProductMetric = { label: string; value: string };
+import type { ProductDetail } from "@/lib/product-details";
 
 export type ProductRow = {
   slug: string;
@@ -15,7 +8,7 @@ export type ProductRow = {
   name: string;
   tagline: string;
   accent: string;
-  icon: ProductIconName;
+  icon: ProductDetail["icon"];
   background_image: string;
   person_image: string;
   person_image_scale: number | null;
@@ -23,16 +16,19 @@ export type ProductRow = {
   person_image_offset_y: number | null;
   quick_facts: string[];
   overview: string[];
-  advantages: ProductAdvantage[];
+  advantages: { title: string; subtitle?: string }[];
   process_intro: { heading: string; body: string } | null;
   process_lottie: string | null;
   features_intro: string | null;
-  features: ProductFeature[];
-  metrics: ProductMetric[];
+  features: { title: string; body: string }[];
+  metrics: { label: string; value: string }[];
   modules: string[];
   sort_order: number;
 };
 
+// cache() dedupes calls within a single request (e.g. Nav + page both need
+// the list, only one query actually hits Supabase). Only safe in Server
+// Components, so this file must not be imported into "use client" files.
 export const getAllProducts = cache(async (): Promise<ProductRow[]> => {
   const { data, error } = await supabase
     .from("products")
@@ -46,20 +42,20 @@ export const getAllProducts = cache(async (): Promise<ProductRow[]> => {
   return data ?? [];
 });
 
-export const getProductBySlug = cache(async (slug: string): Promise<ProductRow | null> => {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("slug", slug)
-    .single();
+export const getProductBySlug = cache(
+  async (slug: string): Promise<ProductRow | null> => {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("slug", slug)
+      .single();
 
-  if (error) return null;
-  return data;
-});
+    if (error) return null;
+    return data;
+  }
+);
 
-// Shape ke bentuk yang dipakai ProductDetailView (camelCase, sama persis kayak
-// ProductDetail lama di lib/product-details.ts)
-export function toProductDetail(row: ProductRow) {
+export function toProductDetail(row: ProductRow): ProductDetail {
   return {
     slug: row.slug,
     code: row.code,
@@ -79,19 +75,5 @@ export function toProductDetail(row: ProductRow) {
     processLottie: row.process_lottie ?? undefined,
     featuresIntro: row.features_intro ?? undefined,
     features: row.features,
-  };
-}
-
-// Shape ke bentuk yang dipakai section Products di homepage (Product type lama)
-export function toHomeProduct(row: ProductRow) {
-  return {
-    id: row.slug,
-    link: row.slug,
-    code: row.code,
-    name: row.name,
-    summary: row.tagline,
-    description: row.overview[0] ?? row.tagline,
-    metrics: row.metrics,
-    modules: row.modules,
   };
 }
