@@ -135,11 +135,38 @@ type ProductRow = {
   sort_order: number;
 };
 
+const navServiceIconMap: Record<string, LucideIcon> = {
+  Code2,
+  Globe,
+  Layers,
+  Smartphone,
+  Wrench,
+  Palette,
+  Rocket,
+};
+
+type NavService = {
+  code: string;
+  name: string;
+  desc: string;
+  icon: string;
+  href: string;
+};
+
+type ServiceRow = {
+  slug: string;
+  code: string;
+  name: string;
+  nav_desc: string;
+  icon: string;
+  sort_order: number;
+};
+
 export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [productList, setProductList] = React.useState<NavProduct[]>([]);
-
+  const [dbServices, setDbServices] = React.useState<NavService[]>([]);
   const [activeDropdown, setActiveDropdown] = React.useState<
     "services" | "products" | null
   >(null);
@@ -179,6 +206,34 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
     }
 
     loadProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function loadServices() {
+      const { data, error } = await supabase
+        .from("services")
+        .select("slug, code, name, nav_desc, icon, sort_order")
+        .order("sort_order", { ascending: true });
+
+      if (error || !data || cancelled) return;
+
+      setDbServices(
+        (data as ServiceRow[]).map((row) => ({
+          code: row.code,
+          name: row.name,
+          desc: row.nav_desc,
+          icon: row.icon,
+          href: `/services/${row.slug}`,
+        })),
+      );
+    }
+
+    loadServices();
     return () => {
       cancelled = true;
     };
@@ -354,26 +409,30 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                             Software Development Services
                           </div>
                           <div className="grid grid-cols-2 gap-2">
-                            {softwareDevServices.map((item) => (
-                              <Link
-                                key={item.slug}
-                                href={`/services/${item.slug}`}
-                                className="group flex items-start gap-3 rounded-lg p-2.5 hover:bg-panel-2"
-                              >
-                                <item.icon
-                                  size={16}
-                                  className="mt-0.5 shrink-0 text-signal-teal"
-                                />
-                                <div>
-                                  <div className="text-[13px] font-medium text-ink-0 group-hover:text-signal-teal">
-                                    {item.title}
+                            {dbServices.map((item) => {
+                              const ServiceIcon =
+                                navServiceIconMap[item.icon] ?? Code2;
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  className="group flex items-start gap-3 rounded-lg p-2.5 hover:bg-panel-2"
+                                >
+                                  <ServiceIcon
+                                    size={16}
+                                    className="mt-0.5 shrink-0 text-signal-teal"
+                                  />
+                                  <div>
+                                    <div className="text-[13px] font-medium text-ink-0 group-hover:text-signal-teal">
+                                      {item.name}
+                                    </div>
+                                    <div className="line-clamp-1 text-[11px] text-ink-2">
+                                      {item.desc}
+                                    </div>
                                   </div>
-                                  <div className="line-clamp-1 text-[11px] text-ink-2">
-                                    {item.desc}
-                                  </div>
-                                </div>
-                              </Link>
-                            ))}
+                                </Link>
+                              );
+                            })}
                           </div>
                         </div>
                       ) : (
@@ -520,17 +579,20 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
                   <div className="mono-label text-[11px]">
                     Software Development
                   </div>
-                  {softwareDevServices.map((item) => (
-                    <Link
-                      key={item.slug}
-                      href={`/services/${item.slug}`}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
-                    >
-                      <item.icon size={16} className="text-signal-teal" />
-                      <span>{item.title}</span>
-                    </Link>
-                  ))}
+                  {dbServices.map((item) => {
+                    const ServiceIcon = navServiceIconMap[item.icon] ?? Code2;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center gap-2 text-[14px] text-ink-1 hover:text-signal-teal"
+                      >
+                        <ServiceIcon size={16} className="text-signal-teal" />
+                        <span>{item.name}</span>
+                      </Link>
+                    );
+                  })}
                 </div>
               )}
             </div>

@@ -11,9 +11,21 @@ import { supabase } from "@/lib/supabase";
 const year = new Date().getFullYear();
 
 const socials = [
-  { icon: FaFacebook, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61550206097624" },
-  { icon: FaInstagram, label: "Instagram", href: "https://www.instagram.com/fiscus_intidata?" },
-  { icon: FaLinkedinIn, label: "LinkedIn", href: "https://id.linkedin.com/company/pt.-intidata-anugrah-pratama" },
+  {
+    icon: FaFacebook,
+    label: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=61550206097624",
+  },
+  {
+    icon: FaInstagram,
+    label: "Instagram",
+    href: "https://www.instagram.com/fiscus_intidata?",
+  },
+  {
+    icon: FaLinkedinIn,
+    label: "LinkedIn",
+    href: "https://id.linkedin.com/company/pt.-intidata-anugrah-pratama",
+  },
 ];
 
 type FooterProduct = {
@@ -21,8 +33,14 @@ type FooterProduct = {
   name: string;
 };
 
+type FooterService = {
+  slug: string;
+  name: string;
+};
+
 export function Footer() {
   const [products, setProducts] = useState<FooterProduct[]>([]);
+  const [services, setServices] = useState<FooterService[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -37,18 +55,32 @@ export function Footer() {
       setProducts(data as FooterProduct[]);
     }
 
+    async function loadServices() {
+      const { data, error } = await supabase
+        .from("services")
+        .select("slug, name, sort_order")
+        .order("sort_order", { ascending: true });
+
+      if (error || !data || cancelled) return;
+      setServices(data as FooterService[]);
+    }
+
     loadProducts();
+    loadServices();
     return () => {
       cancelled = true;
     };
   }, []);
 
   return (
-    <footer style={sectionTones.dark} className="relative overflow-hidden border-t border-(--panel-border) bg-surface pb-10 pt-24">
+    <footer
+      style={sectionTones.dark}
+      className="relative overflow-hidden border-t border-(--panel-border) bg-surface pb-10 pt-24"
+    >
       <div className="constellation-texture pointer-events-none absolute inset-0 opacity-90" />
 
       <div className="container-x relative">
-        <div className="grid grid-cols-1 gap-14 border-b border-(--panel-border) pb-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid grid-cols-1 gap-14 border-b border-(--panel-border) pb-16 sm:grid-cols-2 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr_0.8fr]">
           <div>
             <Logo className="h-9 w-36" />
             <p className="mt-5 max-w-70 text-[14px] leading-relaxed text-ink-1">
@@ -86,6 +118,22 @@ export function Footer() {
                     className="text-[14px] text-ink-1 transition-colors hover:text-ink-0"
                   >
                     {p.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h5 className="mono-label">Services</h5>
+            <ul className="mt-5 space-y-3.5">
+              {services.map((s) => (
+                <li key={s.slug}>
+                  <a
+                    href={`/services/${s.slug}`}
+                    className="text-[14px] text-ink-1 transition-colors hover:text-ink-0"
+                  >
+                    {s.name}
                   </a>
                 </li>
               ))}

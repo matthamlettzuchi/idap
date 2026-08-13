@@ -54,8 +54,7 @@ import { BalancedGrid } from "@/components/ui/balanced-grid";
 import { Marquee } from "@/components/marquee";
 import { clientLogos } from "@/lib/data";
 import {
-  serviceDetails,
-  serviceList,
+  type ServiceDetail,
   type ServiceIconName,
 } from "@/lib/service-details";
 import Image from "next/image";
@@ -197,18 +196,17 @@ const specialistItems = [
 const barSeeds = [42, 68, 55, 88, 64];
 
 export function ServiceDetailView({
-  slug,
-  title,
+  service,
+  related,
 }: {
-  slug: string;
-  title: string;
+  service: ServiceDetail;
+  related: ServiceDetail[];
 }) {
+  const title = service.name;
   const displayTitle = toTitleCase(title);
-  const detail = serviceDetails[slug];
-  const accent = detail?.accent ?? "#2f4bd0";
-  const relatedServices = serviceList
-    .filter((s) => s.slug !== slug)
-    .slice(0, 4);
+  const detail = service;
+  const accent = detail.accent ?? "#2f4bd0";
+  const relatedServices = related;
 
   const featureCards = (detail?.gridSection?.items ?? []).map((item) => ({
     icon: serviceIconMap[item.icon],

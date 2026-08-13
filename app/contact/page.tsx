@@ -7,8 +7,6 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Re-check Supabase every 5 minutes so new/edited/deleted products show up
-// without a redeploy.
 export const revalidate = 300;
 
 export async function generateStaticParams() {
