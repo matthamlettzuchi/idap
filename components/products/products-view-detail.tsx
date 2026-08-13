@@ -540,23 +540,29 @@ export function ProductDetailView({
                   <Reveal key={r.slug} delay={i * 0.05}>
                     <Link
                       href={`/products/${r.slug}`}
-                      className="group flex h-full flex-col justify-between rounded-xl border border-(--panel-border) bg-panel p-5 transition-colors hover:bg-panel-2"
+                      className="group flex h-full flex-col justify-between rounded-xl border border-(--panel-border) bg-panel p-6 transition-colors hover:bg-panel-2"
                     >
                       <div>
                         <span
-                          className="flex h-9 w-9 items-center justify-center rounded-lg"
+                          className="flex h-11 w-11 items-center justify-center rounded-full"
                           style={{
                             background: hexToRgba(r.accent, 0.12),
                             color: r.accent,
                           }}
                         >
-                          <RIcon size={16} strokeWidth={1.75} />
+                          <RIcon size={18} strokeWidth={1.75} />
                         </span>
                         <div className="mt-4 font-display text-[14px] font-medium text-ink-0">
                           {r.name}
                         </div>
+                        <p className="mt-2.5 line-clamp-2 text-[12px] leading-relaxed text-ink-2">
+                          {r.tagline}
+                        </p>
                       </div>
-                      <span className="mt-6 flex items-center gap-1 text-[12px] font-medium text-ink-2 opacity-0 transition-opacity group-hover:opacity-100">
+                      <span
+                        className="mt-6 flex items-center gap-1 text-[12px] font-medium opacity-0 transition-opacity group-hover:opacity-100"
+                        style={{ color: r.accent }}
+                      >
                         See detail <ArrowUpRight size={12} />
                       </span>
                     </Link>

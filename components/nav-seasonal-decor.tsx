@@ -84,7 +84,7 @@ export function NavSeasonalDecor() {
   const [theme, setTheme] = useState<SeasonalTheme | null>(null);
 
   useEffect(() => {
-    setTheme(getActiveSeasonalTheme(new Date("2026-03-30")));
+    setTheme(getActiveSeasonalTheme(new Date("2026-03-18")));
   }, []);
 
   if (!theme) return null;

@@ -53,8 +53,13 @@ import { Reveal } from "@/components/ui/reveal";
 import { BalancedGrid } from "@/components/ui/balanced-grid";
 import { Marquee } from "@/components/marquee";
 import { clientLogos } from "@/lib/data";
-import { serviceDetails, type ServiceIconName } from "@/lib/service-details";
+import {
+  serviceDetails,
+  serviceList,
+  type ServiceIconName,
+} from "@/lib/service-details";
 import Image from "next/image";
+import Link from "next/link";
 import { FloatingActions } from "@/components/floating-actions";
 
 function toTitleCase(s: string) {
@@ -201,6 +206,9 @@ export function ServiceDetailView({
   const displayTitle = toTitleCase(title);
   const detail = serviceDetails[slug];
   const accent = detail?.accent ?? "#2f4bd0";
+  const relatedServices = serviceList
+    .filter((s) => s.slug !== slug)
+    .slice(0, 4);
 
   const featureCards = (detail?.gridSection?.items ?? []).map((item) => ({
     icon: serviceIconMap[item.icon],
@@ -247,6 +255,10 @@ export function ServiceDetailView({
                 const badgeSize = Math.round(
                   Math.min(c.width, c.height) * 0.55,
                 );
+                const isLucide = floatIconName.startsWith("lucide:");
+                const LucideComp = isLucide
+                  ? serviceIconMap[floatIconName.slice(7) as ServiceIconName]
+                  : null;
 
                 return (
                   <motion.div
@@ -293,11 +305,28 @@ export function ServiceDetailView({
                       }`}
                       style={{ width: c.width, height: c.height }}
                     >
-                      <Icon
-                        icon={floatIconName}
-                        width={badgeSize}
-                        height={badgeSize}
-                      />
+                      {isLucide && LucideComp ? (
+                        <span
+                          className="flex items-center justify-center rounded-full"
+                          style={{
+                            width: badgeSize * 1.55,
+                            height: badgeSize * 1.55,
+                            background: hexToRgba(accent, 0.14),
+                            color: accent,
+                          }}
+                        >
+                          <LucideComp
+                            size={Math.round(badgeSize * 0.8)}
+                            strokeWidth={1.75}
+                          />
+                        </span>
+                      ) : (
+                        <Icon
+                          icon={floatIconName}
+                          width={badgeSize}
+                          height={badgeSize}
+                        />
+                      )}
                     </span>
                   </motion.div>
                 );
@@ -746,6 +775,55 @@ export function ServiceDetailView({
           </div>
         </section>
       </main>
+
+      <section className="relative border-t border-[var(--panel-border)] bg-void py-24">
+        <div className="container-x">
+          <Reveal className="mb-10 max-w-xl">
+            <span className="mono-label">Other Services</span>
+            <h2 className="mt-3 text-[clamp(24px,2.6vw,32px)] font-semibold text-ink-0">
+              Explore other ways we can help.
+            </h2>
+          </Reveal>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {relatedServices.map((s, i) => {
+              const SIcon = serviceIconMap[s.icon];
+              return (
+                <Reveal key={s.slug} delay={i * 0.05}>
+                  <Link
+                    href={`/services/${s.slug}`}
+                    className="group flex h-full flex-col justify-between rounded-xl border border-[var(--panel-border)] bg-panel p-6 transition-colors hover:bg-panel-2"
+                  >
+                    <div>
+                      <span
+                        className="flex h-11 w-11 items-center justify-center rounded-full"
+                        style={{
+                          background: hexToRgba(s.accent, 0.12),
+                          color: s.accent,
+                        }}
+                      >
+                        <SIcon size={18} strokeWidth={1.75} />
+                      </span>
+                      <div className="mt-4 font-display text-[14px] font-medium text-ink-0">
+                        {s.name}
+                      </div>
+                      <p className="mt-2.5 line-clamp-2 text-[12px] leading-relaxed text-ink-2">
+                        {s.heroDesc}
+                      </p>
+                    </div>
+                    <span
+                      className="mt-6 flex items-center gap-1 text-[12px] font-medium opacity-0 transition-opacity group-hover:opacity-100"
+                      style={{ color: s.accent }}
+                    >
+                      Learn More <ArrowRight size={12} />
+                    </span>
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
       <Contact />
       <Footer />
