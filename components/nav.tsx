@@ -29,9 +29,11 @@ import {
   FileSpreadsheet,
   Sprout,
   ArrowRight,
+  LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
+import { ProductIconName } from "@/lib/products";
 
 const softwareDevServices = [
   {
@@ -105,6 +107,22 @@ const infrastructureServices = [
   },
 ];
 
+export type NavProduct = {
+  code: string;
+  name: string;
+  desc: string;
+  icon: ProductIconName;
+  href: string;
+};
+
+const navProductIconMap: Record<string, LucideIcon> = {
+  Building2,
+  TrendingUp,
+  Calculator,
+  FileSpreadsheet,
+  Sprout,
+};
+
 const productList = [
   {
     code: "FISCUS MF",
@@ -143,10 +161,16 @@ const productList = [
   },
 ];
 
-export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
+export function Nav({
+  overlayHero = false,
+  products,
+}: {
+  overlayHero?: boolean;
+  products: NavProduct[];
+}) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-
+  
   const [activeDropdown, setActiveDropdown] = React.useState<
     "services" | "products" | null
   >(null);

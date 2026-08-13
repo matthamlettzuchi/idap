@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin } from "lucide-react";
+import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
-import { Reveal } from "@/components/ui/reveal";
 import Image from "next/image";
 import { FloatingActions } from "@/components/floating-actions";
 
@@ -23,6 +22,7 @@ type FormState = {
   phone: string;
   email: string;
   message: string;
+  company: string; // honeypot — must always stay empty
 };
 
 const initialForm: FormState = {
@@ -30,6 +30,7 @@ const initialForm: FormState = {
   phone: "",
   email: "",
   message: "",
+  company: "",
 };
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
@@ -46,16 +47,46 @@ const inputClass =
 export default function ContactPage() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Hook this up to your backend / email service of choice.
-    setSubmitted(true);
-    setForm(initialForm);
+    if (isSubmitting) return;
+
+    setErrorMessage(null);
+    setIsSubmitting(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        throw new Error(
+          data?.error ?? "Something went wrong. Please try again."
+        );
+      }
+
+      setSubmitted(true);
+      setForm(initialForm);
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -209,6 +240,18 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Honeypot field — hidden from real users, catches simple bots */}
+                    <input
+                      type="text"
+                      name="company"
+                      value={form.company}
+                      onChange={(e) => update("company", e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      className="hidden"
+                      aria-hidden="true"
+                    />
+
                     <div>
                       <FieldLabel>Full Name</FieldLabel>
                       <input
@@ -218,6 +261,7 @@ export default function ContactPage() {
                         onChange={(e) => update("fullName", e.target.value)}
                         className={inputClass}
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
 
@@ -230,6 +274,7 @@ export default function ContactPage() {
                           value={form.phone}
                           onChange={(e) => update("phone", e.target.value)}
                           className={inputClass}
+                          disabled={isSubmitting}
                         />
                       </div>
                       <div>
@@ -241,6 +286,7 @@ export default function ContactPage() {
                           onChange={(e) => update("email", e.target.value)}
                           className={inputClass}
                           required
+                          disabled={isSubmitting}
                         />
                       </div>
                     </div>
@@ -254,15 +300,27 @@ export default function ContactPage() {
                         rows={4}
                         className={`${inputClass} resize-none`}
                         required
+                        disabled={isSubmitting}
                       />
                     </div>
 
+                    {errorMessage && (
+                      <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] leading-relaxed text-red-700">
+                        <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                        <span>{errorMessage}</span>
+                      </div>
+                    )}
+
                     <button
                       type="submit"
-                      className="w-full rounded-full py-4 text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5"
+                      disabled={isSubmitting}
+                      className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
                       style={{ background: ACCENT_BLUE }}
                     >
-                      Submit
+                      {isSubmitting && (
+                        <Loader2 size={17} className="animate-spin" />
+                      )}
+                      {isSubmitting ? "Sending..." : "Submit"}
                     </button>
                   </form>
                 )}
