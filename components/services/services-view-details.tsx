@@ -45,6 +45,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { storageUrl } from "@/lib/storage";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Contact } from "@/components/sections/contact";
@@ -580,7 +581,8 @@ export function ServiceDetailView({
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
                   <Image
-                    src="/teamwork.jpg"
+                    src={storageUrl("images", "teamwork.jpg")}
+                    unoptimized
                     alt="Placeholder"
                     height={420}
                     width={800}
@@ -692,7 +694,8 @@ export function ServiceDetailView({
                 />
                 <div className="relative z-0 overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel-2">
                   <Image
-                    src="/futu.jpg"
+                    src={storageUrl("images", "futu.jpg")}
+                    unoptimized
                     alt="Placeholder"
                     height={420}
                     width={800}

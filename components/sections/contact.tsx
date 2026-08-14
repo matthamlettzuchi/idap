@@ -3,14 +3,37 @@
 import { motion } from "framer-motion";
 import { Mail, MapPin, Phone, MessageCircle } from "lucide-react";
 import type { ReactNode } from "react";
-import { contact } from "@/lib/data";
+import { contact as staticContact } from "@/lib/data";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/ui/reveal";
 import { sectionTones } from "@/lib/section-tones";
 
 export function Contact() {
+  const [contact, setContact] = useState<typeof staticContact | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadContact() {
+      const { data, error } = await supabase
+        .from("site_contact")
+        .select("address, email, phones, whatsapp")
+        .single();
+      if (cancelled) return;
+      setContact(!error && data ? data : staticContact);
+    }
+    loadContact();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   return (
-    <section id="kontak" style={sectionTones.dark} className="relative overflow-hidden bg-void py-32">
+    <section
+      id="kontak"
+      style={sectionTones.dark}
+      className="relative overflow-hidden bg-void py-32"
+    >
       <div className="grid-texture pointer-events-none absolute inset-0" />
       <motion.div
         aria-hidden
@@ -28,15 +51,15 @@ export function Contact() {
           <span className="mono-label">Contact</span>
           <h2 className="mt-6 text-[clamp(32px,4vw,48px)] font-semibold text-white">
             Let&apos;s start
-            <br />
-            a conversation.
+            <br />a conversation.
           </h2>
           <p className="mt-7 max-w-sm text-[15.5px] leading-relaxed text-ink-1">
-            We are ready to deliver tailored technology designed to boost your enterprise operations and business growth.
+            We are ready to deliver tailored technology designed to boost your
+            enterprise operations and business growth.
           </p>
           <Button asChild size="default" className="mt-9">
             <a
-              href={contact.whatsapp}
+              href={contact?.whatsapp ?? staticContact.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -47,33 +70,49 @@ export function Contact() {
 
         <Reveal delay={0.1}>
           <div className="panel divide-y divide-(--panel-border) p-2">
-            <ContactRow icon={<MapPin size={17} />} label="Location">
-              <a href={`https://maps.app.goo.gl/GXq2KH6mLug3ehDi8`}
-               className="text-[15px] font-medium leading-snug text-ink-0">
-                {contact.address}
-              </a>
-            </ContactRow>
-            <ContactRow icon={<Mail size={17} />} label="Email">
-              <a
-                href={`mailto:${contact.email}`}
-                className="text-[15px] font-medium text-ink-0 transition-colors hover:text-signal-teal"
-              >
-                {contact.email}
-              </a>
-            </ContactRow>
-            <ContactRow icon={<Phone size={17} />} label="Phone">
-              <div className="flex flex-col gap-1">
-                {contact.phones.map((p) => (
+            {contact === null ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex gap-4 p-6">
+                  <span className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-panel-2" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-2.5 w-16 animate-pulse rounded bg-panel-2" />
+                    <div className="h-4 w-40 animate-pulse rounded bg-panel-2" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              <>
+                <ContactRow icon={<MapPin size={17} />} label="Location">
                   <a
-                    key={p}
-                    href={`tel:${p.replace(/[^\d+]/g, "")}`}
+                    href={`https://maps.app.goo.gl/GXq2KH6mLug3ehDi8`}
+                    className="text-[15px] font-medium leading-snug text-ink-0"
+                  >
+                    {contact.address}
+                  </a>
+                </ContactRow>
+                <ContactRow icon={<Mail size={17} />} label="Email">
+                  <a
+                    href={`mailto:${contact.email}`}
                     className="text-[15px] font-medium text-ink-0 transition-colors hover:text-signal-teal"
                   >
-                    {p}
+                    {contact.email}
                   </a>
-                ))}
-              </div>
-            </ContactRow>
+                </ContactRow>
+                <ContactRow icon={<Phone size={17} />} label="Phone">
+                  <div className="flex flex-col gap-1">
+                    {contact.phones.map((p) => (
+                      <a
+                        key={p}
+                        href={`tel:${p.replace(/[^\d+]/g, "")}`}
+                        className="text-[15px] font-medium text-ink-0 transition-colors hover:text-signal-teal"
+                      >
+                        {p}
+                      </a>
+                    ))}
+                  </div>
+                </ContactRow>
+              </>
+            )}
           </div>
         </Reveal>
       </div>

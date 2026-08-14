@@ -1,5 +1,6 @@
 "use client";
 
+import { storageUrl } from "@/lib/storage";
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -260,7 +261,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               {isLight ? (
                 <motion.img
                   key="light-logo"
-                  src="/logo-light.png"
+                  src={storageUrl("images", "logo-light.png")}
                   alt="Logo"
                   className="absolute h-12 w-32 object-contain"
                   initial={{ opacity: 0 }}
@@ -271,7 +272,7 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               ) : (
                 <motion.img
                   key="dark-logo"
-                  src="/logo.png"
+                  src={storageUrl("images", "logo.png")}
                   alt="Logo"
                   className="absolute h-12 w-32 object-contain"
                   initial={{ opacity: 0 }}
@@ -478,11 +479,19 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
             </Link>
 
             <Link
+              href="/blog"
+              className={`text-[14.5px] font-medium ${linkClass}`}
+            >
+              Blog
+            </Link>
+            
+            <Link
               href="/contact"
               className={`text-[14.5px] font-medium ${linkClass}`}
             >
               Contact
             </Link>
+
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
@@ -603,6 +612,14 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               className="font-display text-[18px] font-medium text-ink-0"
             >
               Credit Simulation
+            </Link>
+
+            <Link
+              href="/blog"
+              onClick={() => setOpen(false)}
+              className="font-display text-[18px] font-medium text-ink-0"
+            >
+              Blog
             </Link>
 
             <Link

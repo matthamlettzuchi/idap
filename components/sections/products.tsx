@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -22,7 +22,8 @@ import {
   Factory,
   Sparkles,
 } from "lucide-react";
-import { products } from "@/lib/data";
+import { products as staticProducts, type Product } from "@/lib/data";
+import { supabase } from "@/lib/supabase";
 import { Reveal } from "@/components/ui/reveal";
 import Link from "next/link";
 
@@ -712,9 +713,60 @@ function ProductMockup({
 }
 
 export function Products() {
-  const [activeId, setActiveId] = useState(products[0].id);
-  const active = products.find((p) => p.id === activeId) ?? products[0];
-  const activeIndex = products.findIndex((p) => p.id === activeId);
+  const slugToId: Record<string, string> = {
+    multifinance: "fiscus-multifinance",
+    factoring: "fiscus-factoring",
+    accounting: "fiscus-accounting",
+    planta: "planta",
+    "slik-silaras": "slik-silaras",
+  };
+
+  const [products, setProducts] = useState<Product[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadHomeProducts() {
+      const { data, error } = await supabase
+        .from("products")
+        .select(
+          "slug, code, name, home_summary, home_description, home_metrics, home_modules",
+        )
+        .order("sort_order", { ascending: true });
+      if (cancelled) return;
+
+      const mapped =
+        !error && data
+          ? data
+              .filter((p) => p.home_summary && p.home_description)
+              .map((p) => ({
+                id: slugToId[p.slug] ?? p.slug,
+                link: p.slug,
+                code: p.code,
+                name: p.name,
+                summary: p.home_summary as string,
+                description: p.home_description as string,
+                metrics: (p.home_metrics as Product["metrics"]) ?? [],
+                modules: (p.home_modules as string[]) ?? [],
+              }))
+          : [];
+
+      setProducts(mapped.length > 0 ? mapped : staticProducts);
+    }
+    loadHomeProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (products && products.length > 0 && activeId === null) {
+      setActiveId(products[0].id);
+    }
+  }, [products, activeId]);
+
+  const active = products?.find((p) => p.id === activeId) ?? products?.[0];
+  const activeIndex = products?.findIndex((p) => p.id === activeId) ?? 0;
 
   return (
     <section id="produk" className="relative overflow-hidden bg-surface py-32">
@@ -739,110 +791,139 @@ export function Products() {
         </div>
 
         <Reveal delay={0.1}>
-          <div className="grid grid-cols-1 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] lg:grid-cols-[320px_1fr]">
-            <div className="flex flex-col border-b border-[var(--panel-border)] bg-panel lg:border-b-0 lg:border-r">
-              {products.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setActiveId(p.id)}
-                  className={`group relative flex items-center justify-between gap-4 border-b border-[var(--panel-border)] px-7 py-6 text-left last:border-b-0 transition-colors ${
-                    activeId === p.id ? "bg-panel-2" : "hover:bg-panel-2/60"
-                  }`}
-                >
-                  <span
-                    className="absolute left-0 top-0 h-full w-[2px]"
-                    style={{
-                      background: accentMap[p.id] ?? "var(--signal-blue)",
-                      opacity: activeId === p.id ? 1 : 0,
-                    }}
-                  />
-                  <span>
-                    <span className="mono-label !text-[10.5px]">{p.code}</span>
+          {!products || !active ? (
+            <div className="grid grid-cols-1 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] lg:grid-cols-[320px_1fr]">
+              <div className="flex flex-col border-b border-[var(--panel-border)] bg-panel lg:border-b-0 lg:border-r">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="border-b border-[var(--panel-border)] px-7 py-6 last:border-b-0"
+                  >
+                    <div className="h-2.5 w-14 animate-pulse rounded bg-panel-2" />
+                    <div className="mt-3 h-4 w-40 animate-pulse rounded bg-panel-2" />
+                  </div>
+                ))}
+              </div>
+              <div className="min-h-[420px] bg-panel-2 p-8 sm:p-10">
+                <div className="h-3 w-16 animate-pulse rounded bg-panel" />
+                <div className="mt-8 grid grid-cols-1 gap-10 xl:grid-cols-[1.05fr_0.95fr]">
+                  <div className="space-y-4">
+                    <div className="h-8 w-2/3 animate-pulse rounded bg-panel" />
+                    <div className="h-4 w-full animate-pulse rounded bg-panel" />
+                    <div className="h-4 w-5/6 animate-pulse rounded bg-panel" />
+                  </div>
+                  <div className="aspect-[4/3.2] w-full animate-pulse rounded-2xl bg-panel" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--panel-border)] lg:grid-cols-[320px_1fr]">
+              <div className="flex flex-col border-b border-[var(--panel-border)] bg-panel lg:border-b-0 lg:border-r">
+                {products.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setActiveId(p.id)}
+                    className={`group relative flex items-center justify-between gap-4 border-b border-[var(--panel-border)] px-7 py-6 text-left last:border-b-0 transition-colors ${
+                      activeId === p.id ? "bg-panel-2" : "hover:bg-panel-2/60"
+                    }`}
+                  >
                     <span
-                      className={`mt-1.5 block font-display text-[16px] font-medium transition-colors ${
-                        activeId === p.id ? "text-ink-0" : "text-ink-1"
-                      }`}
-                    >
-                      {p.name}
-                    </span>
-                  </span>
-                  <Link href={`/products/${p.link}`}>
-                    <ArrowUpRight
-                      size={16}
-                      className={`shrink-0 transition-all ${
-                        activeId === p.id
-                          ? "translate-x-0 text-signal-teal opacity-100"
-                          : "-translate-x-1 text-ink-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
-                      }`}
+                      className="absolute left-0 top-0 h-full w-[2px]"
+                      style={{
+                        background: accentMap[p.id] ?? "var(--signal-blue)",
+                        opacity: activeId === p.id ? 1 : 0,
+                      }}
                     />
-                  </Link>
-                </button>
-              ))}
-            </div>
-
-            {/* detail panel */}
-            <div className="relative min-h-[420px] bg-panel-2 p-8 sm:p-10">
-              <div className="mono-label mb-8">
-                {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                {String(products.length).padStart(2, "0")}
+                    <span>
+                      <span className="mono-label !text-[10.5px]">
+                        {p.code}
+                      </span>
+                      <span
+                        className={`mt-1.5 block font-display text-[16px] font-medium transition-colors ${
+                          activeId === p.id ? "text-ink-0" : "text-ink-1"
+                        }`}
+                      >
+                        {p.name}
+                      </span>
+                    </span>
+                    <Link href={`/products/${p.link}`}>
+                      <ArrowUpRight
+                        size={16}
+                        className={`shrink-0 transition-all ${
+                          activeId === p.id
+                            ? "translate-x-0 text-signal-teal opacity-100"
+                            : "-translate-x-1 text-ink-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
+                        }`}
+                      />
+                    </Link>
+                  </button>
+                ))}
               </div>
 
-              <div className="grid grid-cols-1 gap-10 xl:grid-cols-[1.05fr_0.95fr] xl:items-center">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={active.id}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <h3 className="font-display text-[26px] font-semibold sm:text-[30px]">
-                      {active.name}
-                    </h3>
-                    <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-ink-1">
-                      {active.description}
-                    </p>
+              {/* detail panel */}
+              <div className="relative min-h-[420px] bg-panel-2 p-8 sm:p-10">
+                <div className="mono-label mb-8">
+                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                  {String(products.length).padStart(2, "0")}
+                </div>
 
-                    <div className="mt-8 flex flex-wrap gap-8">
-                      {active.metrics.map((m) => (
-                        <div key={m.label}>
-                          <div className="font-display text-[19px] font-semibold text-signal-teal">
-                            {m.value}
+                <div className="grid grid-cols-1 gap-10 xl:grid-cols-[1.05fr_0.95fr] xl:items-center">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={active.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -12 }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <h3 className="font-display text-[26px] font-semibold sm:text-[30px]">
+                        {active.name}
+                      </h3>
+                      <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-ink-1">
+                        {active.description}
+                      </p>
+
+                      <div className="mt-8 flex flex-wrap gap-8">
+                        {active.metrics.map((m) => (
+                          <div key={m.label}>
+                            <div className="font-display text-[19px] font-semibold text-signal-teal">
+                              {m.value}
+                            </div>
+                            <div className="mt-1 text-[12.5px] text-ink-2">
+                              {m.label}
+                            </div>
                           </div>
-                          <div className="mt-1 text-[12.5px] text-ink-2">
-                            {m.label}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
 
-                    <div className="mt-9 flex flex-wrap gap-2.5">
-                      {active.modules.map((m) => (
-                        <span
-                          key={m}
-                          className="rounded-full border border-[var(--panel-border)] bg-panel px-3.5 py-1.5 text-[12.5px] text-ink-1"
-                        >
-                          {m}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
+                      <div className="mt-9 flex flex-wrap gap-2.5">
+                        {active.modules.map((m) => (
+                          <span
+                            key={m}
+                            className="rounded-full border border-[var(--panel-border)] bg-panel px-3.5 py-1.5 text-[12.5px] text-ink-1"
+                          >
+                            {m}
+                          </span>
+                        ))}
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={active.id + "-mockup"}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <ProductMockup productId={active.id} code={active.code} />
-                  </motion.div>
-                </AnimatePresence>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={active.id + "-mockup"}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <ProductMockup productId={active.id} code={active.code} />
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </Reveal>
       </div>
     </section>

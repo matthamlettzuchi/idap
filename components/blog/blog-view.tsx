@@ -1,51 +1,55 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Newspaper,
+  Search,
+} from "lucide-react";
 
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Contact } from "@/components/sections/contact";
 import { FloatingActions } from "@/components/floating-actions";
 import { Reveal } from "@/components/ui/reveal";
-import {
-  blogCategories,
-  blogPosts,
-  featuredPosts,
-  type BlogCategory,
-  type BlogPost,
-  type BlogThumbPattern,
-} from "@/lib/blog-data";
+import type { BlogPost } from "@/lib/wordpress";
 
 const ALL = "All" as const;
-type CategoryFilter = BlogCategory | typeof ALL;
 
-// Pattern overlays are drawn with hardcoded rgba(white) so they read
-// correctly on the dark placeholder thumbnails regardless of page theme —
-// deliberately not reusing the --panel-border texture classes, which are
-// tuned for light/dark section backgrounds, not a fixed navy card.
-const patternStyle: Record<BlogThumbPattern, CSSProperties> = {
-  grid: {
+// Same 4 placeholder patterns your static data used to assign per-post —
+// now derived deterministically from the slug, used ONLY when a post has
+// no featured image in WordPress, so the visual identity you already had
+// (icon over a subtle pattern) is preserved instead of a broken <img>.
+const patternStyles = [
+  {
     backgroundImage:
       "linear-gradient(to right, rgba(255,255,255,0.09) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.09) 1px, transparent 1px)",
     backgroundSize: "26px 26px",
   },
-  dots: {
+  {
     backgroundImage:
       "radial-gradient(rgba(255,255,255,0.16) 1px, transparent 1.4px)",
     backgroundSize: "15px 15px",
   },
-  diagonal: {
+  {
     backgroundImage:
       "repeating-linear-gradient(115deg, rgba(255,255,255,0.09) 0px, rgba(255,255,255,0.09) 1px, transparent 1px, transparent 20px)",
   },
-  chevron: {
+  {
     backgroundImage:
       "repeating-linear-gradient(135deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 18px), repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 18px)",
   },
-};
+] as const;
+
+function hashSlug(slug: string) {
+  let h = 0;
+  for (let i = 0; i < slug.length; i++) h = (h * 31 + slug.charCodeAt(i)) >>> 0;
+  return h;
+}
 
 function ArticleThumb({
   post,
@@ -54,7 +58,24 @@ function ArticleThumb({
   post: BlogPost;
   className?: string;
 }) {
-  const Icon = post.icon;
+  if (post.image) {
+    return (
+      <div className={`relative overflow-hidden bg-panel-2 ${className ?? ""}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary WordPress-hosted path, not a configured next/image domain */}
+        <img
+          src={post.image}
+          alt={post.title}
+          loading="lazy"
+          className="h-full w-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  // No featured image set in WordPress — fall back to the original
+  // icon+pattern placeholder look instead of a broken image.
+  const pattern = patternStyles[hashSlug(post.slug) % patternStyles.length];
+
   return (
     <div
       className={`relative overflow-hidden ${className ?? ""}`}
@@ -63,7 +84,7 @@ function ArticleThumb({
           "linear-gradient(135deg, #0e1120 0%, #171d3a 55%, #232c5c 100%)",
       }}
     >
-      <div className="absolute inset-0" style={patternStyle[post.pattern]} />
+      <div className="absolute inset-0" style={pattern} />
       <div
         className="pointer-events-none absolute inset-0 opacity-70"
         style={{
@@ -73,49 +94,36 @@ function ArticleThumb({
       />
       <div className="absolute inset-0 flex items-center justify-center">
         <span className="flex h-13 w-13 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-white backdrop-blur-sm">
-          <Icon size={24} strokeWidth={1.5} />
+          <Newspaper size={24} strokeWidth={1.5} />
         </span>
       </div>
     </div>
   );
 }
 
-function AuthorBadge({
-  author,
-  dark = false,
-}: {
-  author: BlogPost["author"];
-  dark?: boolean;
-}) {
+function AuthorBadge({ author }: { author: BlogPost["author"] }) {
   return (
     <div className="flex items-center gap-2.5">
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[image:var(--grad-signal)] font-display text-[11px] font-semibold text-white">
         {author.initials}
       </span>
-      <div>
-        <div
-          className={`text-[12.5px] font-medium ${dark ? "text-white" : "text-ink-0"}`}
-        >
-          {author.name}
-        </div>
-        <div className={`text-[11px] ${dark ? "text-white/60" : "text-ink-2"}`}>
-          {author.role}
-        </div>
+      <div className="text-[12.5px] font-medium text-ink-0">
+        {author.name}
       </div>
     </div>
   );
 }
 
-function FeaturedCarousel() {
+function FeaturedCarousel({ posts }: { posts: BlogPost[] }) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const active = featuredPosts[index];
+
+  if (posts.length === 0) return null;
+  const active = posts[index];
 
   const go = (dir: 1 | -1) => {
     setDirection(dir);
-    setIndex(
-      (prev) => (prev + dir + featuredPosts.length) % featuredPosts.length,
-    );
+    setIndex((prev) => (prev + dir + posts.length) % posts.length);
   };
 
   return (
@@ -135,7 +143,6 @@ function FeaturedCarousel() {
           </motion.div>
         </AnimatePresence>
 
-        {/* overlapping info card */}
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={active.slug + "-card"}
@@ -174,9 +181,8 @@ function FeaturedCarousel() {
       </div>
 
       <div className="mt-12 flex items-center justify-between sm:mt-9 sm:justify-end sm:gap-3">
-        {" "}
         <div className="flex items-center gap-1.5 sm:order-1 sm:mr-auto">
-          {featuredPosts.map((p, i) => (
+          {posts.map((p, i) => (
             <button
               key={p.slug}
               aria-label={`Ke artikel unggulan ${i + 1}`}
@@ -256,13 +262,21 @@ function ArticleCard({ post, index }: { post: BlogPost; index: number }) {
   );
 }
 
-export function BlogView() {
-  const [activeCategory, setActiveCategory] = useState<CategoryFilter>(ALL);
+export function BlogView({
+  posts,
+  categories,
+}: {
+  posts: BlogPost[];
+  categories: string[];
+}) {
+  const [activeCategory, setActiveCategory] = useState<string>(ALL);
   const [query, setQuery] = useState("");
+
+  const featuredPosts = useMemo(() => posts.filter((p) => p.featured), [posts]);
 
   const filteredPosts = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return blogPosts.filter((post) => {
+    return posts.filter((post) => {
       const matchesCategory =
         activeCategory === ALL || post.category === activeCategory;
       const matchesQuery =
@@ -271,16 +285,14 @@ export function BlogView() {
         post.excerpt.toLowerCase().includes(q);
       return matchesCategory && matchesQuery;
     });
-  }, [activeCategory, query]);
+  }, [posts, activeCategory, query]);
 
   return (
     <div className="min-h-screen bg-void text-ink-0 font-sans selection:bg-signal-teal/20 selection:text-signal-teal">
       <Nav />
 
       <main className="pt-40 lg:pt-36">
-        {/* Hero */}
         <section className="relative overflow-hidden pb-14 sm:pb-10">
-          {" "}
           <div className="dot-grid-texture pointer-events-none absolute inset-0 opacity-70" />
           <div className="container-x relative grid grid-cols-1 gap-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-10">
             <Reveal>
@@ -314,19 +326,18 @@ export function BlogView() {
             </Reveal>
 
             <Reveal delay={0.1}>
-              <FeaturedCarousel />
+              <FeaturedCarousel posts={featuredPosts} />
             </Reveal>
           </div>
         </section>
 
-        {/* Category nav */}
         <section className="border-y border-(--panel-border) bg-panel-2">
           <div className="container-x">
             <div
               className="flex items-center gap-2 overflow-x-auto py-4 [&::-webkit-scrollbar]:hidden"
               style={{ scrollbarWidth: "none" }}
             >
-              {[ALL, ...blogCategories].map((cat) => {
+              {[ALL, ...categories].map((cat) => {
                 const isActive = activeCategory === cat;
                 return (
                   <button
@@ -346,7 +357,6 @@ export function BlogView() {
           </div>
         </section>
 
-        {/* Article grid */}
         <section className="relative py-16">
           <div className="container-x">
             <Reveal className="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -371,9 +381,11 @@ export function BlogView() {
             ) : (
               <Reveal className="rounded-2xl border border-(--panel-border) bg-panel px-8 py-16 text-center">
                 <p className="text-[14.5px] text-ink-2">
-                  No articles match &ldquo;{query}&rdquo; in{" "}
-                  {activeCategory === ALL ? "any category" : activeCategory}.
-                  Try a different search or category.
+                  {posts.length === 0
+                    ? "We couldn't reach the blog right now. Please check that intidata-blog.local is running and try again."
+                    : `No articles match "${query}" in ${
+                        activeCategory === ALL ? "any category" : activeCategory
+                      }.`}
                 </p>
               </Reveal>
             )}

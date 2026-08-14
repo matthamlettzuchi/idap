@@ -49,6 +49,7 @@ export function Marquee({
                 alt={item.name}
                 height={80}
                 width={160}
+                unoptimized
                 className="h-auto max-h-16 w-auto max-w-36 object-contain opacity-60 grayscale transition-all hover:opacity-100 hover:grayscale-0"
               />
             </div>

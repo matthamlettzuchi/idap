@@ -4,16 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
-  getActiveSeasonalTheme,
+  defaultSeasonalThemes,
+  pickActiveSeasonalTheme,
   type SeasonalTheme,
 } from "@/lib/seasonal-theme";
+import { supabase } from "@/lib/supabase";
+import { storageUrl } from "@/lib/storage";
 
 function SnowLayer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
+      "(prefers-reduced-motion: reduce)",
     ).matches;
     const canvas = canvasRef.current;
     if (!canvas || reduced) return;
@@ -84,7 +87,39 @@ export function NavSeasonalDecor() {
   const [theme, setTheme] = useState<SeasonalTheme | null>(null);
 
   useEffect(() => {
-    setTheme(getActiveSeasonalTheme(new Date("2026-03-18")));
+    let cancelled = false;
+    async function loadSeasonalTheme() {
+      const { data, error } = await supabase
+        .from("seasonal_themes")
+        .select(
+          "id, label, start_month, start_day, end_month, end_day, decoration, envelope_icon, accent, envelope_title, envelope_message",
+        )
+        .order("sort_order", { ascending: true });
+      if (cancelled) return;
+
+      const themes: SeasonalTheme[] =
+        !error && data && data.length > 0
+          ? data.map((t) => ({
+              id: t.id,
+              label: t.label,
+              startMonth: t.start_month,
+              startDay: t.start_day,
+              endMonth: t.end_month,
+              endDay: t.end_day,
+              decoration: t.decoration,
+              envelopeIcon: t.envelope_icon,
+              accent: t.accent,
+              envelopeTitle: t.envelope_title,
+              envelopeMessage: t.envelope_message,
+            }))
+          : defaultSeasonalThemes;
+
+      setTheme(pickActiveSeasonalTheme(themes, new Date()));
+    }
+    loadSeasonalTheme();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (!theme) return null;
@@ -108,7 +143,7 @@ export function NavSeasonalDecor() {
             className="absolute left-4 top-0 h-24 w-16 sm:left-8 sm:h-28 sm:w-20"
           >
             <Image
-              src="/lampion.png"
+              src={storageUrl("images", "lampion.png")}
               alt=""
               fill
               className="object-contain object-top"
@@ -152,7 +187,7 @@ export function NavSeasonalDecor() {
             className="absolute left-4 top-0 h-24 w-16 sm:left-10 sm:h-28 sm:w-20"
           >
             <Image
-              src="/ramadan-lamp.png"
+              src={storageUrl("images", "ramadan-lamp.png")}
               alt=""
               fill
               className="object-contain object-top"
@@ -191,7 +226,12 @@ export function NavSeasonalDecor() {
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute -left-2 top-0 h-20 w-20 sm:h-24 sm:w-24"
           >
-            <Image src="/holly.png" alt="" fill className="object-contain rotate-270" />
+            <Image
+              src={storageUrl("images", "holly.png")}
+              alt=""
+              fill
+              className="object-contain rotate-270"
+            />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, rotate: -10, y: -10 }}
@@ -199,7 +239,12 @@ export function NavSeasonalDecor() {
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute -right-2 top-0 h-20 w-20 sm:h-24 sm:w-24"
           >
-            <Image src="/holly.png" alt="" fill className="object-contain" />
+            <Image
+              src={storageUrl("images", "holly.png")}
+              alt=""
+              fill
+              className="object-contain"
+            />
           </motion.div>
         </>
       )}

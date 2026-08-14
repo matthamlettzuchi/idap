@@ -28,3 +28,13 @@ export async function requireCmsUser(minRole?: CmsRole): Promise<CmsUser> {
   if (minRole === "admin" && cmsUser.role !== "admin") redirect("/admin");
   return cmsUser;
 }
+
+export async function requireCmsUserApi(minRole?: CmsRole): Promise<
+  | { ok: true; user: CmsUser }
+  | { ok: false; status: 401 | 403 }
+> {
+  const cmsUser = await getCmsUser();
+  if (!cmsUser) return { ok: false, status: 401 };
+  if (minRole === "admin" && cmsUser.role !== "admin") return { ok: false, status: 403 };
+  return { ok: true, user: cmsUser };
+}

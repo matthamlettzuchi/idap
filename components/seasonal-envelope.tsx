@@ -10,9 +10,12 @@ import {
 } from "framer-motion";
 import { X } from "lucide-react";
 import {
-  getActiveSeasonalTheme,
+  defaultSeasonalThemes,
+  pickActiveSeasonalTheme,
   type SeasonalTheme,
 } from "@/lib/seasonal-theme";
+import { supabase } from "@/lib/supabase";
+import { storageUrl } from "@/lib/storage";
 
 function RamadanLampIcon() {
   return (
@@ -63,10 +66,10 @@ function EnvelopeClosedIcon({ theme }: { theme: SeasonalTheme }) {
   if (theme.envelopeIcon === "christmas") {
     return (
       <Image
-        src="/christmas-sock.webp"
+        src={storageUrl("images", "envelope-cny.png")}
         alt=""
-        width={96}
-        height={96}
+        width={400}
+        height={400}
         className="h-24 w-24 object-contain drop-shadow-[0_10px_18px_rgba(0,0,0,0.35)]"
       />
     );
@@ -86,7 +89,39 @@ export function SeasonalEnvelope() {
   });
 
   useEffect(() => {
-    setTheme(getActiveSeasonalTheme(new Date("2026-03-18")));
+    let cancelled = false;
+    async function loadSeasonalTheme() {
+      const { data, error } = await supabase
+        .from("seasonal_themes")
+        .select(
+          "id, label, start_month, start_day, end_month, end_day, decoration, envelope_icon, accent, envelope_title, envelope_message",
+        )
+        .order("sort_order", { ascending: true });
+      if (cancelled) return;
+
+      const themes: SeasonalTheme[] =
+        !error && data && data.length > 0
+          ? data.map((t) => ({
+              id: t.id,
+              label: t.label,
+              startMonth: t.start_month,
+              startDay: t.start_day,
+              endMonth: t.end_month,
+              endDay: t.end_day,
+              decoration: t.decoration,
+              envelopeIcon: t.envelope_icon,
+              accent: t.accent,
+              envelopeTitle: t.envelope_title,
+              envelopeMessage: t.envelope_message,
+            }))
+          : defaultSeasonalThemes;
+
+      setTheme(pickActiveSeasonalTheme(themes, new Date()));
+    }
+    loadSeasonalTheme();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (!theme) return null;

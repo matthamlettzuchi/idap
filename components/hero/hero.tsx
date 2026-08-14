@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getActiveHeroTheme, type HeroTheme } from "@/lib/hero-themes";
+import {
+  defaultHeroThemes,
+  pickActiveHeroTheme,
+  type HeroTheme,
+} from "@/lib/hero-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowRight,
@@ -15,9 +19,11 @@ import {
   Building2,
   Layers,
 } from "lucide-react";
-import { heroStats } from "@/lib/data";
+import { heroStats as staticHeroStats } from "@/lib/data";
 import { Counter } from "@/components/ui/counter";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
+import { storageUrl } from "@/lib/storage";
 
 const statIcons = [Clock, Building2, Layers];
 const kpiMetrics = [
@@ -249,9 +255,63 @@ function HeroDashboardCard() {
 
 export function Hero() {
   const [activeTheme, setActiveTheme] = useState<HeroTheme | null>(null);
+  const [heroStats, setHeroStats] = useState<typeof staticHeroStats | null>(
+    null,
+  );
 
   useEffect(() => {
-    setActiveTheme(getActiveHeroTheme(new Date("2026-03-30")));
+    let cancelled = false;
+    async function loadHeroStats() {
+      const { data, error } = await supabase
+        .from("hero_stats")
+        .select("value, suffix, label")
+        .order("sort_order", { ascending: true });
+      if (cancelled) return;
+      setHeroStats(!error && data && data.length > 0 ? data : staticHeroStats);
+    }
+    loadHeroStats();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadHeroTheme() {
+      const { data, error } = await supabase
+        .from("hero_themes")
+        .select(
+          "id, label, start_month, start_day, end_month, end_day, scale, image_offset_y, background_image, background_wash, character_image, character_alt, blob_gradient, greeting",
+        )
+        .order("sort_order", { ascending: true });
+      if (cancelled) return;
+
+      const themes: HeroTheme[] =
+        !error && data && data.length > 0
+          ? data.map((t) => ({
+              id: t.id,
+              label: t.label,
+              startMonth: t.start_month,
+              startDay: t.start_day,
+              endMonth: t.end_month,
+              endDay: t.end_day,
+              scale: t.scale,
+              imageOffsetY: t.image_offset_y,
+              backgroundImage: t.background_image ?? undefined,
+              backgroundWash: t.background_wash,
+              characterImage: t.character_image,
+              characterAlt: t.character_alt,
+              blobGradient: t.blob_gradient,
+              greeting: t.greeting,
+            }))
+          : defaultHeroThemes;
+
+      setActiveTheme(pickActiveHeroTheme(themes, new Date()));
+    }
+    loadHeroTheme();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
@@ -350,7 +410,7 @@ export function Hero() {
 
           <motion.img
             key={activeTheme?.id ?? "default"}
-            src={activeTheme?.characterImage ?? "/financeguy.png"}
+            src={activeTheme?.characterImage ?? storageUrl("images", "financeguy.png")}
             alt={
               activeTheme?.characterAlt ?? "Financial analyst monitoring data"
             }
@@ -371,7 +431,7 @@ export function Hero() {
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
-              target.src = "/financeguy.png";
+              target.src = storageUrl("images", "financeguy.png");
             }}
           />
         </div>
@@ -400,38 +460,51 @@ export function Hero() {
           />
 
           <div className="relative grid grid-cols-1 divide-y divide-[var(--panel-border)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-            {heroStats.map((s, i) => {
-              const Icon = statIcons[i % statIcons.length];
-              return (
-                <motion.div
-                  key={s.label}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-10% 0px" }}
-                  transition={{
-                    duration: 0.5,
-                    delay: i * 0.1,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  whileHover={{ y: -2 }}
-                  className="group flex items-center gap-4 px-7 py-7 transition-colors duration-300 hover:bg-panel-2 sm:px-8"
-                >
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
-                    <Icon size={20} strokeWidth={1.75} />
-                  </span>
-                  <div>
-                    <Counter
-                      value={s.value}
-                      suffix={s.suffix}
-                      className="font-display text-[26px] font-semibold text-ink-0"
-                    />
-                    <div className="mt-0.5 text-[12.5px] text-ink-2">
-                      {s.label}
+            {heroStats === null
+              ? Array.from({ length: 3 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-4 px-7 py-7 sm:px-8"
+                  >
+                    <span className="h-12 w-12 shrink-0 animate-pulse rounded-xl bg-panel-2" />
+                    <div className="flex-1 space-y-2.5">
+                      <div className="h-6 w-16 animate-pulse rounded bg-panel-2" />
+                      <div className="h-3 w-28 animate-pulse rounded bg-panel-2" />
                     </div>
                   </div>
-                </motion.div>
-              );
-            })}
+                ))
+              : heroStats.map((s, i) => {
+                  const Icon = statIcons[i % statIcons.length];
+                  return (
+                    <motion.div
+                      key={s.label}
+                      initial={{ opacity: 0, y: 16 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-10% 0px" }}
+                      transition={{
+                        duration: 0.5,
+                        delay: i * 0.1,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      whileHover={{ y: -2 }}
+                      className="group flex items-center gap-4 px-7 py-7 transition-colors duration-300 hover:bg-panel-2 sm:px-8"
+                    >
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--panel-border)] text-signal-teal transition-colors duration-300 group-hover:border-signal-teal/40 group-hover:bg-signal-blue-dim">
+                        <Icon size={20} strokeWidth={1.75} />
+                      </span>
+                      <div>
+                        <Counter
+                          value={s.value}
+                          suffix={s.suffix}
+                          className="font-display text-[26px] font-semibold text-ink-0"
+                        />
+                        <div className="mt-0.5 text-[12.5px] text-ink-2">
+                          {s.label}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
           </div>
         </div>
       </div>

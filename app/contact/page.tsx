@@ -7,6 +7,7 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import Image from "next/image";
 import { FloatingActions } from "@/components/floating-actions";
+import { storageUrl } from "@/lib/storage";
 
 const ACCENT_BLUE = "#2f6fe0";
 
@@ -96,11 +97,12 @@ export default function ContactPage() {
       <main>
         <div className="relative -mt-28 left-1/2 right-1/2 ml-[-50vw] mr-[-50vw] w-screen min-h-screen pt-28 overflow-hidden">
           <Image
-            src="/skaiskrepers.jpg"
+            src={storageUrl("images", "skaiskrepers.jpg")}
             alt=""
             height={420}
             width={800}
             aria-hidden
+            unoptimized
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
