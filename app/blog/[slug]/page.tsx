@@ -85,9 +85,16 @@ export default async function BlogPostPage({ params }: PageProps) {
             the CMS editor (components/admin/rich-text-editor.tsx) — not
             user-submitted input, so dangerouslySetInnerHTML is appropriate
             here, same trust model as the old WordPress content.rendered.
+
+            NOTE: this project does not have @tailwindcss/typography
+            installed, so the "prose" classes below render as inert —
+            they add no actual styling. Every element style (including
+            list bullets/numbers, which were previously invisible) is
+            therefore spelled out explicitly via arbitrary-variant
+            selectors instead of relying on the typography plugin.
           */}
           <div
-            className="prose prose-neutral mt-10 max-w-none text-[15.5px] leading-relaxed text-ink-1 [&_a]:text-signal-blue [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-[22px] [&_h2]:font-semibold [&_h2]:text-ink-0 [&_h3]:mt-8 [&_h3]:font-display [&_h3]:text-[18px] [&_h3]:font-semibold [&_h3]:text-ink-0 [&_img]:rounded-xl [&_p]:mt-4"
+            className="prose prose-neutral mt-10 max-w-none text-[15.5px] leading-relaxed text-ink-1 [&_a]:text-signal-blue [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-[22px] [&_h2]:font-semibold [&_h2]:text-ink-0 [&_h3]:mt-8 [&_h3]:font-display [&_h3]:text-[18px] [&_h3]:font-semibold [&_h3]:text-ink-0 [&_img]:rounded-xl [&_p]:mt-4 [&_ul]:mt-4 [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ol]:mt-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-2 [&_li]:pl-1 [&_li>p]:mt-0 [&_blockquote]:mt-4 [&_blockquote]:border-l-2 [&_blockquote]:border-signal-blue [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-ink-2"
             dangerouslySetInnerHTML={{ __html: post.contentHtml }}
           />
         </article>

@@ -28,6 +28,8 @@ export async function createArticle() {
   redirect(`/admin/articles/${data.id}`);
 }
 
+// Saves everything — including status — in one call, mirroring WordPress's
+// single "Update" button instead of a separate save-then-unpublish flow.
 export async function saveArticle(
   id: string,
   fields: {
@@ -40,47 +42,47 @@ export async function saveArticle(
     tags: string[];
     seoTitle: string;
     seoDescription: string;
+    status?: "draft" | "published";
   }
 ) {
-  await requireCmsUser();
+  const user = await requireCmsUser();
   const supabase = await createClient();
 
-  const { error } = await supabase
-    .from("articles")
-    .update({
-      title: fields.title,
-      slug: fields.slug || slugify(fields.title),
-      excerpt: fields.excerpt,
-      content: fields.content,
-      cover_image: fields.coverImage,
-      category: fields.category,
-      tags: fields.tags,
-      seo_title: fields.seoTitle,
-      seo_description: fields.seoDescription,
-    })
-    .eq("id", id);
+  const updates: Record<string, unknown> = {
+    title: fields.title,
+    slug: fields.slug || slugify(fields.title),
+    excerpt: fields.excerpt,
+    content: fields.content,
+    cover_image: fields.coverImage,
+    category: fields.category,
+    tags: fields.tags,
+    seo_title: fields.seoTitle,
+    seo_description: fields.seoDescription,
+  };
 
-  if (error) throw new Error(error.message);
-  revalidatePath(`/admin/articles/${id}`);
-  revalidatePath("/admin/articles");
-}
+  if (fields.status) {
+    if (fields.status === "published" && user.role !== "admin") {
+      throw new Error("Only admins can publish articles.");
+    }
+    updates.status = fields.status;
 
-export async function setArticleStatus(id: string, status: "draft" | "published") {
-  const user = await requireCmsUser();
-
-  // Only admins can publish — editors can only ever save drafts, per spec.
-  if (status === "published" && user.role !== "admin") {
-    throw new Error("Only admins can publish articles.");
+    if (fields.status === "published") {
+      const { data: existing } = await supabase
+        .from("articles")
+        .select("published_at")
+        .eq("id", id)
+        .single();
+      // only stamp published_at the first time it goes live, so re-saving
+      // an already-published article doesn't bump its publish date
+      if (!existing?.published_at) {
+        updates.published_at = new Date().toISOString();
+      }
+    } else {
+      updates.published_at = null;
+    }
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("articles")
-    .update({
-      status,
-      published_at: status === "published" ? new Date().toISOString() : null,
-    })
-    .eq("id", id);
+  const { error } = await supabase.from("articles").update(updates).eq("id", id);
 
   if (error) throw new Error(error.message);
   revalidatePath(`/admin/articles/${id}`);
@@ -89,7 +91,7 @@ export async function setArticleStatus(id: string, status: "draft" | "published"
 }
 
 export async function deleteArticle(id: string) {
-  const user = await requireCmsUser("admin"); // redirects non-admins
+  await requireCmsUser("admin");
   const supabase = await createClient();
   const { error } = await supabase.from("articles").delete().eq("id", id);
   if (error) throw new Error(error.message);

@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { X, Upload, Check } from "lucide-react";
+import { X, Upload, Check, Link2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 type MediaItem = { name: string; url: string };
@@ -17,6 +17,8 @@ export function MediaPicker({
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const [urlError, setUrlError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const supabase = createClient();
 
@@ -60,6 +62,23 @@ export function MediaPicker({
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
+  // Uses an already-hosted image by reference — only the URL string gets
+  // saved into the article's content, nothing is uploaded to Supabase
+  // Storage. Keeps storage usage flat regardless of how many articles
+  // reference external images.
+  function handleUseUrl() {
+    const trimmed = urlInput.trim();
+    if (!trimmed) return;
+
+    if (!/^https?:\/\//i.test(trimmed)) {
+      setUrlError("URL must start with http:// or https://");
+      return;
+    }
+
+    setUrlError(null);
+    onSelect(trimmed);
+  }
+
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 p-6">
       <div className="flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-panel">
@@ -71,6 +90,41 @@ export function MediaPicker({
         </div>
 
         <div className="border-b border-(--panel-border) px-6 py-4">
+          <label className="mb-1.5 flex items-center gap-1.5 text-[12px] font-medium text-ink-2">
+            <Link2 size={13} /> Paste image URL (recommended — doesn&apos;t use storage)
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={urlInput}
+              onChange={(e) => {
+                setUrlInput(e.target.value);
+                if (urlError) setUrlError(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleUseUrl();
+                }
+              }}
+              placeholder="https://example.com/image.jpg"
+              className="flex-1 rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13px] text-ink-0 outline-none focus:border-signal-teal"
+            />
+            <button
+              type="button"
+              onClick={handleUseUrl}
+              className="shrink-0 rounded-lg bg-signal-blue px-4 py-2 text-[13px] font-medium text-white"
+            >
+              Use URL
+            </button>
+          </div>
+          {urlError && <p className="mt-1.5 text-[11.5px] text-red-500">{urlError}</p>}
+        </div>
+
+        <div className="border-b border-(--panel-border) px-6 py-4">
+          <div className="mb-2 text-[12px] font-medium text-ink-2">
+            Or upload a new file (uses storage)
+          </div>
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-(--panel-border-strong) py-4 text-[13px] text-ink-2 hover:border-signal-teal hover:text-signal-teal">
             <Upload size={16} />
             {uploading ? "Uploading..." : "Upload image"}
@@ -79,6 +133,7 @@ export function MediaPicker({
         </div>
 
         <div className="flex-1 overflow-y-auto p-6">
+          <div className="mb-3 text-[12px] font-medium text-ink-2">Previously uploaded</div>
           {loading ? (
             <p className="text-[13px] text-ink-2">Loading...</p>
           ) : items.length === 0 ? (

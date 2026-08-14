@@ -6,8 +6,8 @@ import type { JSONContent } from "@tiptap/react";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
-import type { ArticleRow } from "@/lib/admin/articles";
-import { saveArticle, setArticleStatus } from "@/app/admin/(protected)/articles/actions";
+import type { ArticleRow, ArticleStatus } from "@/lib/admin/articles";
+import { saveArticle } from "@/app/admin/(protected)/articles/actions";
 import { slugify } from "@/lib/admin/slugify";
 
 export function ArticleEditor({
@@ -26,6 +26,7 @@ export function ArticleEditor({
   const [tagsInput, setTagsInput] = useState(article.tags.join(", "));
   const [seoTitle, setSeoTitle] = useState(article.seo_title ?? "");
   const [seoDescription, setSeoDescription] = useState(article.seo_description ?? "");
+  const [status, setStatus] = useState<ArticleStatus>(article.status);
   const [mediaOpen, setMediaOpen] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [pending, startTransition] = useTransition();
@@ -42,43 +43,38 @@ export function ArticleEditor({
         tags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
         seoTitle,
         seoDescription,
+        status: canPublish ? status : "draft",
       });
       setSavedAt(new Date());
-    });
-  }
-
-  function handlePublishToggle() {
-    startTransition(async () => {
-      await handleSave();
-      await setArticleStatus(article.id, article.status === "published" ? "draft" : "published");
     });
   }
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
       <div>
-        <div className="flex items-center justify-between">
-          <StatusBadge status={article.status} />
+        <div className="flex items-center justify-between gap-3">
+          <StatusBadge status={status} />
           <div className="flex items-center gap-3">
             {savedAt && (
               <span className="text-[12px] text-ink-2">Saved {savedAt.toLocaleTimeString()}</span>
             )}
+            {canPublish && (
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as ArticleStatus)}
+                className="rounded-full border border-(--panel-border) bg-panel px-3.5 py-2 text-[13px] font-medium text-ink-1 outline-none"
+              >
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            )}
             <button
               onClick={handleSave}
               disabled={pending}
-              className="rounded-full border border-(--panel-border) px-4 py-2 text-[13px] font-medium text-ink-1 hover:text-ink-0 disabled:opacity-60"
+              className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
             >
-              {pending ? "Saving..." : "Save Draft"}
+              {pending ? "Saving..." : "Save"}
             </button>
-            {canPublish && (
-              <button
-                onClick={handlePublishToggle}
-                disabled={pending}
-                className="rounded-full bg-signal-blue px-4 py-2 text-[13px] font-medium text-white disabled:opacity-60"
-              >
-                {article.status === "published" ? "Unpublish" : "Publish"}
-              </button>
-            )}
           </div>
         </div>
 
