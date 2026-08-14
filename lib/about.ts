@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { supabase } from "@/lib/supabase";
+import { storageUrl } from "./storage";
 
 export type AboutIconName =
   | "Search"
@@ -69,7 +70,7 @@ export type AboutPrincipleRow = {
 // Fallback so the page still renders (with the original copy) if the
 // Supabase table hasn't been created/seeded yet.
 export const DEFAULT_ABOUT_CONTENT: AboutContentRow = {
-  hero_image: "/table.png",
+  hero_image: storageUrl("images", "table.png"),
   hero_heading_line_1: "Building Digital Enterprise",
   hero_heading_line_2: "Foundations for 30+ Years.",
   hero_description:
@@ -99,7 +100,7 @@ export const DEFAULT_ABOUT_CONTENT: AboutContentRow = {
     "Plantation & Agribusiness System",
     "ERP, Licensing & Software Security",
   ],
-  stats_lottie: "/animat.lottie",
+  stats_lottie: storageUrl("images", "animat.lottie"),
 };
 
 export const getAboutContent = cache(async (): Promise<AboutContentRow> => {

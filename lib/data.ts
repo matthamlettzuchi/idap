@@ -1,3 +1,5 @@
+import { storageUrl } from "./storage";
+
 export const nav = [
   { label: "About Us", href: "/about" },
   { label: "Credit Simulation", href: "/credit-simulation" },
@@ -156,15 +158,26 @@ export const heroStats = [
   { value: 5, suffix: "", label: "Core systems operated" },
 ];
 
+// export const clientLogos = [
+//   { name: "ntt", logo: "/nttnew.png" },
+//   { name: "NEC", logo: "/NEC.webp" },
+//   { name: "KMF", logo: "/kmf.webp" },
+//   { name: "RSMAAJ", logo: "/RSMAAJ.webp" },
+//   { name: "Moores Rowland", logo: "/Moores Rowland.webp" },
+//   { name: "Sumitomo", logo: "/Sumitomo.webp" },
+//   { name: "Resona", logo: "/resona.webp" },
+//   { name: "Ventura", logo: "/ventura.webp" },
+// ];
+
 export const clientLogos = [
-  { name: "ntt", logo: "/nttnew.png" },
-  { name: "NEC", logo: "/NEC.webp" },
-  { name: "KMF", logo: "/kmf.webp" },
-  { name: "RSMAAJ", logo: "/RSMAAJ.webp" },
-  { name: "Moores Rowland", logo: "/Moores Rowland.webp" },
-  { name: "Sumitomo", logo: "/Sumitomo.webp" },
-  { name: "Resona", logo: "/resona.webp" },
-  { name: "Ventura", logo: "/ventura.webp" },
+  { name: "ntt", logo: storageUrl("images", "nttnew.png") },
+  { name: "NEC", logo: storageUrl("images", "NEC.webp") },
+  { name: "KMF", logo: storageUrl("images", "kmf.webp") },
+  { name: "RSMAAJ", logo: storageUrl("images", "RSMAAJ.webp") },
+  { name: "Moores Rowland", logo: storageUrl("images", "Moores Rowland.webp") },
+  { name: "Sumitomo", logo: storageUrl("images", "Sumitomo.webp") },
+  { name: "Resona", logo: storageUrl("images", "resona.webp") },
+  { name: "Ventura", logo: storageUrl("images", "ventura.webp") },
 ];
 
 export const clients = [

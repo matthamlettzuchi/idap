@@ -15,7 +15,8 @@ export type SeasonalTheme = {
   envelopeMessage: string;
 };
 
-export const seasonalThemes: SeasonalTheme[] = [
+// fallback kalau tabel Supabase kosong/error
+export const defaultSeasonalThemes: SeasonalTheme[] = [
   {
     id: "imlek",
     label: "Tahun Baru Imlek",
@@ -68,10 +69,11 @@ function isDateInRange(month: number, day: number, theme: SeasonalTheme) {
   return current >= start || current <= end;
 }
 
-export function getActiveSeasonalTheme(
+export function pickActiveSeasonalTheme(
+  themes: SeasonalTheme[],
   date: Date = new Date(),
 ): SeasonalTheme | null {
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return seasonalThemes.find((t) => isDateInRange(month, day, t)) ?? null;
+  return themes.find((t) => isDateInRange(month, day, t)) ?? null;
 }

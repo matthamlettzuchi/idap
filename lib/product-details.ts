@@ -7,6 +7,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { storageUrl } from "./storage";
+
 export type ProductAdvantage = { title: string; subtitle?: string };
 export type ProductFeature = { title: string; body: string };
 
@@ -52,8 +54,8 @@ export const productDetails: Record<string, ProductDetail> = {
       "A Loan Origination System for the entire loan application process, from prospect to disbursement.",
     accent: "#2f4bd0",
     icon: "Building2",
-    backgroundImage: "/hoho.png",
-    personImage: "/peeps-talking.png",
+    backgroundImage: storageUrl("images", "hoho.png"),
+    personImage: storageUrl("images", "peeps-talking.png"),
     personImageScale: 1.2,
     quickFacts: [
       "Web-Based",
@@ -77,7 +79,7 @@ export const productDetails: Record<string, ProductDetail> = {
       heading: "FISCUS Loan Origination System (LOS) Process",
       body: "Makes it easy for debtors to apply for credit through an intuitive online form, filling in key information such as personal data, business profile, and desired loan amount.",
     },
-    processLottie: "/turutu.lottie",
+    processLottie: storageUrl("images", "turutu.lottie"),
     featuresIntro:
       "The system is integrated with automatic credit scoring that assesses debtor eligibility based on specific criteria, delivering fast and accurate results.",
     features: [
@@ -112,8 +114,8 @@ export const productDetails: Record<string, ProductDetail> = {
       "A financing solution where a business sells outstanding invoices for immediate cash, fully tracked in one platform.",
     accent: "#0e9488",
     icon: "TrendingUp",
-    backgroundImage: "/didi.png",
-    personImage: "/factoring.png",
+    backgroundImage: storageUrl("images", "didi.png"),
+    personImage: storageUrl("images", "factoring.png"),
     personImageScale: 1.6,
     personImageOffsetX: -10,
     personImageOffsetY: 14,
@@ -135,7 +137,7 @@ export const productDetails: Record<string, ProductDetail> = {
       heading: "Factoring Process",
       body: "Simplifies the collection process through automatic invoice creation and delivery to clients or customers.",
     },
-    processLottie: "/mimi.lottie",
+    processLottie: storageUrl("images", "mimi.lottie"),
     featuresIntro:
       "Track and categorize expenses efficiently, enabling better cost control and analysis.",
     features: [
@@ -166,8 +168,8 @@ export const productDetails: Record<string, ProductDetail> = {
       "A digital platform for recording, managing, and reporting financial transactions, securely and efficiently.",
     accent: "#7c3aed",
     icon: "Calculator",
-    backgroundImage: "/coco.png",
-    personImage: "/accountant.png",
+    backgroundImage: storageUrl("images", "coco.png"),
+    personImage: storageUrl("images", "accountant.png"),
     personImageScale: 1.6,
     personImageOffsetX: -10,
     personImageOffsetY: 14,
@@ -187,7 +189,7 @@ export const productDetails: Record<string, ProductDetail> = {
       heading: "FISCUS Accounting Workflow",
       body: "Guides transactions through a structured accounting cycle: journal entry and posting, balancing, financial reporting, and period-end closing.",
     },
-    processLottie: "/tiriti.lottie",
+    processLottie: storageUrl("images", "tiriti.lottie"),
     featuresIntro:
       "Track and categorize expenses efficiently, making cost control and analysis easier.",
     features: [
@@ -218,8 +220,8 @@ export const productDetails: Record<string, ProductDetail> = {
       "An innovative data analysis system built to process, analyze, and report your data accurately.",
     accent: "#b45309",
     icon: "FileSpreadsheet",
-    backgroundImage: "/ripot.png",
-    personImage: "/report.png",
+    backgroundImage: storageUrl("images", "ripot.png"),
+    personImage: storageUrl("images", "report.png"),
     personImageScale: 1.6,
     personImageOffsetX: -24,
     personImageOffsetY: 0,
@@ -266,8 +268,8 @@ export const productDetails: Record<string, ProductDetail> = {
       "An integrated information system for optimizing oil palm plantation management.",
     accent: "#15803d",
     icon: "Sprout",
-    backgroundImage: "/sawitwok.png",
-    personImage: "/planta.png",
+    backgroundImage: storageUrl("images", "sawitwok.png"),
+    personImage: storageUrl("images", "planta.png"),
     personImageScale: 1,
     personImageOffsetX: -12,
     quickFacts: ["Estate + Mill", "VRA Tracking", "24/7 Access"],
