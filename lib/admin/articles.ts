@@ -1,5 +1,6 @@
 // lib/admin/articles.ts
 import { createClient } from "@/lib/supabase/server";
+export { slugify } from "@/lib/admin/slugify";
 
 export type ArticleStatus = "draft" | "published";
 
@@ -40,14 +41,3 @@ export async function getArticleById(id: string) {
   if (error) return null;
   return data as ArticleRow;
 }
-
-function slugify(title: string) {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
-
-export { slugify };

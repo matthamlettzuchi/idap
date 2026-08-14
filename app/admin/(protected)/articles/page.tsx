@@ -1,8 +1,6 @@
 // app/admin/(protected)/articles/page.tsx
-import Link from "next/link";
 import { listArticles } from "@/lib/admin/articles";
-import { DataTable } from "@/components/admin/ui/data-table";
-import { StatusBadge } from "@/components/admin/ui/status-badge";
+import { ArticlesTable } from "@/components/admin/articles-table";
 import { createArticle } from "./actions";
 
 export default async function ArticlesListPage({
@@ -47,27 +45,7 @@ export default async function ArticlesListPage({
       </form>
 
       <div className="mt-6">
-        <DataTable
-          rows={articles}
-          rowKey={(a) => a.id}
-          columns={[
-            {
-              header: "Title",
-              render: (a) => (
-                <Link href={`/admin/articles/${a.id}`} className="font-medium hover:text-signal-teal">
-                  {a.title}
-                </Link>
-              ),
-            },
-            { header: "Category", render: (a) => a.category ?? "—" },
-            { header: "Status", render: (a) => <StatusBadge status={a.status} /> },
-            {
-              header: "Updated",
-              render: (a) => new Date(a.updated_at).toLocaleDateString(),
-            },
-          ]}
-          emptyMessage="No articles yet. Create your first one."
-        />
+        <ArticlesTable articles={articles} />
       </div>
     </div>
   );

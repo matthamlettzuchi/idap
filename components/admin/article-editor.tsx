@@ -8,7 +8,7 @@ import { MediaPicker } from "@/components/admin/media-picker";
 import { StatusBadge } from "@/components/admin/ui/status-badge";
 import type { ArticleRow } from "@/lib/admin/articles";
 import { saveArticle, setArticleStatus } from "@/app/admin/(protected)/articles/actions";
-import { slugify } from "@/lib/admin/articles";
+import { slugify } from "@/lib/admin/slugify";
 
 export function ArticleEditor({
   article,

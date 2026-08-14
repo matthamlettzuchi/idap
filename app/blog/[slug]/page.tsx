@@ -7,36 +7,31 @@ import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { Contact } from "@/components/sections/contact";
 import { FloatingActions } from "@/components/floating-actions";
-import { getBlogPostBySlug, getPosts } from "@/lib/wordpress";
+import { getBlogPostBySlug, getAllBlogSlugs } from "@/lib/blog";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const revalidate = 300; // re-check WordPress every 5 minutes
+export const revalidate = 300; // re-check Supabase every 5 minutes
 
 export async function generateStaticParams() {
-  try {
-    const rows = await getPosts();
-    return rows.map((r) => ({ slug: r.slug }));
-  } catch {
-    // WordPress unreachable at build time — fall back to on-demand rendering.
-    return [];
-  }
+  const slugs = await getAllBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(decodeURIComponent(slug));
   if (!post) return {};
   return { title: `${post.title} — Intidata Blog`, description: post.excerpt };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const post = await getBlogPostBySlug(decodeURIComponent(slug));
 
   if (!post) notFound();
 
@@ -77,7 +72,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
 
           {post.image && (
-            // eslint-disable-next-line @next/next/no-img-element -- arbitrary WordPress-hosted path
+            // eslint-disable-next-line @next/next/no-img-element -- Supabase storage-hosted path
             <img
               src={post.image}
               alt={post.title}
@@ -86,9 +81,10 @@ export default async function BlogPostPage({ params }: PageProps) {
           )}
 
           {/*
-            content.rendered is trusted HTML authored by you in wp-admin —
-            same trust model as any headless WordPress setup. Not user-
-            submitted input, so dangerouslySetInnerHTML is appropriate here.
+            contentHtml is generated from TipTap JSON authored by admins in
+            the CMS editor (components/admin/rich-text-editor.tsx) — not
+            user-submitted input, so dangerouslySetInnerHTML is appropriate
+            here, same trust model as the old WordPress content.rendered.
           */}
           <div
             className="prose prose-neutral mt-10 max-w-none text-[15.5px] leading-relaxed text-ink-1 [&_a]:text-signal-blue [&_h2]:mt-10 [&_h2]:font-display [&_h2]:text-[22px] [&_h2]:font-semibold [&_h2]:text-ink-0 [&_h3]:mt-8 [&_h3]:font-display [&_h3]:text-[18px] [&_h3]:font-semibold [&_h3]:text-ink-0 [&_img]:rounded-xl [&_p]:mt-4"

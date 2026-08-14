@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { BlogView } from "@/components/blog/blog-view";
-import { getBlogPosts, getBlogCategories } from "@/lib/wordpress";
+import { getBlogPosts, getBlogCategories } from "@/lib/blog";
 
-export const revalidate = 300; // re-check WordPress every 5 minutes
+export const revalidate = 300; // re-check Supabase every 5 minutes
 
 export const metadata: Metadata = {
   title: "Blog & Insights — Intidata",

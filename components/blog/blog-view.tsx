@@ -16,8 +16,7 @@ import { Footer } from "@/components/footer";
 import { Contact } from "@/components/sections/contact";
 import { FloatingActions } from "@/components/floating-actions";
 import { Reveal } from "@/components/ui/reveal";
-import type { BlogPost } from "@/lib/wordpress";
-
+import type { BlogPost } from "@/lib/blog";
 const ALL = "All" as const;
 
 // Same 4 placeholder patterns your static data used to assign per-post —
@@ -107,9 +106,7 @@ function AuthorBadge({ author }: { author: BlogPost["author"] }) {
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[image:var(--grad-signal)] font-display text-[11px] font-semibold text-white">
         {author.initials}
       </span>
-      <div className="text-[12.5px] font-medium text-ink-0">
-        {author.name}
-      </div>
+      <div className="text-[12.5px] font-medium text-ink-0">{author.name}</div>
     </div>
   );
 }
