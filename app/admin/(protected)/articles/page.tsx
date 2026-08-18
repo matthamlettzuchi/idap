@@ -76,7 +76,7 @@ export default async function ArticlesListPage({
       )}
 
       <div className="mt-6">
-        <ArticlesTable articles={articles} />
+        <ArticlesTable articles={articles} currentUser={user}/>
       </div>
     </div>
   );

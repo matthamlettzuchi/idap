@@ -1,4 +1,3 @@
-// components/admin/articles-table.tsx
 "use client";
 
 import Link from "next/link";
@@ -12,10 +11,21 @@ import {
   permanentlyDeleteArticle,
 } from "@/app/admin/(protected)/articles/actions";
 import type { ArticleRow } from "@/lib/admin/articles";
+import type { CmsUser } from "@/lib/admin/auth";
 
-export function ArticlesTable({ articles: initialArticles }: { articles: ArticleRow[] }) {
+export function ArticlesTable({
+  articles: initialArticles,
+  currentUser,
+}: {
+  articles: ArticleRow[];
+  currentUser: CmsUser;
+}) {
   const [articles, setArticles] = useState(initialArticles);
   const [, startTransition] = useTransition();
+
+  function canModify(article: ArticleRow) {
+    return currentUser.role === "admin" || article.author_id === currentUser.id;
+  }
 
   function handleTrash(id: string) {
     setArticles((prev) => prev.filter((a) => a.id !== id));
@@ -45,12 +55,18 @@ export function ArticlesTable({ articles: initialArticles }: { articles: Article
       columns={[
         {
           header: "Title",
-          render: (a) => (
-            <Link href={`/admin/articles/${a.id}`} className="font-medium hover:text-signal-teal">
-              {a.title}
-            </Link>
-          ),
+          render: (a) =>
+            canModify(a) ? (
+              <Link href={`/admin/articles/${a.id}`} className="font-medium hover:text-signal-teal">
+                {a.title}
+              </Link>
+            ) : (
+              <span className="font-medium text-ink-1" title="You can only edit your own articles">
+                {a.title}
+              </span>
+            ),
         },
+        { header: "Author", render: (a) => a.author_name ?? "—" },
         { header: "Category", render: (a) => a.category ?? "—" },
         { header: "Status", render: (a) => <StatusBadge status={a.status} /> },
         {
@@ -59,8 +75,11 @@ export function ArticlesTable({ articles: initialArticles }: { articles: Article
         },
         {
           header: "Actions",
-          render: (a) =>
-            a.status === "trash" ? (
+          render: (a) => {
+            if (!canModify(a)) {
+              return <span className="text-[12.5px] text-ink-3">—</span>;
+            }
+            return a.status === "trash" ? (
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => handleRestore(a.id)}
@@ -68,12 +87,14 @@ export function ArticlesTable({ articles: initialArticles }: { articles: Article
                 >
                   Restore
                 </button>
-                <ConfirmButton
-                  label="Delete Permanently"
-                  confirmLabel="Delete forever?"
-                  onConfirm={() => handleDeletePermanently(a.id)}
-                  className="text-[12.5px] font-medium text-red-500 hover:underline"
-                />
+                {currentUser.role === "admin" && (
+                  <ConfirmButton
+                    label="Delete Permanently"
+                    confirmLabel="Delete forever?"
+                    onConfirm={() => handleDeletePermanently(a.id)}
+                    className="text-[12.5px] font-medium text-red-500 hover:underline"
+                  />
+                )}
               </div>
             ) : (
               <ConfirmButton
@@ -82,7 +103,8 @@ export function ArticlesTable({ articles: initialArticles }: { articles: Article
                 onConfirm={() => handleTrash(a.id)}
                 className="text-[12.5px] font-medium text-red-500 hover:underline"
               />
-            ),
+            );
+          },
         },
       ]}
       emptyMessage="No articles yet. Create your first one."

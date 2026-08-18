@@ -20,7 +20,11 @@ const navGroups: NavGroup[] = [
     label: "Content",
     accent: "#0e9488",
     items: [
-      { href: "/admin/articles", label: "Articles", roles: ["admin", "editor"] },
+      {
+        href: "/admin/articles",
+        label: "Articles",
+        roles: ["admin", "editor"],
+      },
       { href: "/admin/media", label: "Media", roles: ["admin", "editor"] },
     ],
   },
@@ -40,7 +44,11 @@ const navGroups: NavGroup[] = [
     items: [
       { href: "/admin/users", label: "Users", roles: ["admin"] },
       { href: "/admin/site-content", label: "Site Content", roles: ["admin"] },
-      { href: "/admin/settings", label: "Settings", roles: ["admin", "editor"] },
+      {
+        href: "/admin/settings",
+        label: "Settings",
+        roles: ["admin", "editor"],
+      },
     ],
   },
 ];
@@ -54,7 +62,13 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function AdminShellInner({ user, children }: { user: CmsUser; children: React.ReactNode }) {
+function AdminShellInner({
+  user,
+  children,
+}: {
+  user: CmsUser;
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -68,8 +82,8 @@ function AdminShellInner({ user, children }: { user: CmsUser; children: React.Re
   const displayName = user.displayName || user.username;
 
   return (
-    <div className="flex min-h-screen bg-void">
-      <aside className="hidden w-64 shrink-0 border-r border-(--panel-border) bg-panel p-5 sm:flex sm:flex-col">
+    <div className="min-h-screen bg-void">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-(--panel-border) bg-panel p-5 sm:flex">
         <div className="font-display text-[17px] font-semibold text-ink-0">
           Intidata CMS
         </div>
@@ -115,7 +129,11 @@ function AdminShellInner({ user, children }: { user: CmsUser; children: React.Re
                             style={{ background: group.accent }}
                           />
                         )}
-                        <span className={active ? "" : "text-ink-2 hover:text-ink-0"}>
+                        <span
+                          className={
+                            active ? "" : "text-ink-2 hover:text-ink-0"
+                          }
+                        >
                           {item.label}
                         </span>
                       </Link>
@@ -126,36 +144,38 @@ function AdminShellInner({ user, children }: { user: CmsUser; children: React.Re
             );
           })}
         </nav>
-        <div className="flex items-center gap-3 border-t border-(--panel-border) pt-4">
-          {user.avatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- Supabase storage-hosted path
-            <img
-              src={user.avatarUrl}
-              alt=""
-              className="h-9 w-9 shrink-0 rounded-full border border-(--panel-border) object-cover"
-            />
-          ) : (
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-dashed border-(--panel-border-strong) text-ink-3">
-              <User2 size={16} />
-            </span>
-          )}
-          <div className="min-w-0 flex-1">
-            <div className="truncate text-[12.5px] font-medium text-ink-0">
-              {displayName}
-            </div>
-            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-signal-teal">
-              {user.role}
+        <div className="mt-auto">
+          <div className="flex items-center gap-3 border-t border-(--panel-border) pt-4">
+            {user.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- Supabase storage-hosted path
+              <img
+                src={user.avatarUrl}
+                alt=""
+                className="h-9 w-9 shrink-0 rounded-full border border-(--panel-border) object-cover"
+              />
+            ) : (
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-dashed border-(--panel-border-strong) text-ink-3">
+                <User2 size={16} />
+              </span>
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="truncate text-[12.5px] font-medium text-ink-0">
+                {displayName}
+              </div>
+              <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-signal-teal">
+                {user.role}
+              </div>
             </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="mt-3 text-left text-[12.5px] font-medium text-ink-2 hover:text-ink-0"
+          >
+            Sign out
+          </button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="mt-3 text-left text-[12.5px] font-medium text-ink-2 hover:text-ink-0"
-        >
-          Sign out
-        </button>
       </aside>
-      <main className="flex-1 p-6 sm:p-10">{children}</main>
+      <main className="p-6 sm:ml-64 sm:p-10">{children}</main>
     </div>
   );
 }

@@ -1,11 +1,11 @@
-// app/admin/(protected)/articles/actions.ts
 "use server";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { requireCmsUser } from "@/lib/admin/auth";
+import { requireCmsUser, type CmsUser } from "@/lib/admin/auth";
 import { slugify } from "@/lib/admin/articles";
+import { truncateFields } from "@/lib/admin/field-limits";
 
 export async function createArticle() {
   const user = await requireCmsUser();
@@ -28,8 +28,26 @@ export async function createArticle() {
   redirect(`/admin/articles/${data.id}`);
 }
 
-// Saves everything — including status — in one call, mirroring WordPress's
-// single "Update" button instead of a separate save-then-unpublish flow.
+// Editors may only touch their own articles; admins may touch any.
+async function assertCanModifyArticle(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  user: CmsUser,
+  id: string,
+) {
+  if (user.role === "admin") return;
+
+  const { data: article, error } = await supabase
+    .from("articles")
+    .select("author_id")
+    .eq("id", id)
+    .single();
+
+  if (error || !article) throw new Error("Article not found.");
+  if (article.author_id !== user.id) {
+    throw new Error("You can only edit or delete your own articles.");
+  }
+}
+
 export async function saveArticle(
   id: string,
   fields: {
@@ -43,21 +61,32 @@ export async function saveArticle(
     seoTitle: string;
     seoDescription: string;
     status?: "draft" | "published";
-  }
+  },
 ) {
   const user = await requireCmsUser();
   const supabase = await createClient();
 
+  await assertCanModifyArticle(supabase, user, id);
+
+  const safe = truncateFields(fields, {
+    title: "articleTitle",
+    slug: "slug",
+    excerpt: "articleExcerpt",
+    category: "articleCategory",
+    seoTitle: "seoTitle",
+    seoDescription: "seoDescription",
+  });
+
   const updates: Record<string, unknown> = {
-    title: fields.title,
-    slug: fields.slug || slugify(fields.title),
-    excerpt: fields.excerpt,
+    title: safe.title,
+    slug: safe.slug || slugify(safe.title),
+    excerpt: safe.excerpt,
     content: fields.content,
     cover_image: fields.coverImage,
-    category: fields.category,
+    category: safe.category,
     tags: fields.tags,
-    seo_title: fields.seoTitle,
-    seo_description: fields.seoDescription,
+    seo_title: safe.seoTitle,
+    seo_description: safe.seoDescription,
   };
 
   if (fields.status) {
@@ -80,7 +109,10 @@ export async function saveArticle(
     }
   }
 
-  const { error } = await supabase.from("articles").update(updates).eq("id", id);
+  const { error } = await supabase
+    .from("articles")
+    .update(updates)
+    .eq("id", id);
 
   if (error) throw new Error(error.message);
   revalidatePath(`/admin/articles/${id}`);
@@ -88,27 +120,34 @@ export async function saveArticle(
   revalidatePath("/blog");
 }
 
-// Soft delete — moves the article into the "trash" status. Reversible via
-// restoreArticle, same as WordPress's trash behavior.
 export async function trashArticle(id: string) {
-  await requireCmsUser();
+  const user = await requireCmsUser();
   const supabase = await createClient();
-  const { error } = await supabase.from("articles").update({ status: "trash" }).eq("id", id);
+  await assertCanModifyArticle(supabase, user, id);
+
+  const { error } = await supabase
+    .from("articles")
+    .update({ status: "trash" })
+    .eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/admin/articles");
   revalidatePath("/blog");
 }
 
-// Pulls an article out of trash back into draft, ready to be republished.
 export async function restoreArticle(id: string) {
-  await requireCmsUser();
+  const user = await requireCmsUser();
   const supabase = await createClient();
-  const { error } = await supabase.from("articles").update({ status: "draft" }).eq("id", id);
+  await assertCanModifyArticle(supabase, user, id);
+
+  const { error } = await supabase
+    .from("articles")
+    .update({ status: "draft" })
+    .eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/admin/articles");
 }
 
-// Actual, unrecoverable delete — only from inside the trash, admin only.
+// Actual, unrecoverable delete — admin only, already correct as-is.
 export async function permanentlyDeleteArticle(id: string) {
   await requireCmsUser("admin");
   const supabase = await createClient();

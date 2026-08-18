@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Upload, User, Link2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -24,7 +25,7 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const router = useRouter();
   const [urlInput, setUrlInput] = useState("");
   const [urlError, setUrlError] = useState<string | null>(null);
 
@@ -45,6 +46,7 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
         await updateAvatar(url);
         setAvatarSaved(true);
         setTimeout(() => setAvatarSaved(false), 2000);
+        router.refresh();
       } catch (err) {
         setUploadError(err instanceof Error ? err.message : "Failed to save.");
       }
@@ -57,6 +59,7 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
       try {
         await updateDisplayName(displayName);
         setNameSaved(true);
+        router.refresh();
         setTimeout(() => setNameSaved(false), 2000);
       } catch (err) {
         setNameError(err instanceof Error ? err.message : "Failed to save.");

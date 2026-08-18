@@ -10,11 +10,17 @@ export async function updateDisplayName(displayName: string) {
   const trimmed = displayName.trim();
   if (!trimmed) throw new Error("Display name can't be empty.");
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("admin_users")
     .update({ display_name: trimmed })
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select("user_id");
   if (error) throw new Error(error.message);
+  if (!data || data.length === 0) {
+    throw new Error(
+      "Update was blocked (0 rows affected) — check the admin_users RLS UPDATE policy."
+    );
+  }
 
   revalidatePath("/admin/settings");
   revalidatePath("/admin", "layout");
@@ -24,11 +30,17 @@ export async function updateAvatar(avatarUrl: string | null) {
   const user = await requireCmsUser();
   const supabase = await createClient();
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("admin_users")
     .update({ avatar_url: avatarUrl })
-    .eq("user_id", user.id);
+    .eq("user_id", user.id)
+    .select("user_id");
   if (error) throw new Error(error.message);
+  if (!data || data.length === 0) {
+    throw new Error(
+      "Update was blocked (0 rows affected) — check the admin_users RLS UPDATE policy."
+    );
+  }
 
   revalidatePath("/admin/settings");
   revalidatePath("/admin", "layout");

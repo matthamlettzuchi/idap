@@ -9,5 +9,8 @@ export default async function ArticleEditPage({ params }: { params: Promise<{ id
   const [article, user] = await Promise.all([getArticleById(id), requireCmsUser()]);
   if (!article) notFound();
 
+  const canEdit = user.role === "admin" || article.author_id === user.id;
+  if (!canEdit) notFound();
+
   return <ArticleEditor article={article} canPublish={user.role === "admin"} />;
 }
