@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/admin/ui/data-table";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
+import { USERNAME_MAX_LENGTH, normalizeUsername } from "@/lib/admin/username";
 
 type CmsUserRow = {
   id: string;
@@ -21,6 +22,10 @@ export default function UsersPage() {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const usernameLength = normalizeUsername(username).length;
+  const usernameOverLimit = usernameLength > USERNAME_MAX_LENGTH;
+  const usernameNearLimit = !usernameOverLimit && usernameLength >= USERNAME_MAX_LENGTH * 0.9;
+
   async function load() {
     setLoading(true);
     const res = await fetch("/api/admin/users");
@@ -35,6 +40,7 @@ export default function UsersPage() {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
+    if (usernameOverLimit) return;
     setCreating(true);
     setError(null);
 
@@ -74,7 +80,20 @@ export default function UsersPage() {
         className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-(--panel-border) bg-panel p-5"
       >
         <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Username</label>
+          <div className="mb-1.5 flex items-center justify-between gap-4">
+            <label className="text-[12px] font-medium text-ink-2">Username</label>
+            <span
+              className={`font-mono text-[11px] ${
+                usernameOverLimit
+                  ? "font-semibold text-red-500"
+                  : usernameNearLimit
+                    ? "text-amber-500"
+                    : "text-ink-3"
+              }`}
+            >
+              {usernameLength}/{USERNAME_MAX_LENGTH}
+            </span>
+          </div>
           <input
             type="text"
             required
@@ -82,8 +101,18 @@ export default function UsersPage() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="e.g. jdoe"
-            className="w-48 rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13px] text-ink-0 outline-none"
+            className={`w-48 rounded-lg border bg-panel-2 px-3 py-2 text-[13px] text-ink-0 outline-none transition-colors ${
+              usernameOverLimit
+                ? "border-red-500 focus:border-red-500"
+                : "border-(--panel-border) focus:border-signal-teal"
+            }`}
           />
+          {usernameOverLimit && (
+            <p className="mt-1 text-[11px] text-red-500">
+              {usernameLength - USERNAME_MAX_LENGTH} char
+              {usernameLength - USERNAME_MAX_LENGTH === 1 ? "" : "s"} over the limit
+            </p>
+          )}
         </div>
         <div>
           <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Password</label>
@@ -111,7 +140,7 @@ export default function UsersPage() {
         </div>
         <button
           type="submit"
-          disabled={creating}
+          disabled={creating || usernameOverLimit}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
           {creating ? "Creating..." : "Create User"}
