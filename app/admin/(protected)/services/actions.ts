@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCmsUser } from "@/lib/admin/auth";
+import { logActivity } from "@/lib/admin/activity-log";
 import type { AdminServiceInput } from "@/lib/admin/services";
 
 function revalidateServicePaths(slug: string) {
@@ -12,13 +13,8 @@ function revalidateServicePaths(slug: string) {
   revalidatePath("/");
 }
 
-// Returns the slug instead of calling redirect() directly — same reasoning
-// as createProduct: this is invoked imperatively from a client component,
-// so the client controls navigation via router.push after save succeeds.
-export async function createService(
-  input: AdminServiceInput
-): Promise<{ slug: string }> {
-  await requireCmsUser("admin");
+export async function createService(input: AdminServiceInput): Promise<{ slug: string }> {
+  const user = await requireCmsUser("admin");
   const supabase = await createClient();
 
   const { data: maxRow } = await supabase
@@ -30,35 +26,50 @@ export async function createService(
 
   const nextOrder = (maxRow?.sort_order ?? -1) + 1;
 
-  const { error } = await supabase
-    .from("services")
-    .insert({ ...input, sort_order: nextOrder });
-
+  const { error } = await supabase.from("services").insert({ ...input, sort_order: nextOrder });
   if (error) throw new Error(error.message);
+
+  await logActivity(supabase, {
+    actorName: user.email ?? null,
+    entityType: "service",
+    entityLabel: input.name || input.slug,
+    action: "created",
+  });
 
   revalidateServicePaths(input.slug);
   return { slug: input.slug };
 }
 
-export async function updateService(
-  slug: string,
-  input: Partial<AdminServiceInput>
-) {
-  await requireCmsUser("admin");
+export async function updateService(slug: string, input: Partial<AdminServiceInput>) {
+  const user = await requireCmsUser("admin");
   const supabase = await createClient();
 
   const { error } = await supabase.from("services").update(input).eq("slug", slug);
   if (error) throw new Error(error.message);
 
+  await logActivity(supabase, {
+    actorName: user.email ?? null,
+    entityType: "service",
+    entityLabel: input.name || slug,
+    action: "updated",
+  });
+
   revalidateServicePaths(slug);
 }
 
 export async function deleteService(slug: string) {
-  await requireCmsUser("admin");
+  const user = await requireCmsUser("admin");
   const supabase = await createClient();
 
   const { error } = await supabase.from("services").delete().eq("slug", slug);
   if (error) throw new Error(error.message);
+
+  await logActivity(supabase, {
+    actorName: user.email ?? null,
+    entityType: "service",
+    entityLabel: slug,
+    action: "deleted",
+  });
 
   revalidatePath("/admin/services");
   revalidatePath("/");

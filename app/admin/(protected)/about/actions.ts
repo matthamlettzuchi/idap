@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCmsUser } from "@/lib/admin/auth";
 import type { AdminAboutPage } from "@/lib/admin/about";
+import { logActivity } from "@/lib/admin/activity-log";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -46,11 +47,9 @@ async function syncListTable<T extends { id?: number }>(
 }
 
 export async function saveAboutPage(payload: AdminAboutPage) {
-  await requireCmsUser("admin");
+  const user = await requireCmsUser("admin");
   const supabase = await createClient();
 
-  // upsert (not update) because the singleton row may not exist yet if
-  // about_content was never manually seeded after the table was created.
   const { error: contentError } = await supabase
     .from("about_content")
     .upsert({ ...payload.content, id: true }, { onConflict: "id" });
@@ -61,6 +60,13 @@ export async function saveAboutPage(payload: AdminAboutPage) {
   await syncListTable(supabase, "about_journey", payload.journey);
   await syncListTable(supabase, "about_principles", payload.principles);
   await syncListTable(supabase, "about_process_steps", payload.processSteps);
+
+  await logActivity(supabase, {
+    actorName: user.email ?? null,
+    entityType: "about",
+    entityLabel: "About Us Page",
+    action: "updated",
+  });
 
   revalidatePath("/admin/about");
   revalidatePath("/about");

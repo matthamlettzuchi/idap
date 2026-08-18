@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireCmsUser } from "@/lib/admin/auth";
 import type { AdminSiteContent } from "@/lib/admin/site-content";
 import type { SiteNavLink } from "@/lib/site-content-defaults";
+import { logActivity } from "@/lib/admin/activity-log";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -39,7 +40,7 @@ async function syncNavLinks(supabase: SupabaseServerClient, items: SiteNavLink[]
 }
 
 export async function saveSiteContent(payload: AdminSiteContent) {
-  await requireCmsUser("admin");
+  const user = await requireCmsUser("admin");
   const supabase = await createClient();
 
   await syncNavLinks(supabase, payload.navLinks);
@@ -54,6 +55,12 @@ export async function saveSiteContent(payload: AdminSiteContent) {
     .upsert({ ...payload.footerContent, id: true }, { onConflict: "id" });
   if (footerError) throw new Error(footerError.message);
 
-  // Revalidate everywhere these render — nav/footer appear on every page.
+  await logActivity(supabase, {
+    actorName: user.email ?? null,
+    entityType: "site_content",
+    entityLabel: "Site Content",
+    action: "updated",
+  });
+
   revalidatePath("/", "layout");
 }

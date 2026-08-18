@@ -23,7 +23,11 @@ export type ArticleRow = {
   updated_at: string;
 };
 
-export async function listArticles(opts?: { status?: ArticleStatus; search?: string }) {
+export async function listArticles(opts?: {
+  status?: ArticleStatus;
+  search?: string;
+  authorId?: string;
+}) {
   const supabase = await createClient();
   let query = supabase.from("articles").select("*").order("updated_at", { ascending: false });
 
@@ -34,6 +38,7 @@ export async function listArticles(opts?: { status?: ArticleStatus; search?: str
     query = query.neq("status", "trash");
   }
   if (opts?.search) query = query.ilike("title", `%${opts.search}%`);
+  if (opts?.authorId) query = query.eq("author_id", opts.authorId);
 
   const { data, error } = await query;
   if (error) throw new Error(error.message);

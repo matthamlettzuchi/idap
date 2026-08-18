@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireCmsUser } from "@/lib/admin/auth";
 import type { AdminHomePage } from "@/lib/admin/home";
+import { logActivity } from "@/lib/admin/activity-log";
 
 type SupabaseServerClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -68,7 +69,7 @@ async function syncTextIdTable<T extends { id: string }>(
 }
 
 export async function saveHomePage(payload: AdminHomePage) {
-  await requireCmsUser("admin");
+  const user = await requireCmsUser("admin");
   const supabase = await createClient();
 
   await syncListTable(supabase, "hero_stats", payload.heroStats);
@@ -82,6 +83,13 @@ export async function saveHomePage(payload: AdminHomePage) {
     .from("site_contact")
     .upsert({ ...payload.siteContact, id: 1 }, { onConflict: "id" });
   if (contactError) throw new Error(contactError.message);
+
+  await logActivity(supabase, {
+    actorName: user.email ?? null,
+    entityType: "home",
+    entityLabel: "Home Page",
+    action: "updated",
+  });
 
   revalidatePath("/admin/home");
   revalidatePath("/");
