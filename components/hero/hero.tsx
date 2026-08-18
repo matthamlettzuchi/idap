@@ -78,6 +78,12 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+import {
+  defaultSiteButtons,
+  isInternalHref,
+  type SiteButtons,
+} from "@/lib/site-content-defaults";
+
 // Decorative trend line under each metric, matching the live Fiscus
 // dashboard's thin sparkline.
 function MiniSparkline({ color }: { color: string }) {
@@ -258,6 +264,23 @@ export function Hero() {
   const [heroStats, setHeroStats] = useState<typeof staticHeroStats | null>(
     null,
   );
+  const [buttons, setButtons] = useState<SiteButtons>(defaultSiteButtons);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadButtons() {
+      const { data, error } = await supabase
+        .from("site_buttons")
+        .select("*")
+        .single();
+      if (error || !data || cancelled) return;
+      setButtons(data as SiteButtons);
+    }
+    loadButtons();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -379,13 +402,27 @@ export function Hero() {
             </p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-3.5 lg:justify-start">
               <Button asChild size="sm">
-                <a href="#kontak">
-                  Contact Us <ArrowRight size={15} />
+                <a
+                  href={buttons.hero_primary_href}
+                  target={
+                    isInternalHref(buttons.hero_primary_href)
+                      ? undefined
+                      : "_blank"
+                  }
+                >
+                  {buttons.hero_primary_label} <ArrowRight size={15} />
                 </a>
               </Button>
               <Button asChild variant="ghost" size="sm">
-                <a href="#produk">
-                  View Products <ArrowDownRight size={15} />
+                <a
+                  href={buttons.hero_secondary_href}
+                  target={
+                    isInternalHref(buttons.hero_secondary_href)
+                      ? undefined
+                      : "_blank"
+                  }
+                >
+                  {buttons.hero_secondary_label} <ArrowDownRight size={15} />
                 </a>
               </Button>
             </div>

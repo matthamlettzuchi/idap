@@ -7,25 +7,80 @@ import { contact, nav } from "@/lib/data";
 import { Logo } from "@/components/logo";
 import { sectionTones } from "@/lib/section-tones";
 import { supabase } from "@/lib/supabase";
+import {
+  defaultNavLinks,
+  defaultFooterContent,
+  isInternalHref,
+  type SiteNavLink,
+  type SiteFooterContent,
+} from "@/lib/site-content-defaults";
 
 const year = new Date().getFullYear();
 
+const [navLinks, setNavLinks] = useState<SiteNavLink[]>(defaultNavLinks);
+const [footerContent, setFooterContent] =
+  useState<SiteFooterContent>(defaultFooterContent);
+
+useEffect(() => {
+  let cancelled = false;
+  async function loadNavLinks() {
+    const { data, error } = await supabase
+      .from("site_nav_links")
+      .select("id, label, href")
+      .order("sort_order", { ascending: true });
+    if (error || !data || data.length === 0 || cancelled) return;
+    setNavLinks(data as SiteNavLink[]);
+  }
+  loadNavLinks();
+  return () => {
+    cancelled = true;
+  };
+}, []);
+
+useEffect(() => {
+  let cancelled = false;
+  async function loadFooterContent() {
+    const { data, error } = await supabase
+      .from("site_footer_content")
+      .select("*")
+      .single();
+    if (error || !data || cancelled) return;
+    setFooterContent(data as SiteFooterContent);
+  }
+  loadFooterContent();
+  return () => {
+    cancelled = true;
+  };
+}, []);
+
 const socials = [
-  {
-    icon: FaFacebook,
-    label: "Facebook",
-    href: "https://www.facebook.com/profile.php?id=61550206097624",
-  },
-  {
-    icon: FaInstagram,
-    label: "Instagram",
-    href: "https://www.instagram.com/fiscus_intidata?",
-  },
-  {
-    icon: FaLinkedinIn,
-    label: "LinkedIn",
-    href: "https://id.linkedin.com/company/pt.-intidata-anugrah-pratama",
-  },
+  ...(footerContent.facebook_url
+    ? [
+        {
+          icon: FaFacebook,
+          label: "Facebook",
+          href: footerContent.facebook_url,
+        },
+      ]
+    : []),
+  ...(footerContent.instagram_url
+    ? [
+        {
+          icon: FaInstagram,
+          label: "Instagram",
+          href: footerContent.instagram_url,
+        },
+      ]
+    : []),
+  ...(footerContent.linkedin_url
+    ? [
+        {
+          icon: FaLinkedinIn,
+          label: "LinkedIn",
+          href: footerContent.linkedin_url,
+        },
+      ]
+    : []),
 ];
 
 type FooterProduct = {
@@ -84,8 +139,7 @@ export function Footer() {
           <div>
             <Logo className="h-9 w-36" />
             <p className="mt-5 max-w-70 text-[14px] leading-relaxed text-ink-1">
-              PT Intidata Anugrah Pratama — integrated IT consulting solutions
-              for corporate and public sectors.
+              {footerContent.description}
             </p>
             <p className="mt-4 max-w-70 text-[12.5px] leading-relaxed text-ink-2">
               {contact.address}
@@ -167,7 +221,7 @@ export function Footer() {
 
         <div className="flex flex-wrap items-center justify-between gap-6 pt-8">
           <p className="text-[12.5px] text-ink-2">
-            © {year} Intidata Anugrah Pratama. All rights reserved.
+            © {year} {footerContent.copyright_name}. All rights reserved.
           </p>
           <div className="flex gap-3">
             {socials.map((s) => (

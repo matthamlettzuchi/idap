@@ -35,6 +35,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/logo";
 import { supabase } from "@/lib/supabase";
+import {
+  defaultNavLinks,
+  defaultSiteButtons,
+  isInternalHref,
+  type SiteNavLink,
+  type SiteButtons,
+} from "@/lib/site-content-defaults";
 
 const softwareDevServices = [
   {
@@ -163,11 +170,47 @@ type ServiceRow = {
   sort_order: number;
 };
 
+// A link is treated as internal (Next <Link>, client-side nav) when it
+// starts with "/" or "#"; otherwise it's rendered as a plain <a> that opens
+// in a new tab — covers external URLs, wa.me, tel:, mailto:, etc.
+function NavLink({
+  href,
+  className,
+  onClick,
+  children,
+}: {
+  href: string;
+  className: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  if (isInternalHref(href)) {
+    return (
+      <Link href={href} className={className} onClick={onClick}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      onClick={onClick}
+    >
+      {children}
+    </a>
+  );
+}
+
 export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [productList, setProductList] = React.useState<NavProduct[]>([]);
   const [dbServices, setDbServices] = React.useState<NavService[]>([]);
+  const [navLinks, setNavLinks] = React.useState<SiteNavLink[]>(defaultNavLinks);
+  const [buttons, setButtons] = React.useState<SiteButtons>(defaultSiteButtons);
   const [activeDropdown, setActiveDropdown] = React.useState<
     "services" | "products" | null
   >(null);
@@ -240,11 +283,51 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
     };
   }, []);
 
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function loadNavLinks() {
+      const { data, error } = await supabase
+        .from("site_nav_links")
+        .select("id, label, href")
+        .order("sort_order", { ascending: true });
+
+      if (error || !data || data.length === 0 || cancelled) return;
+      setNavLinks(data as SiteNavLink[]);
+    }
+
+    loadNavLinks();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    async function loadButtons() {
+      const { data, error } = await supabase.from("site_buttons").select("*").single();
+      if (error || !data || cancelled) return;
+      setButtons(data as SiteButtons);
+    }
+
+    loadButtons();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const isLight = overlayHero && !scrolled;
   const linkClass = isLight
     ? "text-white/90 transition-colors hover:text-white"
     : "text-ink-1 transition-colors hover:text-ink-0";
   const hamburgerClass = isLight ? "text-white" : "text-ink-0";
+
+  // "About Us" sits before the Products/Services mega menus in the nav
+  // order; everything else (Credit Simulation, Blog, Contact, and any
+  // admin-added links) renders after them, same order as before.
+  const beforeMegaMenus = navLinks.filter((l) => l.label === "About Us");
+  const afterMegaMenus = navLinks.filter((l) => l.label !== "About Us");
 
   return (
     <header className="fixed inset-x-0 top-0 z-50">
@@ -285,12 +368,15 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
           </Link>
 
           <nav className="hidden items-center gap-9 md:flex">
-            <Link
-              href="/about"
-              className={`text-[14.5px] font-medium ${linkClass}`}
-            >
-              About Us
-            </Link>
+            {beforeMegaMenus.map((l) => (
+              <NavLink
+                key={l.id ?? l.label}
+                href={l.href}
+                className={`text-[14.5px] font-medium ${linkClass}`}
+              >
+                {l.label}
+              </NavLink>
+            ))}
 
             {/* PRODUCTS MEGA MENU */}
             <div
@@ -471,32 +557,22 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               </AnimatePresence>
             </div>
 
-            <Link
-              href="/credit-simulation"
-              className={`text-[14.5px] font-medium ${linkClass}`}
-            >
-              Credit Simulation
-            </Link>
-
-            <Link
-              href="/blog"
-              className={`text-[14.5px] font-medium ${linkClass}`}
-            >
-              Blog
-            </Link>
-            
-            <Link
-              href="/contact"
-              className={`text-[14.5px] font-medium ${linkClass}`}
-            >
-              Contact
-            </Link>
-
+            {afterMegaMenus.map((l) => (
+              <NavLink
+                key={l.id ?? l.label}
+                href={l.href}
+                className={`text-[14.5px] font-medium ${linkClass}`}
+              >
+                {l.label}
+              </NavLink>
+            ))}
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
             <Button asChild size="sm" variant="primary">
-              <Link href="https://wa.me/+6282211581769">Hubungi Kami</Link>
+              <NavLink href={buttons.nav_cta_href} className="">
+                {buttons.nav_cta_label}
+              </NavLink>
             </Button>
           </div>
 
@@ -519,13 +595,16 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
           className="max-h-[calc(100vh-72px)] overflow-y-auto border-b border-(--panel-border) bg-void/95 backdrop-blur-xl md:hidden"
         >
           <div className="container-x flex flex-col gap-4 py-6">
-            <Link
-              href="/about"
-              onClick={() => setOpen(false)}
-              className="font-display text-[18px] font-medium text-ink-0"
-            >
-              About Us
-            </Link>
+            {beforeMegaMenus.map((l) => (
+              <NavLink
+                key={l.id ?? l.label}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="font-display text-[18px] font-medium text-ink-0"
+              >
+                {l.label}
+              </NavLink>
+            ))}
 
             {/* Mobile Products Collapsible */}
             <div>
@@ -606,34 +685,21 @@ export function Nav({ overlayHero = false }: { overlayHero?: boolean }) {
               )}
             </div>
 
-            <Link
-              href="/credit-simulation"
-              onClick={() => setOpen(false)}
-              className="font-display text-[18px] font-medium text-ink-0"
-            >
-              Credit Simulation
-            </Link>
-
-            <Link
-              href="/blog"
-              onClick={() => setOpen(false)}
-              className="font-display text-[18px] font-medium text-ink-0"
-            >
-              Blog
-            </Link>
-
-            <Link
-              href="/contact"
-              onClick={() => setOpen(false)}
-              className="font-display text-[18px] font-medium text-ink-0"
-            >
-              Contact
-            </Link>
+            {afterMegaMenus.map((l) => (
+              <NavLink
+                key={l.id ?? l.label}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="font-display text-[18px] font-medium text-ink-0"
+              >
+                {l.label}
+              </NavLink>
+            ))}
 
             <Button asChild variant="primary" className="mt-4 w-full">
-              <Link href="/contact" onClick={() => setOpen(false)}>
-                Hubungi Kami
-              </Link>
+              <NavLink href={buttons.nav_cta_href} onClick={() => setOpen(false)} className="">
+                {buttons.nav_cta_label}
+              </NavLink>
             </Button>
           </div>
         </motion.div>
