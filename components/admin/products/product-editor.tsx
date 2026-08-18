@@ -8,7 +8,7 @@ import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
 import { LimitedInput } from "@/components/admin/ui/limited-input";
 import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
-import { FIELD_LIMITS } from "@/lib/admin/field-limits";
+import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { slugify } from "@/lib/admin/slugify";
 import {
   createProduct,
@@ -338,6 +338,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           onChange={(v) => set("quick_facts", v)}
           newItem={() => ""}
           addLabel="Add fact"
+          maxItems={MAX_ITEMS.quickFacts}
           renderItem={(item, update) => (
             <LimitedInput
               maxLength={FIELD_LIMITS.quickFact}
@@ -358,6 +359,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           onChange={(v) => set("overview", v)}
           newItem={() => ""}
           addLabel="Add paragraph"
+          maxItems={MAX_ITEMS.overviewParagraphs}
           renderItem={(item, update) => (
             <LimitedTextArea
               maxLength={FIELD_LIMITS.overviewParagraph}
@@ -378,6 +380,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           onChange={(v) => set("advantages", v)}
           newItem={() => ({ title: "", subtitle: "" }) as ProductAdvantage}
           addLabel="Add advantage"
+          maxItems={MAX_ITEMS.advantages}
           renderItem={(item, update) => (
             <div className="space-y-2">
               <LimitedInput
@@ -464,6 +467,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           onChange={(v) => set("features", v)}
           newItem={() => ({ title: "", body: "" }) as ProductFeature}
           addLabel="Add feature"
+          maxItems={MAX_ITEMS.features}
           renderItem={(item, update) => (
             <div className="space-y-2">
               <LimitedInput
@@ -513,6 +517,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
             onChange={(v) => set("home_metrics", v)}
             newItem={() => ({ label: "", value: "" }) as ProductMetric}
             addLabel="Add metric"
+            maxItems={MAX_ITEMS.homeMetrics}
             renderItem={(item, update) => (
               <div className="grid grid-cols-2 gap-2">
                 <LimitedInput
@@ -540,6 +545,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
             onChange={(v) => set("home_modules", v)}
             newItem={() => ""}
             addLabel="Add module"
+            maxItems={MAX_ITEMS.homeModules}
             renderItem={(item, update) => (
               <LimitedInput
                 maxLength={FIELD_LIMITS.shortLabel}

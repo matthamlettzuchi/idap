@@ -4,6 +4,9 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ImageField } from "@/components/admin/ui/image-field";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
+import { LimitedInput } from "@/components/admin/ui/limited-input";
+import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
+import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { saveHomePage } from "@/app/admin/(protected)/home/actions";
 import { slugify } from "@/lib/admin/slugify";
 import type {
@@ -142,7 +145,8 @@ function DateRangeFields({
 
 // Editable id field for text-id items (hero_themes, seasonal_themes,
 // testimonials) — auto-slugified from a "source" label the first time it's
-// touched, but stays freely editable afterward so admins can fix collisions.
+// touched, stays freely editable afterward, and is hard-capped at
+// FIELD_LIMITS.entityId so it can never grow into a paragraph.
 function IdField({
   value,
   onChange,
@@ -159,7 +163,9 @@ function IdField({
       </label>
       <input
         value={value}
-        onChange={(e) => onChange(slugify(e.target.value))}
+        onChange={(e) =>
+          onChange(slugify(e.target.value).slice(0, FIELD_LIMITS.entityId))
+        }
         placeholder={placeholder}
         className={fieldClass("bg-panel font-mono text-[12px]")}
       />
@@ -182,6 +188,60 @@ function makeSetDefault<T extends { id: string; is_default: boolean }>(
       items.map((it) => ({ ...it, is_default: it.id === id ? value : false })),
     );
   };
+}
+
+// Mirrors product-editor.tsx / about-editor.tsx: every text field with a
+// matching Postgres truncation trigger (or a sane practical limit) is
+// checked here. Any field or list item over its limit blocks Save.
+function computeOverLimit(
+  heroStats: AdminHeroStat[],
+  heroThemes: AdminHeroTheme[],
+  seasonalThemes: AdminSeasonalTheme[],
+  testimonials: AdminTestimonial[],
+  clientLogos: AdminClientLogo[],
+  faqs: AdminFaq[],
+  siteContact: AdminSiteContact,
+): boolean {
+  return (
+    heroStats.some(
+      (s) => s.suffix.length > FIELD_LIMITS.statSuffix || s.label.length > FIELD_LIMITS.statLabel
+    ) ||
+    heroThemes.some(
+      (t) =>
+        t.id.length > FIELD_LIMITS.entityId ||
+        t.label.length > FIELD_LIMITS.themeLabel ||
+        t.character_alt.length > FIELD_LIMITS.characterAlt ||
+        t.blob_gradient.length > FIELD_LIMITS.cssGradient ||
+        t.background_wash.length > FIELD_LIMITS.cssGradient ||
+        t.greeting.length > FIELD_LIMITS.greeting
+    ) ||
+    seasonalThemes.some(
+      (t) =>
+        t.id.length > FIELD_LIMITS.entityId ||
+        t.label.length > FIELD_LIMITS.themeLabel ||
+        t.envelope_title.length > FIELD_LIMITS.envelopeTitle ||
+        t.envelope_message.length > FIELD_LIMITS.envelopeMessage
+    ) ||
+    testimonials.some(
+      (t) =>
+        t.id.length > FIELD_LIMITS.entityId ||
+        t.category.length > FIELD_LIMITS.testimonialCategory ||
+        t.quote.length > FIELD_LIMITS.testimonialQuote ||
+        t.name.length > FIELD_LIMITS.testimonialName ||
+        t.role.length > FIELD_LIMITS.testimonialRole ||
+        t.company.length > FIELD_LIMITS.testimonialCompany ||
+        t.initials.length > FIELD_LIMITS.testimonialInitials ||
+        t.video_id.length > FIELD_LIMITS.testimonialVideoId
+    ) ||
+    clientLogos.some((c) => c.name.length > FIELD_LIMITS.clientLogoName) ||
+    faqs.some(
+      (f) => f.question.length > FIELD_LIMITS.faqQuestion || f.answer.length > FIELD_LIMITS.faqAnswer
+    ) ||
+    siteContact.address.length > FIELD_LIMITS.address ||
+    siteContact.email.length > FIELD_LIMITS.email ||
+    siteContact.whatsapp.length > FIELD_LIMITS.whatsappLink ||
+    siteContact.phones.some((p) => p.length > FIELD_LIMITS.phone)
+  );
 }
 
 export function HomeEditor({ initial }: { initial: AdminHomePage }) {
@@ -215,6 +275,16 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
 
+  const overLimit = computeOverLimit(
+    heroStats,
+    heroThemes,
+    seasonalThemes,
+    testimonials,
+    clientLogos,
+    faqs,
+    siteContact,
+  );
+
   function setContact<K extends keyof AdminSiteContact>(
     key: K,
     value: AdminSiteContact[K],
@@ -223,6 +293,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
   }
 
   function handleSave() {
+    if (overLimit) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -251,9 +322,14 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
             Saved {savedAt.toLocaleTimeString()}
           </span>
         )}
+        {overLimit && (
+          <span className="text-[12px] font-medium text-red-500">
+            Fix fields over their character limit before saving.
+          </span>
+        )}
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
@@ -274,6 +350,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         <ListFieldEditor
           items={heroStats}
           onChange={setHeroStats}
+          maxItems={MAX_ITEMS.heroStats}
           newItem={() =>
             ({ value: 0, suffix: "+", label: "" }) as AdminHeroStat
           }
@@ -289,17 +366,19 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
                 placeholder="25"
                 className={fieldClass("bg-panel")}
               />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.statSuffix}
                 value={item.suffix}
                 onChange={(e) => update({ ...item, suffix: e.target.value })}
                 placeholder="+"
-                className={fieldClass("bg-panel")}
+                className="bg-panel"
               />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.statLabel}
                 value={item.label}
                 onChange={(e) => update({ ...item, label: e.target.value })}
                 placeholder="Years of practical experience"
-                className={fieldClass("bg-panel")}
+                className="bg-panel"
               />
             </div>
           )}
@@ -314,6 +393,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         <ListFieldEditor
           items={heroThemes}
           onChange={setHeroThemes}
+          maxItems={MAX_ITEMS.heroThemes}
           newItem={() =>
             ({
               id: tempId("theme"),
@@ -345,11 +425,12 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
                   <label className="mb-1 block text-[10.5px] text-ink-2">
                     Label
                   </label>
-                  <input
+                  <LimitedInput
+                    maxLength={FIELD_LIMITS.themeLabel}
                     value={item.label}
                     onChange={(e) => update({ ...item, label: e.target.value })}
                     placeholder="Tahun Baru Imlek"
-                    className={fieldClass("bg-panel")}
+                    className="bg-panel"
                   />
                 </div>
               </div>
@@ -428,49 +509,53 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
                 <label className="mb-1 block text-[10.5px] text-ink-2">
                   Character Alt Text
                 </label>
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.characterAlt}
                   value={item.character_alt}
                   onChange={(e) =>
                     update({ ...item, character_alt: e.target.value })
                   }
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
               </div>
               <div>
                 <label className="mb-1 block text-[10.5px] text-ink-2">
                   Blob Gradient (CSS, e.g. radial-gradient(...))
                 </label>
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.cssGradient}
                   value={item.blob_gradient}
                   onChange={(e) =>
                     update({ ...item, blob_gradient: e.target.value })
                   }
-                  className={fieldClass("bg-panel font-mono text-[12px]")}
+                  className="bg-panel font-mono text-[12px]"
                 />
               </div>
               <div>
                 <label className="mb-1 block text-[10.5px] text-ink-2">
                   Background Wash (CSS gradient)
                 </label>
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.cssGradient}
                   value={item.background_wash}
                   onChange={(e) =>
                     update({ ...item, background_wash: e.target.value })
                   }
-                  className={fieldClass("bg-panel font-mono text-[12px]")}
+                  className="bg-panel font-mono text-[12px]"
                 />
               </div>
               <div>
                 <label className="mb-1 block text-[10.5px] text-ink-2">
                   Greeting
                 </label>
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.greeting}
                   value={item.greeting}
                   onChange={(e) =>
                     update({ ...item, greeting: e.target.value })
                   }
                   placeholder="Gong Xi Fa Cai"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
               </div>
             </div>
@@ -486,6 +571,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         <ListFieldEditor
           items={seasonalThemes}
           onChange={setSeasonalThemes}
+          maxItems={MAX_ITEMS.seasonalThemes}
           newItem={() =>
             ({
               id: tempId("season"),
@@ -514,10 +600,11 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
                   <label className="mb-1 block text-[10.5px] text-ink-2">
                     Label
                   </label>
-                  <input
+                  <LimitedInput
+                    maxLength={FIELD_LIMITS.themeLabel}
                     value={item.label}
                     onChange={(e) => update({ ...item, label: e.target.value })}
-                    className={fieldClass("bg-panel")}
+                    className="bg-panel"
                   />
                 </div>
               </div>
@@ -612,25 +699,27 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
                 <label className="mb-1 block text-[10.5px] text-ink-2">
                   Envelope Title
                 </label>
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.envelopeTitle}
                   value={item.envelope_title}
                   onChange={(e) =>
                     update({ ...item, envelope_title: e.target.value })
                   }
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
               </div>
               <div>
                 <label className="mb-1 block text-[10.5px] text-ink-2">
                   Envelope Message
                 </label>
-                <textarea
+                <LimitedTextArea
+                  maxLength={FIELD_LIMITS.envelopeMessage}
                   value={item.envelope_message}
                   onChange={(e) =>
                     update({ ...item, envelope_message: e.target.value })
                   }
                   rows={3}
-                  className={fieldClass("resize-none bg-panel")}
+                  className="bg-panel"
                 />
               </div>
             </div>
@@ -646,6 +735,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         <ListFieldEditor
           items={testimonials}
           onChange={setTestimonials}
+          maxItems={MAX_ITEMS.testimonials}
           newItem={() =>
             ({
               id: tempId("t"),
@@ -670,61 +760,68 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
                   <label className="mb-1 block text-[10.5px] text-ink-2">
                     Category
                   </label>
-                  <input
+                  <LimitedInput
+                    maxLength={FIELD_LIMITS.testimonialCategory}
                     value={item.category}
                     onChange={(e) =>
                       update({ ...item, category: e.target.value })
                     }
                     placeholder="Multifinance"
-                    className={fieldClass("bg-panel")}
+                    className="bg-panel"
                   />
                 </div>
               </div>
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.testimonialQuote}
                 value={item.quote}
                 onChange={(e) => update({ ...item, quote: e.target.value })}
                 rows={3}
                 placeholder="Quote"
-                className={fieldClass("resize-none bg-panel")}
+                className="bg-panel"
               />
               <div className="grid grid-cols-2 gap-2">
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.testimonialName}
                   value={item.name}
                   onChange={(e) => update({ ...item, name: e.target.value })}
                   placeholder="Name"
-                  className={fieldClass("bg-panel font-medium")}
+                  className="bg-panel font-medium"
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.testimonialInitials}
                   value={item.initials}
                   onChange={(e) =>
                     update({ ...item, initials: e.target.value })
                   }
                   placeholder="Initials (e.g. B)"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.testimonialRole}
                   value={item.role}
                   onChange={(e) => update({ ...item, role: e.target.value })}
                   placeholder="Role"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.testimonialCompany}
                   value={item.company}
                   onChange={(e) => update({ ...item, company: e.target.value })}
                   placeholder="Company"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
               </div>
               <div>
                 <label className="mb-1 block text-[10.5px] text-ink-2">
                   YouTube Video ID (e.g. j0VmrBxTSAA)
                 </label>
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.testimonialVideoId}
                   value={item.video_id}
                   onChange={(e) =>
                     update({ ...item, video_id: e.target.value })
                   }
-                  className={fieldClass("bg-panel font-mono text-[12px]")}
+                  className="bg-panel font-mono text-[12px]"
                 />
               </div>
             </div>
@@ -740,15 +837,17 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         <ListFieldEditor
           items={clientLogos}
           onChange={setClientLogos}
+          maxItems={MAX_ITEMS.clientLogos}
           newItem={() => ({ name: "", logo: "" }) as AdminClientLogo}
           addLabel="Add logo"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.clientLogoName}
                 value={item.name}
                 onChange={(e) => update({ ...item, name: e.target.value })}
                 placeholder="Client name"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
               <ImageField
                 label="Logo"
@@ -766,22 +865,25 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         <ListFieldEditor
           items={faqs}
           onChange={setFaqs}
+          maxItems={MAX_ITEMS.faqs}
           newItem={() => ({ question: "", answer: "" }) as AdminFaq}
           addLabel="Add FAQ"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.faqQuestion}
                 value={item.question}
                 onChange={(e) => update({ ...item, question: e.target.value })}
                 placeholder="Question"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.faqAnswer}
                 value={item.answer}
                 onChange={(e) => update({ ...item, answer: e.target.value })}
                 rows={3}
                 placeholder="Answer"
-                className={fieldClass("resize-none bg-panel")}
+                className="bg-panel"
               />
             </div>
           )}
@@ -793,28 +895,20 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         title="Site Contact"
         desc="Digunakan di section Contact, Footer, dan floating WhatsApp."
       >
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Address
-          </label>
-          <textarea
-            value={siteContact.address}
-            onChange={(e) => setContact("address", e.target.value)}
-            rows={2}
-            className={fieldClass("resize-none")}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Email
-          </label>
-          <input
-            type="email"
-            value={siteContact.email}
-            onChange={(e) => setContact("email", e.target.value)}
-            className={fieldClass()}
-          />
-        </div>
+        <LimitedTextArea
+          label="Address"
+          maxLength={FIELD_LIMITS.address}
+          value={siteContact.address}
+          onChange={(e) => setContact("address", e.target.value)}
+          rows={2}
+        />
+        <LimitedInput
+          label="Email"
+          type="email"
+          maxLength={FIELD_LIMITS.email}
+          value={siteContact.email}
+          onChange={(e) => setContact("email", e.target.value)}
+        />
         <div>
           <div className="mb-2 text-[12px] font-medium text-ink-2">
             Phone Numbers
@@ -822,34 +916,32 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
           <ListFieldEditor
             items={siteContact.phones}
             onChange={(phones) => setContact("phones", phones)}
+            maxItems={MAX_ITEMS.phones}
             newItem={() => ""}
             addLabel="Add phone"
             renderItem={(item, update) => (
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.phone}
                 value={item}
                 onChange={(e) => update(e.target.value)}
                 placeholder="+62 (21) 5595-2979"
-                className={fieldClass("bg-panel")}
+                className="bg-panel"
               />
             )}
           />
         </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            WhatsApp Link (e.g. https://wa.me/+6282211581769)
-          </label>
-          <input
-            value={siteContact.whatsapp}
-            onChange={(e) => setContact("whatsapp", e.target.value)}
-            className={fieldClass()}
-          />
-        </div>
+        <LimitedInput
+          label="WhatsApp Link (e.g. https://wa.me/+6282211581769)"
+          maxLength={FIELD_LIMITS.whatsappLink}
+          value={siteContact.whatsapp}
+          onChange={(e) => setContact("whatsapp", e.target.value)}
+        />
       </SectionCard>
 
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}

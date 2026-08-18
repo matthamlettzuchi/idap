@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import { ImageField } from "@/components/admin/ui/image-field";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
+import { LimitedInput } from "@/components/admin/ui/limited-input";
+import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
+import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { saveAboutPage } from "@/app/admin/(protected)/about/actions";
 import type {
   AdminAboutPage,
@@ -140,6 +143,57 @@ function SectionCard({
   );
 }
 
+// Mirrors product-editor.tsx / service-editor.tsx: every text field with a
+// matching Postgres truncation trigger (or a sane practical limit) is
+// checked here. Any single field, or any list item, over its limit blocks
+// Save the same way an over-limit article field does.
+function computeOverLimit(
+  content: AdminAboutContentRow,
+  coreValues: AdminAboutCoreValue[],
+  industries: AdminAboutIndustry[],
+  journey: AdminAboutJourneyStep[],
+  principles: AdminAboutPrinciple[],
+  processSteps: AdminAboutProcessStep[]
+): boolean {
+  const heroStatsOver = content.hero_stats.some(
+    (s) => (s.suffix?.length ?? 0) > FIELD_LIMITS.statSuffix || s.label.length > FIELD_LIMITS.statLabel
+  );
+  const visionStatsOver = content.vision_stats.some(
+    (s) => (s.suffix?.length ?? 0) > FIELD_LIMITS.statSuffix || s.label.length > FIELD_LIMITS.statLabel
+  );
+
+  return (
+    content.hero_heading_line_1.length > FIELD_LIMITS.aboutHeadingLine ||
+    content.hero_heading_line_2.length > FIELD_LIMITS.aboutHeadingLine ||
+    content.hero_description.length > FIELD_LIMITS.aboutDescription ||
+    (content.stats_lottie?.length ?? 0) > FIELD_LIMITS.lottieUrl ||
+    content.vision_description.length > FIELD_LIMITS.aboutDescription ||
+    content.mission_points.some((m) => m.length > FIELD_LIMITS.missionPoint) ||
+    content.solutions.some((s) => s.length > FIELD_LIMITS.solutionItem) ||
+    heroStatsOver ||
+    visionStatsOver ||
+    journey.some(
+      (j) =>
+        j.era.length > FIELD_LIMITS.journeyEra ||
+        j.title.length > FIELD_LIMITS.journeyTitle ||
+        j.body.length > FIELD_LIMITS.journeyBody
+    ) ||
+    coreValues.some(
+      (c) => c.title.length > FIELD_LIMITS.coreValueTitle || c.desc.length > FIELD_LIMITS.coreValueDesc
+    ) ||
+    industries.some(
+      (i) => i.title.length > FIELD_LIMITS.industryTitle || i.body.length > FIELD_LIMITS.industryBody
+    ) ||
+    principles.some(
+      (p) => p.label.length > FIELD_LIMITS.principleLabel || p.body.length > FIELD_LIMITS.principleBody
+    ) ||
+    processSteps.some(
+      (p) =>
+        p.label.length > FIELD_LIMITS.processStepTitle || p.body.length > FIELD_LIMITS.processStepBody
+    )
+  );
+}
+
 export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
   const [content, setContent] = useState<AdminAboutContentRow>(initial.content);
   const [coreValues, setCoreValues] = useState<AdminAboutCoreValue[]>(initial.coreValues);
@@ -155,11 +209,14 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
 
+  const overLimit = computeOverLimit(content, coreValues, industries, journey, principles, processSteps);
+
   function setC<K extends keyof AdminAboutContentRow>(key: K, value: AdminAboutContentRow[K]) {
     setContent((prev) => ({ ...prev, [key]: value }));
   }
 
   function handleSave() {
+    if (overLimit) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -185,9 +242,14 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         {savedAt && (
           <span className="text-[12px] text-ink-2">Saved {savedAt.toLocaleTimeString()}</span>
         )}
+        {overLimit && (
+          <span className="text-[12px] font-medium text-red-500">
+            Fix fields over their character limit before saving.
+          </span>
+        )}
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
@@ -209,46 +271,32 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           folder="about"
         />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-              Heading — Line 1
-            </label>
-            <input
-              value={content.hero_heading_line_1}
-              onChange={(e) => setC("hero_heading_line_1", e.target.value)}
-              className={fieldClass()}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-              Heading — Line 2
-            </label>
-            <input
-              value={content.hero_heading_line_2}
-              onChange={(e) => setC("hero_heading_line_2", e.target.value)}
-              className={fieldClass()}
-            />
-          </div>
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Description</label>
-          <textarea
-            value={content.hero_description}
-            onChange={(e) => setC("hero_description", e.target.value)}
-            rows={3}
-            className={fieldClass("resize-none")}
+          <LimitedInput
+            label="Heading — Line 1"
+            maxLength={FIELD_LIMITS.aboutHeadingLine}
+            value={content.hero_heading_line_1}
+            onChange={(e) => setC("hero_heading_line_1", e.target.value)}
+          />
+          <LimitedInput
+            label="Heading — Line 2"
+            maxLength={FIELD_LIMITS.aboutHeadingLine}
+            value={content.hero_heading_line_2}
+            onChange={(e) => setC("hero_heading_line_2", e.target.value)}
           />
         </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Stats Lottie URL (opsional)
-          </label>
-          <input
-            value={content.stats_lottie ?? ""}
-            onChange={(e) => setC("stats_lottie", e.target.value || null)}
-            className={fieldClass()}
-          />
-        </div>
+        <LimitedTextArea
+          label="Description"
+          maxLength={FIELD_LIMITS.aboutDescription}
+          value={content.hero_description}
+          onChange={(e) => setC("hero_description", e.target.value)}
+          rows={3}
+        />
+        <LimitedInput
+          label="Stats Lottie URL (opsional)"
+          maxLength={FIELD_LIMITS.lottieUrl}
+          value={content.stats_lottie ?? ""}
+          onChange={(e) => setC("stats_lottie", e.target.value || null)}
+        />
         <div>
           <div className="mb-2 text-[12px] font-medium text-ink-2">
             Hero Stats (kartu "30+ Years..." di sebelah stats lottie)
@@ -256,6 +304,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           <ListFieldEditor
             items={content.hero_stats}
             onChange={(v) => setC("hero_stats", v)}
+            maxItems={MAX_ITEMS.heroStats}
             newItem={() => ({ value: 0, suffix: "+", label: "", color: "text-signal-teal" }) as AboutHeroStat}
             addLabel="Add hero stat"
             renderItem={(item, update) => (
@@ -267,17 +316,19 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
                   placeholder="30"
                   className={fieldClass("bg-panel")}
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.statSuffix}
                   value={item.suffix ?? ""}
                   onChange={(e) => update({ ...item, suffix: e.target.value })}
                   placeholder="+"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.statLabel}
                   value={item.label}
                   onChange={(e) => update({ ...item, label: e.target.value })}
                   placeholder="Years Track Record"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
               </div>
             )}
@@ -287,22 +338,19 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
 
       {/* VISION & MISSION */}
       <SectionCard title="Vision & Mission">
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Vision Description
-          </label>
-          <textarea
-            value={content.vision_description}
-            onChange={(e) => setC("vision_description", e.target.value)}
-            rows={3}
-            className={fieldClass("resize-none")}
-          />
-        </div>
+        <LimitedTextArea
+          label="Vision Description"
+          maxLength={FIELD_LIMITS.aboutDescription}
+          value={content.vision_description}
+          onChange={(e) => setC("vision_description", e.target.value)}
+          rows={3}
+        />
         <div>
           <div className="mb-2 text-[12px] font-medium text-ink-2">Vision Stats</div>
           <ListFieldEditor
             items={content.vision_stats}
             onChange={(v) => setC("vision_stats", v)}
+            maxItems={MAX_ITEMS.visionStats}
             newItem={() => ({ value: 0, suffix: "", label: "" }) as AboutStat}
             addLabel="Add vision stat"
             renderItem={(item, update) => (
@@ -314,17 +362,19 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
                   placeholder="25"
                   className={fieldClass("bg-panel")}
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.statSuffix}
                   value={item.suffix ?? ""}
                   onChange={(e) => update({ ...item, suffix: e.target.value })}
                   placeholder="+"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.statLabel}
                   value={item.label}
                   onChange={(e) => update({ ...item, label: e.target.value })}
                   placeholder="Years Experience"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
               </div>
             )}
@@ -335,14 +385,16 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           <ListFieldEditor
             items={content.mission_points}
             onChange={(v) => setC("mission_points", v)}
+            maxItems={MAX_ITEMS.missionPoints}
             newItem={() => ""}
             addLabel="Add mission point"
             renderItem={(item, update) => (
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.missionPoint}
                 value={item}
                 onChange={(e) => update(e.target.value)}
                 rows={2}
-                className={fieldClass("resize-none bg-panel")}
+                className="bg-panel"
               />
             )}
           />
@@ -354,14 +406,16 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           <ListFieldEditor
             items={content.solutions}
             onChange={(v) => setC("solutions", v)}
+            maxItems={MAX_ITEMS.solutions}
             newItem={() => ""}
             addLabel="Add solution"
             renderItem={(item, update) => (
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.solutionItem}
                 value={item}
                 onChange={(e) => update(e.target.value)}
                 placeholder="MultiFinance System (LOS & LMS)"
-                className={fieldClass("bg-panel")}
+                className="bg-panel"
               />
             )}
           />
@@ -373,28 +427,32 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         <ListFieldEditor
           items={journey}
           onChange={setJourney}
+          maxItems={MAX_ITEMS.journeySteps}
           newItem={() => ({ era: "", title: "", body: "" }) as AdminAboutJourneyStep}
           addLabel="Add journey step"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.journeyEra}
                 value={item.era}
                 onChange={(e) => update({ ...item, era: e.target.value })}
                 placeholder="1990s"
-                className={fieldClass("bg-panel font-mono text-[12px]")}
+                className="bg-panel font-mono text-[12px]"
               />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.journeyTitle}
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.journeyBody}
                 value={item.body}
                 onChange={(e) => update({ ...item, body: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -406,22 +464,25 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         <ListFieldEditor
           items={coreValues}
           onChange={setCoreValues}
+          maxItems={MAX_ITEMS.coreValues}
           newItem={() => ({ title: "", desc: "" }) as AdminAboutCoreValue}
           addLabel="Add core value"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.coreValueTitle}
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.coreValueDesc}
                 value={item.desc}
                 onChange={(e) => update({ ...item, desc: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -433,23 +494,26 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         <ListFieldEditor
           items={processSteps}
           onChange={setProcessSteps}
+          maxItems={MAX_ITEMS.processSteps}
           newItem={() => ({ icon: "Search", label: "", body: "" }) as AdminAboutProcessStep}
           addLabel="Add process step"
           renderItem={(item, update) => (
             <div className="space-y-2">
               <IconPicker value={item.icon} onChange={(icon) => update({ ...item, icon })} />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.processStepTitle}
                 value={item.label}
                 onChange={(e) => update({ ...item, label: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.processStepBody}
                 value={item.body}
                 onChange={(e) => update({ ...item, body: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -461,23 +525,26 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         <ListFieldEditor
           items={industries}
           onChange={setIndustries}
+          maxItems={MAX_ITEMS.industries}
           newItem={() => ({ icon: "Building2", title: "", body: "" }) as AdminAboutIndustry}
           addLabel="Add industry"
           renderItem={(item, update) => (
             <div className="space-y-2">
               <IconPicker value={item.icon} onChange={(icon) => update({ ...item, icon })} />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.industryTitle}
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.industryBody}
                 value={item.body}
                 onChange={(e) => update({ ...item, body: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -489,22 +556,25 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         <ListFieldEditor
           items={principles}
           onChange={setPrinciples}
+          maxItems={MAX_ITEMS.principles}
           newItem={() => ({ label: "", body: "" }) as AdminAboutPrinciple}
           addLabel="Add principle"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.principleLabel}
                 value={item.label}
                 onChange={(e) => update({ ...item, label: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.principleBody}
                 value={item.body}
                 onChange={(e) => update({ ...item, body: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -514,7 +584,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}

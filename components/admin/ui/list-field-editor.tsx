@@ -10,6 +10,7 @@ export function ListFieldEditor<T>({
   label,
   addLabel = "Add item",
   emptyLabel = "No items yet.",
+  maxItems,
 }: {
   items: T[];
   onChange: (items: T[]) => void;
@@ -18,6 +19,10 @@ export function ListFieldEditor<T>({
   label?: string;
   addLabel?: string;
   emptyLabel?: string;
+  // When set, hides the "Add" button (and shows a "n/max" counter) once
+  // items.length reaches this cap. Purely a UX bound — see MAX_ITEMS in
+  // lib/admin/field-limits.ts for the values used across the CMS.
+  maxItems?: number;
 }) {
   function move(index: number, dir: -1 | 1) {
     const target = index + dir;
@@ -37,9 +42,28 @@ export function ListFieldEditor<T>({
     onChange(copy);
   }
 
+  const atMax = typeof maxItems === "number" && items.length >= maxItems;
+
   return (
     <div>
-      {label && <div className="mb-2 text-[12px] font-medium text-ink-2">{label}</div>}
+      {(label || typeof maxItems === "number") && (
+        <div className="mb-2 flex items-center justify-between">
+          {label ? (
+            <div className="text-[12px] font-medium text-ink-2">{label}</div>
+          ) : (
+            <span />
+          )}
+          {typeof maxItems === "number" && (
+            <span
+              className={`font-mono text-[11px] ${
+                atMax ? "font-semibold text-amber-500" : "text-ink-3"
+              }`}
+            >
+              {items.length}/{maxItems}
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="space-y-3">
         {items.length === 0 && (
@@ -87,13 +111,19 @@ export function ListFieldEditor<T>({
         ))}
       </div>
 
-      <button
-        type="button"
-        onClick={() => onChange([...items, newItem()])}
-        className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-(--panel-border-strong) px-3 py-2 text-[12.5px] font-medium text-ink-1 hover:border-signal-teal hover:text-signal-teal"
-      >
-        <Plus size={14} /> {addLabel}
-      </button>
+      {atMax ? (
+        <p className="mt-3 text-[11.5px] text-ink-3">
+          Maximum of {maxItems} items reached. Remove one to add another.
+        </p>
+      ) : (
+        <button
+          type="button"
+          onClick={() => onChange([...items, newItem()])}
+          className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-(--panel-border-strong) px-3 py-2 text-[12.5px] font-medium text-ink-1 hover:border-signal-teal hover:text-signal-teal"
+        >
+          <Plus size={14} /> {addLabel}
+        </button>
+      )}
     </div>
   );
 }

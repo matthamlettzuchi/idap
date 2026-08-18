@@ -3,13 +3,12 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
+import { LimitedInput } from "@/components/admin/ui/limited-input";
+import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
+import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { saveSiteContent } from "@/app/admin/(protected)/site-content/actions";
 import type { AdminSiteContent } from "@/lib/admin/site-content";
 import type { SiteNavLink, SiteButtons, SiteFooterContent } from "@/lib/site-content-defaults";
-
-function fieldClass(extra = "") {
-  return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
-}
 
 function SectionCard({
   title,
@@ -31,6 +30,31 @@ function SectionCard({
   );
 }
 
+// Mirrors the other page editors — any field or list item over its limit
+// blocks Save.
+function computeOverLimit(
+  navLinks: SiteNavLink[],
+  buttons: SiteButtons,
+  footerContent: SiteFooterContent
+): boolean {
+  return (
+    navLinks.some(
+      (l) => l.label.length > FIELD_LIMITS.navLabel || l.href.length > FIELD_LIMITS.navHref
+    ) ||
+    buttons.nav_cta_label.length > FIELD_LIMITS.navLabel ||
+    buttons.nav_cta_href.length > FIELD_LIMITS.navHref ||
+    buttons.hero_primary_label.length > FIELD_LIMITS.navLabel ||
+    buttons.hero_primary_href.length > FIELD_LIMITS.navHref ||
+    buttons.hero_secondary_label.length > FIELD_LIMITS.navLabel ||
+    buttons.hero_secondary_href.length > FIELD_LIMITS.navHref ||
+    footerContent.description.length > FIELD_LIMITS.footerDescription ||
+    (footerContent.facebook_url?.length ?? 0) > FIELD_LIMITS.socialUrl ||
+    (footerContent.instagram_url?.length ?? 0) > FIELD_LIMITS.socialUrl ||
+    (footerContent.linkedin_url?.length ?? 0) > FIELD_LIMITS.socialUrl ||
+    footerContent.copyright_name.length > FIELD_LIMITS.copyrightName
+  );
+}
+
 export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
   const [navLinks, setNavLinks] = useState<SiteNavLink[]>(initial.navLinks);
   const [buttons, setButtons] = useState<SiteButtons>(initial.buttons);
@@ -41,6 +65,8 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
 
+  const overLimit = computeOverLimit(navLinks, buttons, footerContent);
+
   function setButton<K extends keyof SiteButtons>(key: K, value: SiteButtons[K]) {
     setButtons((prev) => ({ ...prev, [key]: value }));
   }
@@ -50,6 +76,7 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
   }
 
   function handleSave() {
+    if (overLimit) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -68,9 +95,14 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
         {savedAt && (
           <span className="text-[12px] text-ink-2">Saved {savedAt.toLocaleTimeString()}</span>
         )}
+        {overLimit && (
+          <span className="text-[12px] font-medium text-red-500">
+            Fix fields over their character limit before saving.
+          </span>
+        )}
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
@@ -91,21 +123,24 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
         <ListFieldEditor
           items={navLinks}
           onChange={setNavLinks}
+          maxItems={MAX_ITEMS.navLinks}
           newItem={() => ({ label: "", href: "" }) as SiteNavLink}
           addLabel="Add link"
           renderItem={(item, update) => (
             <div className="grid grid-cols-2 gap-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.navLabel}
                 value={item.label}
                 onChange={(e) => update({ ...item, label: e.target.value })}
                 placeholder="Label (e.g. About Us)"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.navHref}
                 value={item.href}
                 onChange={(e) => update({ ...item, href: e.target.value })}
                 placeholder="/about or https://..."
-                className={fieldClass("bg-panel")}
+                className="bg-panel"
               />
             </div>
           )}
@@ -120,17 +155,19 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
         <div className="space-y-3 rounded-lg border border-(--panel-border) bg-panel-2 p-4">
           <div className="text-[12px] font-medium text-ink-2">Navbar CTA ("Hubungi Kami")</div>
           <div className="grid grid-cols-2 gap-2">
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.navLabel}
               value={buttons.nav_cta_label}
               onChange={(e) => setButton("nav_cta_label", e.target.value)}
               placeholder="Label"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.navHref}
               value={buttons.nav_cta_href}
               onChange={(e) => setButton("nav_cta_href", e.target.value)}
               placeholder="Link"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
           </div>
         </div>
@@ -138,17 +175,19 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
         <div className="space-y-3 rounded-lg border border-(--panel-border) bg-panel-2 p-4">
           <div className="text-[12px] font-medium text-ink-2">Hero Primary Button ("Contact Us")</div>
           <div className="grid grid-cols-2 gap-2">
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.navLabel}
               value={buttons.hero_primary_label}
               onChange={(e) => setButton("hero_primary_label", e.target.value)}
               placeholder="Label"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.navHref}
               value={buttons.hero_primary_href}
               onChange={(e) => setButton("hero_primary_href", e.target.value)}
               placeholder="Link"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
           </div>
         </div>
@@ -156,17 +195,19 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
         <div className="space-y-3 rounded-lg border border-(--panel-border) bg-panel-2 p-4">
           <div className="text-[12px] font-medium text-ink-2">Hero Secondary Button ("View Products")</div>
           <div className="grid grid-cols-2 gap-2">
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.navLabel}
               value={buttons.hero_secondary_label}
               onChange={(e) => setButton("hero_secondary_label", e.target.value)}
               placeholder="Label"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.navHref}
               value={buttons.hero_secondary_href}
               onChange={(e) => setButton("hero_secondary_href", e.target.value)}
               placeholder="Link"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
           </div>
         </div>
@@ -174,61 +215,43 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
 
       {/* FOOTER */}
       <SectionCard title="Footer" desc="Deskripsi singkat, social links, dan copyright name.">
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Description</label>
-          <textarea
-            value={footerContent.description}
-            onChange={(e) => setFooter("description", e.target.value)}
-            rows={3}
-            className={fieldClass("resize-none")}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Facebook URL (kosongkan untuk sembunyikan ikon)
-          </label>
-          <input
-            value={footerContent.facebook_url ?? ""}
-            onChange={(e) => setFooter("facebook_url", e.target.value || null)}
-            className={fieldClass()}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Instagram URL (kosongkan untuk sembunyikan ikon)
-          </label>
-          <input
-            value={footerContent.instagram_url ?? ""}
-            onChange={(e) => setFooter("instagram_url", e.target.value || null)}
-            className={fieldClass()}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            LinkedIn URL (kosongkan untuk sembunyikan ikon)
-          </label>
-          <input
-            value={footerContent.linkedin_url ?? ""}
-            onChange={(e) => setFooter("linkedin_url", e.target.value || null)}
-            className={fieldClass()}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Copyright Name (muncul sebagai "© {"{"}year{"}"} [nama]. All rights reserved.")
-          </label>
-          <input
-            value={footerContent.copyright_name}
-            onChange={(e) => setFooter("copyright_name", e.target.value)}
-            className={fieldClass()}
-          />
-        </div>
+        <LimitedTextArea
+          label="Description"
+          maxLength={FIELD_LIMITS.footerDescription}
+          value={footerContent.description}
+          onChange={(e) => setFooter("description", e.target.value)}
+          rows={3}
+        />
+        <LimitedInput
+          label="Facebook URL (kosongkan untuk sembunyikan ikon)"
+          maxLength={FIELD_LIMITS.socialUrl}
+          value={footerContent.facebook_url ?? ""}
+          onChange={(e) => setFooter("facebook_url", e.target.value || null)}
+        />
+        <LimitedInput
+          label="Instagram URL (kosongkan untuk sembunyikan ikon)"
+          maxLength={FIELD_LIMITS.socialUrl}
+          value={footerContent.instagram_url ?? ""}
+          onChange={(e) => setFooter("instagram_url", e.target.value || null)}
+        />
+        <LimitedInput
+          label="LinkedIn URL (kosongkan untuk sembunyikan ikon)"
+          maxLength={FIELD_LIMITS.socialUrl}
+          value={footerContent.linkedin_url ?? ""}
+          onChange={(e) => setFooter("linkedin_url", e.target.value || null)}
+        />
+        <LimitedInput
+          label='Copyright Name (muncul sebagai "© {year} [nama]. All rights reserved.")'
+          maxLength={FIELD_LIMITS.copyrightName}
+          value={footerContent.copyright_name}
+          onChange={(e) => setFooter("copyright_name", e.target.value)}
+        />
       </SectionCard>
 
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}

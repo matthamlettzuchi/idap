@@ -41,14 +41,48 @@ export const FIELD_LIMITS = {
   testimonialRole: 60,
   testimonialCompany: 80,
   testimonialInitials: 4,
+  testimonialVideoId: 20,
+  testimonialCategory: 40,
 
   // Contact / footer / nav
   address: 200,
   email: 100,
   phone: 30,
   navLabel: 30,
+  navHref: 200,
   footerDescription: 300,
   copyrightName: 80,
+  socialUrl: 200,
+  whatsappLink: 200,
+
+  // About page
+  aboutHeadingLine: 60,
+  aboutDescription: 400,
+  missionPoint: 200,
+  solutionItem: 60,
+  journeyEra: 20,
+  journeyTitle: 60,
+  journeyBody: 240,
+  coreValueTitle: 60,
+  coreValueDesc: 160,
+  industryTitle: 60,
+  industryBody: 160,
+  principleLabel: 60,
+  principleBody: 160,
+
+  // Hero / seasonal themes (Home page)
+  entityId: 40,
+  themeLabel: 40,
+  characterAlt: 100,
+  cssGradient: 200,
+  greeting: 60,
+  envelopeTitle: 60,
+  envelopeMessage: 300,
+  lottieUrl: 300,
+  statSuffix: 8,
+  statLabel: 60,
+
+  clientLogoName: 60,
 
   // Generic fallbacks for anything not mapped yet
   shortLabel: 40,
@@ -57,6 +91,38 @@ export const FIELD_LIMITS = {
 } as const;
 
 export type FieldLimitKey = keyof typeof FIELD_LIMITS;
+
+// Caps how many rows a given repeatable list can hold. Enforced in
+// ListFieldEditor (hides/disables "Add") — this is a UX/data-sanity bound,
+// not a security boundary, so it lives purely on the frontend.
+export const MAX_ITEMS = {
+  quickFacts: 6,
+  overviewParagraphs: 4,
+  advantages: 8,
+  features: 8,
+  heroFloatIcons: 6,
+  homeMetrics: 4,
+  homeModules: 6,
+  highlights: 4,
+  gridItems: 8,
+  techGroups: 6,
+  processSteps: 6,
+  heroStats: 4,
+  visionStats: 4,
+  missionPoints: 6,
+  solutions: 8,
+  journeySteps: 12,
+  coreValues: 8,
+  industries: 8,
+  principles: 8,
+  heroThemes: 8,
+  seasonalThemes: 8,
+  testimonials: 20,
+  clientLogos: 20,
+  faqs: 12,
+  navLinks: 8,
+  phones: 4,
+} as const;
 
 export function truncate(value: string | null | undefined, key: FieldLimitKey): string {
   if (!value) return value ?? "";

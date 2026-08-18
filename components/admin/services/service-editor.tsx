@@ -45,7 +45,7 @@ import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
 import { LimitedInput } from "@/components/admin/ui/limited-input";
 import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
-import { FIELD_LIMITS } from "@/lib/admin/field-limits";
+import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { slugify } from "@/lib/admin/slugify";
 import {
   createService,
@@ -449,6 +449,7 @@ export function ServiceEditor({
           onChange={(v) => set("hero_float_icons", v)}
           newItem={() => ""}
           addLabel="Add icon"
+          maxItems={MAX_ITEMS.heroFloatIcons}
           renderItem={(item, update) => (
             <LimitedInput
               maxLength={FIELD_LIMITS.shortLabel}
@@ -469,6 +470,7 @@ export function ServiceEditor({
           onChange={(v) => set("highlights", v)}
           newItem={() => ({ icon: "Zap", title: "", desc: "" }) as ServiceItem}
           addLabel="Add highlight"
+          maxItems={MAX_ITEMS.highlights}
           renderItem={(item, update) => (
             <div className="space-y-2">
               <IconPicker
@@ -560,6 +562,7 @@ export function ServiceEditor({
                 ({ icon: "Building2", title: "", desc: "" }) as ServiceItem
               }
               addLabel="Add item"
+              maxItems={MAX_ITEMS.gridItems}
               renderItem={(item, update) => (
                 <div className="space-y-2">
                   <IconPicker
@@ -652,6 +655,7 @@ export function ServiceEditor({
                 }
                 newItem={() => ({ label: "", items: [] }) as ServiceTechGroup}
                 addLabel="Add group"
+                maxItems={MAX_ITEMS.techGroups}
                 renderItem={(item, update) => (
                   <div className="space-y-2">
                     <LimitedInput
@@ -703,6 +707,7 @@ export function ServiceEditor({
             }) as ServiceProcessStep
           }
           addLabel="Add step"
+          maxItems={MAX_ITEMS.processSteps}
           renderItem={(item, update) => (
             <div className="space-y-2">
               <div className="grid grid-cols-[64px_1fr] gap-2">
