@@ -10,6 +10,7 @@ const navItems: { href: string; label: string; roles: CmsRole[] }[] = [
   { href: "/admin/articles", label: "Articles", roles: ["admin", "editor"] },
   { href: "/admin/media", label: "Media", roles: ["admin", "editor"] },
   { href: "/admin/products", label: "Products", roles: ["admin"] },
+  { href: "/admin/about", label: "About Us", roles: ["admin"] },
   { href: "/admin/pages", label: "Pages", roles: ["admin"] },
   { href: "/admin/services", label: "Services", roles: ["admin"] },
   { href: "/admin/users", label: "Users", roles: ["admin"] },

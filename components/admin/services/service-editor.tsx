@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
+  ChevronDown,
   Code2,
   Globe,
   Layers,
@@ -95,7 +96,7 @@ const iconOptions: { value: ServiceIconName; Icon: LucideIcon }[] = [
 ];
 
 const iconMap = Object.fromEntries(
-  iconOptions.map((o) => [o.value, o.Icon])
+  iconOptions.map((o) => [o.value, o.Icon]),
 ) as Record<ServiceIconName, LucideIcon>;
 
 function IconPicker({
@@ -105,23 +106,64 @@ function IconPicker({
   value: ServiceIconName;
   onChange: (v: ServiceIconName) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const SelectedIcon = iconMap[value];
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {iconOptions.map(({ value: v, Icon }) => (
-        <button
-          key={v}
-          type="button"
-          title={v}
-          onClick={() => onChange(v)}
-          className={`flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${
-            value === v
-              ? "border-signal-teal bg-signal-blue-dim text-signal-teal"
-              : "border-(--panel-border) text-ink-2 hover:border-ink-1 hover:text-ink-0"
-          }`}
-        >
-          <Icon size={15} />
-        </button>
-      ))}
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center gap-2.5 rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-left text-[13.5px] text-ink-0 outline-none focus:border-signal-teal"
+      >
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-(--panel-border) bg-panel text-signal-teal">
+          <SelectedIcon size={13} />
+        </span>
+        <span className="flex-1 truncate">{value}</span>
+        <ChevronDown
+          size={14}
+          className={`shrink-0 text-ink-2 transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute left-0 right-0 top-full z-20 mt-1.5 max-h-64 overflow-y-auto rounded-lg border border-(--panel-border) bg-panel p-1.5 shadow-lg">
+          {iconOptions.map(({ value: v, Icon }) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => {
+                onChange(v);
+                setOpen(false);
+              }}
+              className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-[13px] transition-colors ${
+                value === v
+                  ? "bg-signal-blue-dim text-signal-teal"
+                  : "text-ink-1 hover:bg-panel-2 hover:text-ink-0"
+              }`}
+            >
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-(--panel-border) bg-panel-2 text-current">
+                <Icon size={13} />
+              </span>
+              {v}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -148,7 +190,11 @@ function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
 }
 
-export function ServiceEditor({ service }: { service: AdminServiceRow | null }) {
+export function ServiceEditor({
+  service,
+}: {
+  service: AdminServiceRow | null;
+}) {
   const isNew = service === null;
   const [form, setForm] = useState<AdminServiceRow>(service ?? emptyService);
   const [slugTouched, setSlugTouched] = useState(!isNew);
@@ -157,7 +203,10 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
 
-  function set<K extends keyof AdminServiceRow>(key: K, value: AdminServiceRow[K]) {
+  function set<K extends keyof AdminServiceRow>(
+    key: K,
+    value: AdminServiceRow[K],
+  ) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -200,11 +249,15 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
           <h1 className="font-display text-[22px] font-semibold text-ink-0">
             {isNew ? "New Service" : form.name || form.slug}
           </h1>
-          {!isNew && <p className="mt-1 text-[12.5px] text-ink-2">/{form.slug}</p>}
+          {!isNew && (
+            <p className="mt-1 text-[12.5px] text-ink-2">/{form.slug}</p>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {savedAt && (
-            <span className="text-[12px] text-ink-2">Saved {savedAt.toLocaleTimeString()}</span>
+            <span className="text-[12px] text-ink-2">
+              Saved {savedAt.toLocaleTimeString()}
+            </span>
           )}
           {!isNew && (
             <ConfirmButton
@@ -235,7 +288,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
         <div className="mono-label">Basic Info</div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Name</label>
+            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
+              Name
+            </label>
             <input
               value={form.name}
               onChange={(e) => handleNameChange(e.target.value)}
@@ -257,7 +312,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Code</label>
+            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
+              Code
+            </label>
             <input
               value={form.code}
               onChange={(e) => set("code", e.target.value)}
@@ -266,7 +323,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Sort Order</label>
+            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
+              Sort Order
+            </label>
             <input
               type="number"
               value={form.sort_order}
@@ -316,7 +375,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
       <section className="space-y-4 rounded-xl border border-(--panel-border) bg-panel p-6">
         <div className="mono-label">Hero Copy</div>
         <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Hero Title</label>
+          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
+            Hero Title
+          </label>
           <input
             value={form.hero_title}
             onChange={(e) => set("hero_title", e.target.value)}
@@ -324,7 +385,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Hero Description</label>
+          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
+            Hero Description
+          </label>
           <textarea
             value={form.hero_desc}
             onChange={(e) => set("hero_desc", e.target.value)}
@@ -367,7 +430,10 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
           addLabel="Add highlight"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <IconPicker value={item.icon} onChange={(icon) => update({ ...item, icon })} />
+              <IconPicker
+                value={item.icon}
+                onChange={(icon) => update({ ...item, icon })}
+              />
               <input
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
@@ -379,7 +445,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
                 onChange={(e) => update({ ...item, desc: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className={fieldClass(
+                  "resize-none bg-panel text-[12.5px] text-ink-1",
+                )}
               />
             </div>
           )}
@@ -397,7 +465,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
               onChange={(e) =>
                 set(
                   "grid_section",
-                  e.target.checked ? { label: "", title: "", desc: "", items: [] } : null
+                  e.target.checked
+                    ? { label: "", title: "", desc: "", items: [] }
+                    : null,
                 )
               }
             />
@@ -408,31 +478,53 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
           <div className="space-y-3">
             <input
               value={form.grid_section.label}
-              onChange={(e) => set("grid_section", { ...form.grid_section!, label: e.target.value })}
+              onChange={(e) =>
+                set("grid_section", {
+                  ...form.grid_section!,
+                  label: e.target.value,
+                })
+              }
               placeholder="Label (e.g. Service Scope)"
               className={fieldClass()}
             />
             <input
               value={form.grid_section.title}
-              onChange={(e) => set("grid_section", { ...form.grid_section!, title: e.target.value })}
+              onChange={(e) =>
+                set("grid_section", {
+                  ...form.grid_section!,
+                  title: e.target.value,
+                })
+              }
               placeholder="Title"
               className={fieldClass()}
             />
             <textarea
               value={form.grid_section.desc ?? ""}
-              onChange={(e) => set("grid_section", { ...form.grid_section!, desc: e.target.value })}
+              onChange={(e) =>
+                set("grid_section", {
+                  ...form.grid_section!,
+                  desc: e.target.value,
+                })
+              }
               rows={2}
               placeholder="Description (optional)"
               className={fieldClass("resize-none")}
             />
             <ListFieldEditor
               items={form.grid_section.items}
-              onChange={(items) => set("grid_section", { ...form.grid_section!, items })}
-              newItem={() => ({ icon: "Building2", title: "", desc: "" }) as ServiceItem}
+              onChange={(items) =>
+                set("grid_section", { ...form.grid_section!, items })
+              }
+              newItem={() =>
+                ({ icon: "Building2", title: "", desc: "" }) as ServiceItem
+              }
               addLabel="Add item"
               renderItem={(item, update) => (
                 <div className="space-y-2">
-                  <IconPicker value={item.icon} onChange={(icon) => update({ ...item, icon })} />
+                  <IconPicker
+                    value={item.icon}
+                    onChange={(icon) => update({ ...item, icon })}
+                  />
                   <input
                     value={item.title}
                     onChange={(e) => update({ ...item, title: e.target.value })}
@@ -444,7 +536,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
                     onChange={(e) => update({ ...item, desc: e.target.value })}
                     rows={2}
                     placeholder="Description"
-                    className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                    className={fieldClass(
+                      "resize-none bg-panel text-[12.5px] text-ink-1",
+                    )}
                   />
                 </div>
               )}
@@ -464,7 +558,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
               onChange={(e) =>
                 set(
                   "tech_stack",
-                  e.target.checked ? { label: "", title: "", desc: "", groups: [] } : null
+                  e.target.checked
+                    ? { label: "", title: "", desc: "", groups: [] }
+                    : null,
                 )
               }
             />
@@ -475,35 +571,53 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
           <div className="space-y-3">
             <input
               value={form.tech_stack.label}
-              onChange={(e) => set("tech_stack", { ...form.tech_stack!, label: e.target.value })}
+              onChange={(e) =>
+                set("tech_stack", {
+                  ...form.tech_stack!,
+                  label: e.target.value,
+                })
+              }
               placeholder="Label (e.g. Technology Stack)"
               className={fieldClass()}
             />
             <input
               value={form.tech_stack.title}
-              onChange={(e) => set("tech_stack", { ...form.tech_stack!, title: e.target.value })}
+              onChange={(e) =>
+                set("tech_stack", {
+                  ...form.tech_stack!,
+                  title: e.target.value,
+                })
+              }
               placeholder="Title"
               className={fieldClass()}
             />
             <textarea
               value={form.tech_stack.desc ?? ""}
-              onChange={(e) => set("tech_stack", { ...form.tech_stack!, desc: e.target.value })}
+              onChange={(e) =>
+                set("tech_stack", { ...form.tech_stack!, desc: e.target.value })
+              }
               rows={2}
               placeholder="Description (optional)"
               className={fieldClass("resize-none")}
             />
             <div>
-              <div className="mb-2 text-[12px] font-medium text-ink-2">Groups</div>
+              <div className="mb-2 text-[12px] font-medium text-ink-2">
+                Groups
+              </div>
               <ListFieldEditor
                 items={form.tech_stack.groups}
-                onChange={(groups) => set("tech_stack", { ...form.tech_stack!, groups })}
+                onChange={(groups) =>
+                  set("tech_stack", { ...form.tech_stack!, groups })
+                }
                 newItem={() => ({ label: "", items: [] }) as ServiceTechGroup}
                 addLabel="Add group"
                 renderItem={(item, update) => (
                   <div className="space-y-2">
                     <input
                       value={item.label}
-                      onChange={(e) => update({ ...item, label: e.target.value })}
+                      onChange={(e) =>
+                        update({ ...item, label: e.target.value })
+                      }
                       placeholder="Group label (e.g. Frontend)"
                       className={fieldClass("bg-panel font-medium")}
                     />
@@ -519,7 +633,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
                         })
                       }
                       placeholder="React, Next.js, Tailwind (pisahkan koma)"
-                      className={fieldClass("bg-panel text-[12.5px] text-ink-1")}
+                      className={fieldClass(
+                        "bg-panel text-[12.5px] text-ink-1",
+                      )}
                     />
                   </div>
                 )}
@@ -535,18 +651,28 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
         <ListFieldEditor
           items={form.process ?? []}
           onChange={(v) => set("process", v)}
-          newItem={() => ({ icon: "Search", step: "01", title: "", desc: "" }) as ServiceProcessStep}
+          newItem={() =>
+            ({
+              icon: "Search",
+              step: "01",
+              title: "",
+              desc: "",
+            }) as ServiceProcessStep
+          }
           addLabel="Add step"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-[64px_1fr] gap-2">
                 <input
                   value={item.step}
                   onChange={(e) => update({ ...item, step: e.target.value })}
                   placeholder="01"
-                  className={fieldClass("bg-panel w-16 shrink-0 text-center font-mono")}
+                  className={fieldClass("bg-panel text-center font-mono")}
                 />
-                <IconPicker value={item.icon} onChange={(icon) => update({ ...item, icon })} />
+                <IconPicker
+                  value={item.icon}
+                  onChange={(icon) => update({ ...item, icon })}
+                />
               </div>
               <input
                 value={item.title}
@@ -559,7 +685,9 @@ export function ServiceEditor({ service }: { service: AdminServiceRow | null }) 
                 onChange={(e) => update({ ...item, desc: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className={fieldClass(
+                  "resize-none bg-panel text-[12.5px] text-ink-1",
+                )}
               />
             </div>
           )}
