@@ -17,72 +17,6 @@ import {
 
 const year = new Date().getFullYear();
 
-const [navLinks, setNavLinks] = useState<SiteNavLink[]>(defaultNavLinks);
-const [footerContent, setFooterContent] =
-  useState<SiteFooterContent>(defaultFooterContent);
-
-useEffect(() => {
-  let cancelled = false;
-  async function loadNavLinks() {
-    const { data, error } = await supabase
-      .from("site_nav_links")
-      .select("id, label, href")
-      .order("sort_order", { ascending: true });
-    if (error || !data || data.length === 0 || cancelled) return;
-    setNavLinks(data as SiteNavLink[]);
-  }
-  loadNavLinks();
-  return () => {
-    cancelled = true;
-  };
-}, []);
-
-useEffect(() => {
-  let cancelled = false;
-  async function loadFooterContent() {
-    const { data, error } = await supabase
-      .from("site_footer_content")
-      .select("*")
-      .single();
-    if (error || !data || cancelled) return;
-    setFooterContent(data as SiteFooterContent);
-  }
-  loadFooterContent();
-  return () => {
-    cancelled = true;
-  };
-}, []);
-
-const socials = [
-  ...(footerContent.facebook_url
-    ? [
-        {
-          icon: FaFacebook,
-          label: "Facebook",
-          href: footerContent.facebook_url,
-        },
-      ]
-    : []),
-  ...(footerContent.instagram_url
-    ? [
-        {
-          icon: FaInstagram,
-          label: "Instagram",
-          href: footerContent.instagram_url,
-        },
-      ]
-    : []),
-  ...(footerContent.linkedin_url
-    ? [
-        {
-          icon: FaLinkedinIn,
-          label: "LinkedIn",
-          href: footerContent.linkedin_url,
-        },
-      ]
-    : []),
-];
-
 type FooterProduct = {
   slug: string;
   name: string;
@@ -94,8 +28,43 @@ type FooterService = {
 };
 
 export function Footer() {
+  const [navLinks, setNavLinks] = useState<SiteNavLink[]>(defaultNavLinks);
+  const [footerContent, setFooterContent] =
+    useState<SiteFooterContent>(defaultFooterContent);
   const [products, setProducts] = useState<FooterProduct[]>([]);
   const [services, setServices] = useState<FooterService[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadNavLinks() {
+      const { data, error } = await supabase
+        .from("site_nav_links")
+        .select("id, label, href")
+        .order("sort_order", { ascending: true });
+      if (error || !data || data.length === 0 || cancelled) return;
+      setNavLinks(data as SiteNavLink[]);
+    }
+    loadNavLinks();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadFooterContent() {
+      const { data, error } = await supabase
+        .from("site_footer_content")
+        .select("*")
+        .single();
+      if (error || !data || cancelled) return;
+      setFooterContent(data as SiteFooterContent);
+    }
+    loadFooterContent();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -126,6 +95,36 @@ export function Footer() {
       cancelled = true;
     };
   }, []);
+
+  const socials = [
+    ...(footerContent.facebook_url
+      ? [
+          {
+            icon: FaFacebook,
+            label: "Facebook",
+            href: footerContent.facebook_url,
+          },
+        ]
+      : []),
+    ...(footerContent.instagram_url
+      ? [
+          {
+            icon: FaInstagram,
+            label: "Instagram",
+            href: footerContent.instagram_url,
+          },
+        ]
+      : []),
+    ...(footerContent.linkedin_url
+      ? [
+          {
+            icon: FaLinkedinIn,
+            label: "LinkedIn",
+            href: footerContent.linkedin_url,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <footer
