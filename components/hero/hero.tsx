@@ -281,7 +281,7 @@ export function Hero() {
       const { data, error } = await supabase
         .from("hero_themes")
         .select(
-          "id, label, start_month, start_day, end_month, end_day, scale, image_offset_y, background_image, background_wash, character_image, character_alt, blob_gradient, greeting",
+          "id, label, start_month, start_day, end_month, end_day, scale, image_offset_y, background_image, background_wash, character_image, character_alt, blob_gradient, greeting, is_default",
         )
         .order("sort_order", { ascending: true });
       if (cancelled) return;
@@ -303,6 +303,7 @@ export function Hero() {
               characterAlt: t.character_alt,
               blobGradient: t.blob_gradient,
               greeting: t.greeting,
+              isDefault: t.is_default,
             }))
           : defaultHeroThemes;
 
@@ -410,7 +411,10 @@ export function Hero() {
 
           <motion.img
             key={activeTheme?.id ?? "default"}
-            src={activeTheme?.characterImage ?? storageUrl("images", "financeguy.png")}
+            src={
+              activeTheme?.characterImage ??
+              storageUrl("images", "financeguy.png")
+            }
             alt={
               activeTheme?.characterAlt ?? "Financial analyst monitoring data"
             }

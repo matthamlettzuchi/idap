@@ -94,7 +94,7 @@ export function SeasonalEnvelope() {
       const { data, error } = await supabase
         .from("seasonal_themes")
         .select(
-          "id, label, start_month, start_day, end_month, end_day, decoration, envelope_icon, accent, envelope_title, envelope_message",
+          "id, label, start_month, start_day, end_month, end_day, decoration, envelope_icon, accent, envelope_title, envelope_message, is_default",
         )
         .order("sort_order", { ascending: true });
       if (cancelled) return;
@@ -113,6 +113,7 @@ export function SeasonalEnvelope() {
               accent: t.accent,
               envelopeTitle: t.envelope_title,
               envelopeMessage: t.envelope_message,
+              isDefault: t.is_default,
             }))
           : defaultSeasonalThemes;
 

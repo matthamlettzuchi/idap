@@ -13,6 +13,7 @@ export type HeroTheme = {
   characterAlt: string;
   blobGradient: string;
   greeting: string;
+  isDefault?: boolean;
 };
 
 import { storageUrl } from "./storage";
@@ -85,5 +86,14 @@ export function pickActiveHeroTheme(
 ): HeroTheme | null {
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return themes.find((t) => isDateInRange(month, day, t)) ?? null;
+
+  // Seasonal themes always win over the default/regular theme, and the
+  // default (isDefault=true) is exempt from date-range matching — it's the
+  // fallback used whenever no seasonal theme is currently active.
+  const seasonal = themes.find(
+    (t) => !t.isDefault && isDateInRange(month, day, t),
+  );
+  if (seasonal) return seasonal;
+
+  return themes.find((t) => t.isDefault) ?? null;
 }

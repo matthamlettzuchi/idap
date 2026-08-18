@@ -13,6 +13,7 @@ export type SeasonalTheme = {
   accent: string;
   envelopeTitle: string;
   envelopeMessage: string;
+  isDefault?: boolean;
 };
 
 // fallback kalau tabel Supabase kosong/error
@@ -75,5 +76,11 @@ export function pickActiveSeasonalTheme(
 ): SeasonalTheme | null {
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  return themes.find((t) => isDateInRange(month, day, t)) ?? null;
+
+  const seasonal = themes.find(
+    (t) => !t.isDefault && isDateInRange(month, day, t),
+  );
+  if (seasonal) return seasonal;
+
+  return themes.find((t) => t.isDefault) ?? null;
 }
