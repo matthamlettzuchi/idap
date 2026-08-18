@@ -18,7 +18,11 @@ const navGroups: NavGroup[] = [
     label: "Content",
     accent: "#0e9488", // teal — matches Web Development accent elsewhere
     items: [
-      { href: "/admin/articles", label: "Articles", roles: ["admin", "editor"] },
+      {
+        href: "/admin/articles",
+        label: "Articles",
+        roles: ["admin", "editor"],
+      },
       { href: "/admin/media", label: "Media", roles: ["admin", "editor"] },
     ],
   },
@@ -52,7 +56,13 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function AdminShell({ user, children }: { user: CmsUser; children: React.ReactNode }) {
+export function AdminShell({
+  user,
+  children,
+}: {
+  user: CmsUser;
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -66,10 +76,14 @@ export function AdminShell({ user, children }: { user: CmsUser; children: React.
   return (
     <div className="flex min-h-screen bg-void">
       <aside className="hidden w-64 shrink-0 border-r border-(--panel-border) bg-panel p-5 sm:flex sm:flex-col">
-        <div className="font-display text-[17px] font-semibold text-ink-0">Intidata CMS</div>
+        <div className="font-display text-[17px] font-semibold text-ink-0">
+          Intidata CMS
+        </div>
         <nav className="mt-8 flex flex-1 flex-col gap-6">
           {navGroups.map((group) => {
-            const visibleItems = group.items.filter((item) => item.roles.includes(user.role));
+            const visibleItems = group.items.filter((item) =>
+              item.roles.includes(user.role),
+            );
             if (visibleItems.length === 0) return null;
 
             return (
@@ -107,7 +121,11 @@ export function AdminShell({ user, children }: { user: CmsUser; children: React.
                             style={{ background: group.accent }}
                           />
                         )}
-                        <span className={active ? "" : "text-ink-2 hover:text-ink-0"}>
+                        <span
+                          className={
+                            active ? "" : "text-ink-2 hover:text-ink-0"
+                          }
+                        >
                           {item.label}
                         </span>
                       </Link>
@@ -119,9 +137,16 @@ export function AdminShell({ user, children }: { user: CmsUser; children: React.
           })}
         </nav>
         <div className="border-t border-(--panel-border) pt-4">
-          <div className="truncate text-[12px] text-ink-2">{user.email}</div>
-          <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-signal-teal">{user.role}</div>
-          <button onClick={handleLogout} className="mt-3 text-[12.5px] font-medium text-ink-2 hover:text-ink-0">
+          <div className="truncate text-[12px] text-ink-2">
+            @{user.username}
+          </div>{" "}
+          <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-signal-teal">
+            {user.role}
+          </div>
+          <button
+            onClick={handleLogout}
+            className="mt-3 text-[12.5px] font-medium text-ink-2 hover:text-ink-0"
+          >
             Sign out
           </button>
         </div>

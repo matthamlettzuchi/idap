@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { FileText, PenLine, Plus, Sparkles, Trash2, User2 } from "lucide-react";
 import { requireCmsUser } from "@/lib/admin/auth";
-import { getAdminDashboardData, type ActivityItem } from "@/lib/admin/dashboard";
+import {
+  getAdminDashboardData,
+  type ActivityItem,
+} from "@/lib/admin/dashboard";
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("en-US", {
@@ -28,10 +31,11 @@ export default async function AdminDashboardPage() {
   return (
     <div>
       <h1 className="font-display text-[24px] font-semibold text-ink-0">
-        Welcome back{user.email ? `, ${user.email}` : ""}
+        Welcome back, {user.username}
       </h1>
       <p className="mt-2 text-[14px] text-ink-2">
-        You&apos;re signed in as <span className="font-medium text-ink-0">{user.role}</span>.
+        You&apos;re signed in as{" "}
+        <span className="font-medium text-ink-0">{user.role}</span>.
       </p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -74,7 +78,9 @@ export default async function AdminDashboardPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-[13.5px] text-ink-0">
-                      <span className="font-medium">{item.actorName ?? "Someone"}</span>{" "}
+                      <span className="font-medium">
+                        {item.actorName ?? "Someone"}
+                      </span>{" "}
                       {item.action}{" "}
                       {item.href ? (
                         <Link
@@ -84,7 +90,9 @@ export default async function AdminDashboardPage() {
                           {item.label}
                         </Link>
                       ) : (
-                        <span className="font-medium text-ink-0">{item.label}</span>
+                        <span className="font-medium text-ink-0">
+                          {item.label}
+                        </span>
                       )}
                     </p>
                     <p className="mt-0.5 text-[11.5px] text-ink-2">
@@ -114,7 +122,8 @@ export default async function AdminDashboardPage() {
                         {draft.title || "(untitled)"}
                       </div>
                       <div className="mt-0.5 text-[11.5px] text-ink-2">
-                        {draft.authorName ?? "Unknown"} · {formatDateTime(draft.updatedAt)}
+                        {draft.authorName ?? "Unknown"} ·{" "}
+                        {formatDateTime(draft.updatedAt)}
                       </div>
                     </div>
                   </Link>

@@ -56,7 +56,7 @@ export async function saveSiteContent(payload: AdminSiteContent) {
   if (footerError) throw new Error(footerError.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "site_content",
     entityLabel: "Site Content",
     action: "updated",

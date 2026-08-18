@@ -1,17 +1,24 @@
-// app/admin/(protected)/users/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/admin/ui/data-table";
+import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
 
-type CmsUserRow = { id: string; user_id: string; role: string; email: string; created_at: string };
+type CmsUserRow = {
+  id: string;
+  user_id: string;
+  username: string;
+  role: string;
+  created_at: string;
+};
 
 export default function UsersPage() {
   const [users, setUsers] = useState<CmsUserRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState<"admin" | "editor">("editor");
-  const [inviting, setInviting] = useState(false);
+  const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function load() {
@@ -26,40 +33,69 @@ export default function UsersPage() {
     load();
   }, []);
 
-  async function handleInvite(e: React.FormEvent) {
+  async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    setInviting(true);
+    setCreating(true);
     setError(null);
 
     const res = await fetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, role }),
+      body: JSON.stringify({ username, password, role }),
     });
 
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Failed to invite user.");
+      setError(data.error ?? "Failed to create user.");
     } else {
-      setEmail("");
+      setUsername("");
+      setPassword("");
+      setRole("editor");
       await load();
     }
-    setInviting(false);
+    setCreating(false);
+  }
+
+  async function handleDelete(user_id: string) {
+    setUsers((prev) => prev.filter((u) => u.user_id !== user_id));
+    await fetch("/api/admin/users", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_id }),
+    });
   }
 
   return (
     <div>
       <h1 className="font-display text-[22px] font-semibold text-ink-0">Users</h1>
 
-      <form onSubmit={handleInvite} className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-(--panel-border) bg-panel p-5">
+      <form
+        onSubmit={handleCreate}
+        className="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-(--panel-border) bg-panel p-5"
+      >
         <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Email</label>
+          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Username</label>
           <input
-            type="email"
+            type="text"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-64 rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13px] text-ink-0 outline-none"
+            autoComplete="off"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="e.g. jdoe"
+            className="w-48 rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13px] text-ink-0 outline-none"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Password</label>
+          <input
+            type="password"
+            required
+            minLength={8}
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="At least 8 characters"
+            className="w-48 rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13px] text-ink-0 outline-none"
           />
         </div>
         <div>
@@ -75,10 +111,10 @@ export default function UsersPage() {
         </div>
         <button
           type="submit"
-          disabled={inviting}
+          disabled={creating}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
-          {inviting ? "Inviting..." : "Invite User"}
+          {creating ? "Creating..." : "Create User"}
         </button>
         {error && <p className="w-full text-[12.5px] text-red-500">{error}</p>}
       </form>
@@ -91,7 +127,7 @@ export default function UsersPage() {
             rows={users}
             rowKey={(u) => u.id}
             columns={[
-              { header: "Email", render: (u) => u.email },
+              { header: "Username", render: (u) => u.username },
               {
                 header: "Role",
                 render: (u) => (
@@ -101,6 +137,17 @@ export default function UsersPage() {
                 ),
               },
               { header: "Added", render: (u) => new Date(u.created_at).toLocaleDateString() },
+              {
+                header: "Actions",
+                render: (u) => (
+                  <ConfirmButton
+                    label="Delete"
+                    confirmLabel="Delete user?"
+                    onConfirm={() => handleDelete(u.user_id)}
+                    className="text-[12.5px] font-medium text-red-500 hover:underline"
+                  />
+                ),
+              },
             ]}
           />
         )}

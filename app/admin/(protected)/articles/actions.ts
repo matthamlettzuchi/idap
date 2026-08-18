@@ -19,7 +19,7 @@ export async function createArticle() {
       content: {},
       status: "draft",
       author_id: user.id,
-      author_name: user.email,
+      author_name: user.username,
     })
     .select("id")
     .single();

@@ -30,7 +30,7 @@ export async function createService(input: AdminServiceInput): Promise<{ slug: s
   if (error) throw new Error(error.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "service",
     entityLabel: input.name || input.slug,
     action: "created",
@@ -48,7 +48,7 @@ export async function updateService(slug: string, input: Partial<AdminServiceInp
   if (error) throw new Error(error.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "service",
     entityLabel: input.name || slug,
     action: "updated",
@@ -65,7 +65,7 @@ export async function deleteService(slug: string) {
   if (error) throw new Error(error.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "service",
     entityLabel: slug,
     action: "deleted",

@@ -3,10 +3,11 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { usernameToAuthEmail } from "@/lib/admin/username";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -17,10 +18,13 @@ export default function AdminLoginPage() {
     setError(null);
 
     const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: usernameToAuthEmail(username),
+      password,
+    });
 
     if (signInError) {
-      setError("Invalid email or password.");
+      setError("Invalid username or password.");
       setLoading(false);
       return;
     }
@@ -37,12 +41,13 @@ export default function AdminLoginPage() {
 
         <div className="mt-6 space-y-4">
           <div>
-            <label className="mb-1.5 block text-[13px] font-medium text-ink-1">Email</label>
+            <label className="mb-1.5 block text-[13px] font-medium text-ink-1">Username</label>
             <input
-              type="email"
+              type="text"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3.5 py-2.5 text-[14px] text-ink-0 outline-none focus:border-signal-teal"
             />
           </div>
@@ -51,6 +56,7 @@ export default function AdminLoginPage() {
             <input
               type="password"
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3.5 py-2.5 text-[14px] text-ink-0 outline-none focus:border-signal-teal"

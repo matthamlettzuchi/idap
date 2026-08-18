@@ -62,7 +62,7 @@ export async function saveAboutPage(payload: AdminAboutPage) {
   await syncListTable(supabase, "about_process_steps", payload.processSteps);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "about",
     entityLabel: "About Us Page",
     action: "updated",

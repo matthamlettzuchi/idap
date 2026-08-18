@@ -85,7 +85,7 @@ export async function saveHomePage(payload: AdminHomePage) {
   if (contactError) throw new Error(contactError.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "home",
     entityLabel: "Home Page",
     action: "updated",

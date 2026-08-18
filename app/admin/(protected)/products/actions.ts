@@ -30,7 +30,7 @@ export async function createProduct(input: AdminProductInput): Promise<{ slug: s
   if (error) throw new Error(error.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "product",
     entityLabel: input.name || input.slug,
     action: "created",
@@ -48,7 +48,7 @@ export async function updateProduct(slug: string, input: Partial<AdminProductInp
   if (error) throw new Error(error.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "product",
     entityLabel: input.name || slug,
     action: "updated",
@@ -65,7 +65,7 @@ export async function deleteProduct(slug: string) {
   if (error) throw new Error(error.message);
 
   await logActivity(supabase, {
-    actorName: user.email ?? null,
+    actorName: user.username ?? null,
     entityType: "product",
     entityLabel: slug,
     action: "deleted",
