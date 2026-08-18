@@ -6,6 +6,9 @@ import { Building2, TrendingUp, Calculator, FileSpreadsheet, Sprout } from "luci
 import { ImageField } from "@/components/admin/ui/image-field";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
+import { LimitedInput } from "@/components/admin/ui/limited-input";
+import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
+import { FIELD_LIMITS } from "@/lib/admin/field-limits";
 import { slugify } from "@/lib/admin/slugify";
 import {
   createProduct,
@@ -57,6 +60,40 @@ function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
 }
 
+// Every text field that has a matching Postgres truncation trigger (or a
+// sane practical limit) is checked here — mirrors the pattern used by
+// components/admin/article-editor.tsx. Any single field over its limit, or
+// any list item over its per-item limit, blocks Save the same way an
+// over-limit article field does.
+function computeOverLimit(form: AdminProductRow): boolean {
+  const over =
+    form.name.length > FIELD_LIMITS.name ||
+    form.slug.length > FIELD_LIMITS.slug ||
+    form.code.length > FIELD_LIMITS.code ||
+    form.tagline.length > FIELD_LIMITS.tagline ||
+    form.quick_facts.some((f) => f.length > FIELD_LIMITS.quickFact) ||
+    form.overview.some((o) => o.length > FIELD_LIMITS.overviewParagraph) ||
+    form.advantages.some(
+      (a) =>
+        a.title.length > FIELD_LIMITS.advantageTitle ||
+        (a.subtitle?.length ?? 0) > FIELD_LIMITS.advantageSubtitle
+    ) ||
+    (form.process_intro?.heading.length ?? 0) > FIELD_LIMITS.processStepTitle ||
+    (form.process_intro?.body.length ?? 0) > FIELD_LIMITS.longText ||
+    (form.features_intro?.length ?? 0) > FIELD_LIMITS.longText ||
+    form.features.some(
+      (f) => f.title.length > FIELD_LIMITS.featureTitle || f.body.length > FIELD_LIMITS.featureBody
+    ) ||
+    (form.home_summary?.length ?? 0) > FIELD_LIMITS.mediumLabel ||
+    (form.home_description?.length ?? 0) > FIELD_LIMITS.longText ||
+    (form.home_metrics ?? []).some(
+      (m) => m.label.length > FIELD_LIMITS.shortLabel || m.value.length > FIELD_LIMITS.shortLabel
+    ) ||
+    (form.home_modules ?? []).some((m) => m.length > FIELD_LIMITS.shortLabel);
+
+  return over;
+}
+
 export function ProductEditor({ product }: { product: AdminProductRow | null }) {
   const isNew = product === null;
   const [form, setForm] = useState<AdminProductRow>(product ?? emptyProduct);
@@ -65,6 +102,8 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
+
+  const overLimit = computeOverLimit(form);
 
   function set<K extends keyof AdminProductRow>(key: K, value: AdminProductRow[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -76,6 +115,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
   }
 
   function handleSave() {
+    if (overLimit) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -113,6 +153,11 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           {savedAt && (
             <span className="text-[12px] text-ink-2">Saved {savedAt.toLocaleTimeString()}</span>
           )}
+          {overLimit && (
+            <span className="text-[12px] font-medium text-red-500">
+              Fix fields over their character limit before saving.
+            </span>
+          )}
           {!isNew && (
             <ConfirmButton
               label="Delete"
@@ -123,7 +168,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           )}
           <button
             onClick={handleSave}
-            disabled={pending}
+            disabled={pending || overLimit}
             className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           >
             {pending ? "Saving..." : isNew ? "Create Product" : "Save"}
@@ -141,37 +186,32 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
       <section className="space-y-4 rounded-xl border border-(--panel-border) bg-panel p-6">
         <div className="mono-label">Basic Info</div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <LimitedInput
+            label="Name"
+            maxLength={FIELD_LIMITS.name}
+            value={form.name}
+            onChange={(e) => handleNameChange(e.target.value)}
+          />
           <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Name</label>
-            <input
-              value={form.name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              className={fieldClass()}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-              Slug {!isNew && "(locked)"}
-            </label>
-            <input
+            <LimitedInput
+              label={`Slug ${!isNew ? "(locked)" : ""}`}
+              maxLength={FIELD_LIMITS.slug}
               value={form.slug}
               disabled={!isNew}
               onChange={(e) => {
                 setSlugTouched(true);
                 set("slug", slugify(e.target.value));
               }}
-              className={fieldClass("disabled:opacity-60")}
+              className="disabled:opacity-60"
             />
           </div>
-          <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Code</label>
-            <input
-              value={form.code}
-              onChange={(e) => set("code", e.target.value)}
-              placeholder="FIS-MF"
-              className={fieldClass()}
-            />
-          </div>
+          <LimitedInput
+            label="Code"
+            maxLength={FIELD_LIMITS.code}
+            value={form.code}
+            onChange={(e) => set("code", e.target.value)}
+            placeholder="FIS-MF"
+          />
           <div>
             <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Sort Order</label>
             <input
@@ -182,11 +222,11 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
             />
           </div>
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Tagline</label>
-            <input
+            <LimitedInput
+              label="Tagline"
+              maxLength={FIELD_LIMITS.tagline}
               value={form.tagline}
               onChange={(e) => set("tagline", e.target.value)}
-              className={fieldClass()}
             />
           </div>
           <div>
@@ -299,11 +339,12 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           newItem={() => ""}
           addLabel="Add fact"
           renderItem={(item, update) => (
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.quickFact}
               value={item}
               onChange={(e) => update(e.target.value)}
               placeholder="Web-Based"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
           )}
         />
@@ -318,11 +359,12 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           newItem={() => ""}
           addLabel="Add paragraph"
           renderItem={(item, update) => (
-            <textarea
+            <LimitedTextArea
+              maxLength={FIELD_LIMITS.overviewParagraph}
               value={item}
               onChange={(e) => update(e.target.value)}
               rows={3}
-              className={fieldClass("resize-none bg-panel")}
+              className="bg-panel"
             />
           )}
         />
@@ -338,17 +380,19 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           addLabel="Add advantage"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.advantageTitle}
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.advantageSubtitle}
                 value={item.subtitle ?? ""}
                 onChange={(e) => update({ ...item, subtitle: e.target.value })}
                 placeholder="Subtitle (optional)"
-                className={fieldClass("bg-panel text-[12.5px] text-ink-1")}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -372,22 +416,22 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
         </div>
         {form.process_intro && (
           <div className="space-y-3">
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.processStepTitle}
               value={form.process_intro.heading}
               onChange={(e) =>
                 set("process_intro", { ...form.process_intro!, heading: e.target.value })
               }
               placeholder="Heading"
-              className={fieldClass()}
             />
-            <textarea
+            <LimitedTextArea
+              maxLength={FIELD_LIMITS.longText}
               value={form.process_intro.body}
               onChange={(e) =>
                 set("process_intro", { ...form.process_intro!, body: e.target.value })
               }
               rows={3}
               placeholder="Body"
-              className={fieldClass("resize-none")}
             />
           </div>
         )}
@@ -407,14 +451,12 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
       <section className="space-y-4 rounded-xl border border-(--panel-border) bg-panel p-6">
         <div className="mono-label">Core Features</div>
         <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Features Intro (opsional)
-          </label>
-          <textarea
+          <LimitedTextArea
+            label="Features Intro (opsional)"
+            maxLength={FIELD_LIMITS.longText}
             value={form.features_intro ?? ""}
             onChange={(e) => set("features_intro", e.target.value || null)}
             rows={2}
-            className={fieldClass("resize-none")}
           />
         </div>
         <ListFieldEditor
@@ -424,18 +466,20 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           addLabel="Add feature"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.featureTitle}
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.featureBody}
                 value={item.body}
                 onChange={(e) => update({ ...item, body: e.target.value })}
                 rows={2}
                 placeholder="Body"
-                className={fieldClass("resize-none bg-panel text-[12.5px] text-ink-1")}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -449,25 +493,19 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           Bagian ini menentukan apakah produk muncul di kartu &quot;Products&quot; di homepage.
           Kosongkan Summary/Description untuk menyembunyikannya dari homepage.
         </p>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Home Summary</label>
-          <input
-            value={form.home_summary ?? ""}
-            onChange={(e) => set("home_summary", e.target.value || null)}
-            className={fieldClass()}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Home Description
-          </label>
-          <textarea
-            value={form.home_description ?? ""}
-            onChange={(e) => set("home_description", e.target.value || null)}
-            rows={3}
-            className={fieldClass("resize-none")}
-          />
-        </div>
+        <LimitedInput
+          label="Home Summary"
+          maxLength={FIELD_LIMITS.mediumLabel}
+          value={form.home_summary ?? ""}
+          onChange={(e) => set("home_summary", e.target.value || null)}
+        />
+        <LimitedTextArea
+          label="Home Description"
+          maxLength={FIELD_LIMITS.longText}
+          value={form.home_description ?? ""}
+          onChange={(e) => set("home_description", e.target.value || null)}
+          rows={3}
+        />
         <div>
           <div className="mb-2 text-[12px] font-medium text-ink-2">Home Metrics</div>
           <ListFieldEditor
@@ -477,17 +515,19 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
             addLabel="Add metric"
             renderItem={(item, update) => (
               <div className="grid grid-cols-2 gap-2">
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.shortLabel}
                   value={item.label}
                   onChange={(e) => update({ ...item, label: e.target.value })}
                   placeholder="Label"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
-                <input
+                <LimitedInput
+                  maxLength={FIELD_LIMITS.shortLabel}
                   value={item.value}
                   onChange={(e) => update({ ...item, value: e.target.value })}
                   placeholder="Value"
-                  className={fieldClass("bg-panel")}
+                  className="bg-panel"
                 />
               </div>
             )}
@@ -501,11 +541,12 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
             newItem={() => ""}
             addLabel="Add module"
             renderItem={(item, update) => (
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.shortLabel}
                 value={item}
                 onChange={(e) => update(e.target.value)}
                 placeholder="Application & Scoring"
-                className={fieldClass("bg-panel")}
+                className="bg-panel"
               />
             )}
           />
@@ -515,7 +556,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : isNew ? "Create Product" : "Save Changes"}

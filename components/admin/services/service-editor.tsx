@@ -43,6 +43,9 @@ import {
 } from "lucide-react";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
+import { LimitedInput } from "@/components/admin/ui/limited-input";
+import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
+import { FIELD_LIMITS } from "@/lib/admin/field-limits";
 import { slugify } from "@/lib/admin/slugify";
 import {
   createService,
@@ -190,6 +193,56 @@ function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
 }
 
+// Mirrors article-editor.tsx / product-editor.tsx: every text field with a
+// matching Postgres truncation trigger (or a sane practical limit) is
+// checked here. Any single field or list item over its limit blocks Save.
+function computeOverLimit(form: AdminServiceRow): boolean {
+  const highlightsOver = (form.highlights ?? []).some(
+    (h) => h.title.length > FIELD_LIMITS.featureTitle || h.desc.length > FIELD_LIMITS.featureBody
+  );
+
+  const gridItemsOver = (form.grid_section?.items ?? []).some(
+    (i) => i.title.length > FIELD_LIMITS.featureTitle || i.desc.length > FIELD_LIMITS.featureBody
+  );
+  const gridSectionOver =
+    !!form.grid_section &&
+    ((form.grid_section.label?.length ?? 0) > FIELD_LIMITS.shortLabel ||
+      (form.grid_section.title?.length ?? 0) > FIELD_LIMITS.name ||
+      (form.grid_section.desc?.length ?? 0) > FIELD_LIMITS.longText ||
+      gridItemsOver);
+
+  const techGroupsOver = (form.tech_stack?.groups ?? []).some(
+    (g) => g.label.length > FIELD_LIMITS.techGroupLabel
+  );
+  const techStackOver =
+    !!form.tech_stack &&
+    ((form.tech_stack.label?.length ?? 0) > FIELD_LIMITS.shortLabel ||
+      (form.tech_stack.title?.length ?? 0) > FIELD_LIMITS.name ||
+      (form.tech_stack.desc?.length ?? 0) > FIELD_LIMITS.longText ||
+      techGroupsOver);
+
+  const processOver = (form.process ?? []).some(
+    (p) =>
+      p.title.length > FIELD_LIMITS.processStepTitle ||
+      p.desc.length > FIELD_LIMITS.processStepBody
+  );
+
+  return (
+    form.name.length > FIELD_LIMITS.name ||
+    form.slug.length > FIELD_LIMITS.slug ||
+    form.code.length > FIELD_LIMITS.code ||
+    form.nav_desc.length > FIELD_LIMITS.navDesc ||
+    form.hero_title.length > FIELD_LIMITS.heroTitle ||
+    form.hero_desc.length > FIELD_LIMITS.heroDesc ||
+    (form.hero_float_icons ?? []).some((i) => i.length > FIELD_LIMITS.shortLabel) ||
+    highlightsOver ||
+    gridSectionOver ||
+    techStackOver ||
+    processOver ||
+    (form.closing_cta_title?.length ?? 0) > FIELD_LIMITS.heroTitle
+  );
+}
+
 export function ServiceEditor({
   service,
 }: {
@@ -202,6 +255,8 @@ export function ServiceEditor({
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
+
+  const overLimit = computeOverLimit(form);
 
   function set<K extends keyof AdminServiceRow>(
     key: K,
@@ -216,6 +271,7 @@ export function ServiceEditor({
   }
 
   function handleSave() {
+    if (overLimit) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -259,6 +315,11 @@ export function ServiceEditor({
               Saved {savedAt.toLocaleTimeString()}
             </span>
           )}
+          {overLimit && (
+            <span className="text-[12px] font-medium text-red-500">
+              Fix fields over their character limit before saving.
+            </span>
+          )}
           {!isNew && (
             <ConfirmButton
               label="Delete"
@@ -269,7 +330,7 @@ export function ServiceEditor({
           )}
           <button
             onClick={handleSave}
-            disabled={pending}
+            disabled={pending || overLimit}
             className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           >
             {pending ? "Saving..." : isNew ? "Create Service" : "Save"}
@@ -287,41 +348,30 @@ export function ServiceEditor({
       <section className="space-y-4 rounded-xl border border-(--panel-border) bg-panel p-6">
         <div className="mono-label">Basic Info</div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-              Name
-            </label>
-            <input
-              value={form.name}
-              onChange={(e) => handleNameChange(e.target.value)}
-              className={fieldClass()}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-              Slug {!isNew && "(locked)"}
-            </label>
-            <input
-              value={form.slug}
-              disabled={!isNew}
-              onChange={(e) => {
-                setSlugTouched(true);
-                set("slug", slugify(e.target.value));
-              }}
-              className={fieldClass("disabled:opacity-60")}
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-              Code
-            </label>
-            <input
-              value={form.code}
-              onChange={(e) => set("code", e.target.value)}
-              placeholder="WEB"
-              className={fieldClass()}
-            />
-          </div>
+          <LimitedInput
+            label="Name"
+            maxLength={FIELD_LIMITS.name}
+            value={form.name}
+            onChange={(e) => handleNameChange(e.target.value)}
+          />
+          <LimitedInput
+            label={`Slug ${!isNew ? "(locked)" : ""}`}
+            maxLength={FIELD_LIMITS.slug}
+            value={form.slug}
+            disabled={!isNew}
+            onChange={(e) => {
+              setSlugTouched(true);
+              set("slug", slugify(e.target.value));
+            }}
+            className="disabled:opacity-60"
+          />
+          <LimitedInput
+            label="Code"
+            maxLength={FIELD_LIMITS.code}
+            value={form.code}
+            onChange={(e) => set("code", e.target.value)}
+            placeholder="WEB"
+          />
           <div>
             <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
               Sort Order
@@ -352,13 +402,11 @@ export function ServiceEditor({
             </div>
           </div>
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-              Nav Description (dipakai di mega menu Services)
-            </label>
-            <input
+            <LimitedInput
+              label="Nav Description (dipakai di mega menu Services)"
+              maxLength={FIELD_LIMITS.navDesc}
               value={form.nav_desc}
               onChange={(e) => set("nav_desc", e.target.value)}
-              className={fieldClass()}
             />
           </div>
         </div>
@@ -374,27 +422,19 @@ export function ServiceEditor({
       {/* Hero Copy */}
       <section className="space-y-4 rounded-xl border border-(--panel-border) bg-panel p-6">
         <div className="mono-label">Hero Copy</div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Hero Title
-          </label>
-          <input
-            value={form.hero_title}
-            onChange={(e) => set("hero_title", e.target.value)}
-            className={fieldClass()}
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
-            Hero Description
-          </label>
-          <textarea
-            value={form.hero_desc}
-            onChange={(e) => set("hero_desc", e.target.value)}
-            rows={3}
-            className={fieldClass("resize-none")}
-          />
-        </div>
+        <LimitedInput
+          label="Hero Title"
+          maxLength={FIELD_LIMITS.heroTitle}
+          value={form.hero_title}
+          onChange={(e) => set("hero_title", e.target.value)}
+        />
+        <LimitedTextArea
+          label="Hero Description"
+          maxLength={FIELD_LIMITS.heroDesc}
+          value={form.hero_desc}
+          onChange={(e) => set("hero_desc", e.target.value)}
+          rows={3}
+        />
       </section>
 
       {/* Hero Float Icons */}
@@ -410,11 +450,12 @@ export function ServiceEditor({
           newItem={() => ""}
           addLabel="Add icon"
           renderItem={(item, update) => (
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.shortLabel}
               value={item}
               onChange={(e) => update(e.target.value)}
               placeholder="logos:react"
-              className={fieldClass("bg-panel")}
+              className="bg-panel"
             />
           )}
         />
@@ -434,20 +475,20 @@ export function ServiceEditor({
                 value={item.icon}
                 onChange={(icon) => update({ ...item, icon })}
               />
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.featureTitle}
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.featureBody}
                 value={item.desc}
                 onChange={(e) => update({ ...item, desc: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass(
-                  "resize-none bg-panel text-[12.5px] text-ink-1",
-                )}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -476,7 +517,8 @@ export function ServiceEditor({
         </div>
         {form.grid_section && (
           <div className="space-y-3">
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.shortLabel}
               value={form.grid_section.label}
               onChange={(e) =>
                 set("grid_section", {
@@ -485,9 +527,9 @@ export function ServiceEditor({
                 })
               }
               placeholder="Label (e.g. Service Scope)"
-              className={fieldClass()}
             />
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.name}
               value={form.grid_section.title}
               onChange={(e) =>
                 set("grid_section", {
@@ -496,9 +538,9 @@ export function ServiceEditor({
                 })
               }
               placeholder="Title"
-              className={fieldClass()}
             />
-            <textarea
+            <LimitedTextArea
+              maxLength={FIELD_LIMITS.longText}
               value={form.grid_section.desc ?? ""}
               onChange={(e) =>
                 set("grid_section", {
@@ -508,7 +550,6 @@ export function ServiceEditor({
               }
               rows={2}
               placeholder="Description (optional)"
-              className={fieldClass("resize-none")}
             />
             <ListFieldEditor
               items={form.grid_section.items}
@@ -525,20 +566,20 @@ export function ServiceEditor({
                     value={item.icon}
                     onChange={(icon) => update({ ...item, icon })}
                   />
-                  <input
+                  <LimitedInput
+                    maxLength={FIELD_LIMITS.featureTitle}
                     value={item.title}
                     onChange={(e) => update({ ...item, title: e.target.value })}
                     placeholder="Title"
-                    className={fieldClass("bg-panel font-medium")}
+                    className="bg-panel font-medium"
                   />
-                  <textarea
+                  <LimitedTextArea
+                    maxLength={FIELD_LIMITS.featureBody}
                     value={item.desc}
                     onChange={(e) => update({ ...item, desc: e.target.value })}
                     rows={2}
                     placeholder="Description"
-                    className={fieldClass(
-                      "resize-none bg-panel text-[12.5px] text-ink-1",
-                    )}
+                    className="bg-panel text-[12.5px] text-ink-1"
                   />
                 </div>
               )}
@@ -569,7 +610,8 @@ export function ServiceEditor({
         </div>
         {form.tech_stack && (
           <div className="space-y-3">
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.shortLabel}
               value={form.tech_stack.label}
               onChange={(e) =>
                 set("tech_stack", {
@@ -578,9 +620,9 @@ export function ServiceEditor({
                 })
               }
               placeholder="Label (e.g. Technology Stack)"
-              className={fieldClass()}
             />
-            <input
+            <LimitedInput
+              maxLength={FIELD_LIMITS.name}
               value={form.tech_stack.title}
               onChange={(e) =>
                 set("tech_stack", {
@@ -589,16 +631,15 @@ export function ServiceEditor({
                 })
               }
               placeholder="Title"
-              className={fieldClass()}
             />
-            <textarea
+            <LimitedTextArea
+              maxLength={FIELD_LIMITS.longText}
               value={form.tech_stack.desc ?? ""}
               onChange={(e) =>
                 set("tech_stack", { ...form.tech_stack!, desc: e.target.value })
               }
               rows={2}
               placeholder="Description (optional)"
-              className={fieldClass("resize-none")}
             />
             <div>
               <div className="mb-2 text-[12px] font-medium text-ink-2">
@@ -613,13 +654,14 @@ export function ServiceEditor({
                 addLabel="Add group"
                 renderItem={(item, update) => (
                   <div className="space-y-2">
-                    <input
+                    <LimitedInput
+                      maxLength={FIELD_LIMITS.techGroupLabel}
                       value={item.label}
                       onChange={(e) =>
                         update({ ...item, label: e.target.value })
                       }
                       placeholder="Group label (e.g. Frontend)"
-                      className={fieldClass("bg-panel font-medium")}
+                      className="bg-panel font-medium"
                     />
                     <input
                       defaultValue={item.items.join(", ")}
@@ -628,15 +670,16 @@ export function ServiceEditor({
                           ...item,
                           items: e.target.value
                             .split(",")
-                            .map((s) => s.trim())
+                            .map((s) => s.trim().slice(0, FIELD_LIMITS.techItem))
                             .filter(Boolean),
                         })
                       }
                       placeholder="React, Next.js, Tailwind (pisahkan koma)"
-                      className={fieldClass(
-                        "bg-panel text-[12.5px] text-ink-1",
-                      )}
+                      className={fieldClass("bg-panel text-[12.5px] text-ink-1")}
                     />
+                    <p className="text-[10.5px] text-ink-3">
+                      Each item is capped at {FIELD_LIMITS.techItem} characters.
+                    </p>
                   </div>
                 )}
               />
@@ -674,20 +717,20 @@ export function ServiceEditor({
                   onChange={(icon) => update({ ...item, icon })}
                 />
               </div>
-              <input
+              <LimitedInput
+                maxLength={FIELD_LIMITS.processStepTitle}
                 value={item.title}
                 onChange={(e) => update({ ...item, title: e.target.value })}
                 placeholder="Title"
-                className={fieldClass("bg-panel font-medium")}
+                className="bg-panel font-medium"
               />
-              <textarea
+              <LimitedTextArea
+                maxLength={FIELD_LIMITS.processStepBody}
                 value={item.desc}
                 onChange={(e) => update({ ...item, desc: e.target.value })}
                 rows={2}
                 placeholder="Description"
-                className={fieldClass(
-                  "resize-none bg-panel text-[12.5px] text-ink-1",
-                )}
+                className="bg-panel text-[12.5px] text-ink-1"
               />
             </div>
           )}
@@ -697,18 +740,18 @@ export function ServiceEditor({
       {/* Closing CTA */}
       <section className="rounded-xl border border-(--panel-border) bg-panel p-6">
         <div className="mono-label mb-3">Closing CTA Title (opsional)</div>
-        <input
+        <LimitedInput
+          maxLength={FIELD_LIMITS.heroTitle}
           value={form.closing_cta_title ?? ""}
           onChange={(e) => set("closing_cta_title", e.target.value || null)}
           placeholder="Ready to Build Your System?"
-          className={fieldClass()}
         />
       </section>
 
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending}
+          disabled={pending || overLimit}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : isNew ? "Create Service" : "Save Changes"}
