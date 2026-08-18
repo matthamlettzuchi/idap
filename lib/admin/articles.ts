@@ -23,6 +23,34 @@ export type ArticleRow = {
   updated_at: string;
 };
 
+export type ArticleHeroItem = {
+  id: string;
+  title: string;
+  coverImage: string | null;
+  publishedAt: string | null;
+};
+
+export async function listRecentPublishedArticlesForHero(
+  limit = 6
+): Promise<ArticleHeroItem[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("articles")
+    .select("id, title, cover_image, published_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(limit);
+
+  if (error) return [];
+
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    coverImage: row.cover_image,
+    publishedAt: row.published_at,
+  }));
+}
+
 export async function listArticles(opts?: {
   status?: ArticleStatus;
   search?: string;

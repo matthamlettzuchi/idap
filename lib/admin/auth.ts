@@ -2,7 +2,13 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export type CmsRole = "admin" | "editor";
-export type CmsUser = { id: string; username: string; role: CmsRole };
+export type CmsUser = {
+  id: string;
+  username: string;
+  role: CmsRole;
+  displayName: string | null;
+  avatarUrl: string | null;
+};
 
 export async function getCmsUser(): Promise<CmsUser | null> {
   const supabase = await createClient();
@@ -13,13 +19,19 @@ export async function getCmsUser(): Promise<CmsUser | null> {
 
   const { data: adminRow } = await supabase
     .from("admin_users")
-    .select("role, username")
+    .select("role, username, display_name, avatar_url")
     .eq("user_id", user.id)
     .single();
 
   if (!adminRow) return null; // authenticated, but not a CMS user
 
-  return { id: user.id, username: adminRow.username, role: adminRow.role as CmsRole };
+  return {
+    id: user.id,
+    username: adminRow.username,
+    role: adminRow.role as CmsRole,
+    displayName: adminRow.display_name ?? null,
+    avatarUrl: adminRow.avatar_url ?? null,
+  };
 }
 
 export async function requireCmsUser(minRole?: CmsRole): Promise<CmsUser> {

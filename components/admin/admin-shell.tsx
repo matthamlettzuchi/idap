@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { CmsRole, CmsUser } from "@/lib/admin/auth";
+import { AdminThemeProvider } from "@/lib/admin/theme-provider";
+import { User2 } from "lucide-react";
 
 type NavItem = { href: string; label: string; roles: CmsRole[] };
 type NavGroup = { label: string; accent: string; items: NavItem[] };
@@ -11,24 +13,20 @@ type NavGroup = { label: string; accent: string; items: NavItem[] };
 const navGroups: NavGroup[] = [
   {
     label: "Overview",
-    accent: "#6f8dff", // signal-teal
+    accent: "#6f8dff",
     items: [{ href: "/admin", label: "Dashboard", roles: ["admin", "editor"] }],
   },
   {
     label: "Content",
-    accent: "#0e9488", // teal — matches Web Development accent elsewhere
+    accent: "#0e9488",
     items: [
-      {
-        href: "/admin/articles",
-        label: "Articles",
-        roles: ["admin", "editor"],
-      },
+      { href: "/admin/articles", label: "Articles", roles: ["admin", "editor"] },
       { href: "/admin/media", label: "Media", roles: ["admin", "editor"] },
     ],
   },
   {
     label: "Pages",
-    accent: "#2f4bd0", // blue — matches Custom Software accent elsewhere
+    accent: "#2f4bd0",
     items: [
       { href: "/admin/home", label: "Home Page", roles: ["admin"] },
       { href: "/admin/about", label: "About Us", roles: ["admin"] },
@@ -38,11 +36,11 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Administration",
-    accent: "#b45309", // amber — matches Maintenance & Support accent elsewhere
+    accent: "#b45309",
     items: [
       { href: "/admin/users", label: "Users", roles: ["admin"] },
       { href: "/admin/site-content", label: "Site Content", roles: ["admin"] },
-      { href: "/admin/settings", label: "Settings", roles: ["admin"] },
+      { href: "/admin/settings", label: "Settings", roles: ["admin", "editor"] },
     ],
   },
 ];
@@ -56,13 +54,7 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function AdminShell({
-  user,
-  children,
-}: {
-  user: CmsUser;
-  children: React.ReactNode;
-}) {
+function AdminShellInner({ user, children }: { user: CmsUser; children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -72,6 +64,8 @@ export function AdminShell({
     router.replace("/admin/login");
     router.refresh();
   }
+
+  const displayName = user.displayName || user.username;
 
   return (
     <div className="flex min-h-screen bg-void">
@@ -121,11 +115,7 @@ export function AdminShell({
                             style={{ background: group.accent }}
                           />
                         )}
-                        <span
-                          className={
-                            active ? "" : "text-ink-2 hover:text-ink-0"
-                          }
-                        >
+                        <span className={active ? "" : "text-ink-2 hover:text-ink-0"}>
                           {item.label}
                         </span>
                       </Link>
@@ -136,22 +126,50 @@ export function AdminShell({
             );
           })}
         </nav>
-        <div className="border-t border-(--panel-border) pt-4">
-          <div className="truncate text-[12px] text-ink-2">
-            @{user.username}
-          </div>{" "}
-          <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-signal-teal">
-            {user.role}
+        <div className="flex items-center gap-3 border-t border-(--panel-border) pt-4">
+          {user.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- Supabase storage-hosted path
+            <img
+              src={user.avatarUrl}
+              alt=""
+              className="h-9 w-9 shrink-0 rounded-full border border-(--panel-border) object-cover"
+            />
+          ) : (
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-dashed border-(--panel-border-strong) text-ink-3">
+              <User2 size={16} />
+            </span>
+          )}
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[12.5px] font-medium text-ink-0">
+              {displayName}
+            </div>
+            <div className="mt-0.5 text-[11px] font-medium uppercase tracking-wide text-signal-teal">
+              {user.role}
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="mt-3 text-[12.5px] font-medium text-ink-2 hover:text-ink-0"
-          >
-            Sign out
-          </button>
         </div>
+        <button
+          onClick={handleLogout}
+          className="mt-3 text-left text-[12.5px] font-medium text-ink-2 hover:text-ink-0"
+        >
+          Sign out
+        </button>
       </aside>
       <main className="flex-1 p-6 sm:p-10">{children}</main>
     </div>
+  );
+}
+
+export function AdminShell({
+  user,
+  children,
+}: {
+  user: CmsUser;
+  children: React.ReactNode;
+}) {
+  return (
+    <AdminThemeProvider>
+      <AdminShellInner user={user}>{children}</AdminShellInner>
+    </AdminThemeProvider>
   );
 }

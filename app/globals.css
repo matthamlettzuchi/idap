@@ -52,6 +52,20 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* ---------- admin dashboard dark mode ---------- */
+.admin-shell.dark {
+  --void: #0e1020;
+  --surface: #171a2e;
+  --panel: #171a2e;
+  --panel-2: #0a0c18;
+  --panel-border: rgba(255, 255, 255, 0.09);
+  --panel-border-strong: rgba(255, 255, 255, 0.18);
+  --ink-0: #f8f9fc;
+  --ink-1: #c2c5da;
+  --ink-2: #868bab;
+  --ink-3: #565b78;
+}
+
 * {
   box-sizing: border-box;
 }

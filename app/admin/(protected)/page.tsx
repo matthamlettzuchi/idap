@@ -5,6 +5,8 @@ import {
   getAdminDashboardData,
   type ActivityItem,
 } from "@/lib/admin/dashboard";
+import { listRecentPublishedArticlesForHero } from "@/lib/admin/articles";
+import { ArticleHeroCarousel } from "@/components/admin/dashboard/article-hero-carousel";
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString("en-US", {
@@ -25,18 +27,38 @@ function ActivityIcon({ action }: { action: ActivityItem["action"] }) {
 
 export default async function AdminDashboardPage() {
   const user = await requireCmsUser();
-  const { recentActivity, recentDrafts, totalArticles, myArticles } =
-    await getAdminDashboardData(user.id);
+  const [{ recentActivity, recentDrafts, totalArticles, myArticles }, heroArticles] =
+    await Promise.all([
+      getAdminDashboardData(user.id),
+      listRecentPublishedArticlesForHero(),
+    ]);
 
   return (
     <div>
-      <h1 className="font-display text-[24px] font-semibold text-ink-0">
-        Welcome back, {user.username}
-      </h1>
-      <p className="mt-2 text-[14px] text-ink-2">
-        You&apos;re signed in as{" "}
-        <span className="font-medium text-ink-0">{user.role}</span>.
-      </p>
+      <ArticleHeroCarousel articles={heroArticles} />
+
+      <div className="flex items-center gap-4">
+        {user.avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- arbitrary/external hosted path (upload or imgbb)
+          <img
+            src={user.avatarUrl}
+            alt=""
+            className="h-12 w-12 shrink-0 rounded-full border border-(--panel-border) object-cover"
+          />
+        ) : (
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-(--panel-border-strong) text-ink-3">
+            <User2 size={20} />
+          </span>
+        )}
+        <div>
+          <h1 className="font-display text-[24px] font-semibold text-ink-0">
+            Welcome back, {user.displayName || user.username}
+          </h1>
+          <p className="mt-1 text-[14px] text-ink-2">
+            You&apos;re signed in as <span className="font-medium text-ink-0">{user.role}</span>.
+          </p>
+        </div>
+      </div>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex items-center gap-4 rounded-xl border border-(--panel-border) bg-panel p-5">
@@ -78,9 +100,7 @@ export default async function AdminDashboardPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-[13.5px] text-ink-0">
-                      <span className="font-medium">
-                        {item.actorName ?? "Someone"}
-                      </span>{" "}
+                      <span className="font-medium">{item.actorName ?? "Someone"}</span>{" "}
                       {item.action}{" "}
                       {item.href ? (
                         <Link
@@ -90,9 +110,7 @@ export default async function AdminDashboardPage() {
                           {item.label}
                         </Link>
                       ) : (
-                        <span className="font-medium text-ink-0">
-                          {item.label}
-                        </span>
+                        <span className="font-medium text-ink-0">{item.label}</span>
                       )}
                     </p>
                     <p className="mt-0.5 text-[11.5px] text-ink-2">
@@ -122,8 +140,7 @@ export default async function AdminDashboardPage() {
                         {draft.title || "(untitled)"}
                       </div>
                       <div className="mt-0.5 text-[11.5px] text-ink-2">
-                        {draft.authorName ?? "Unknown"} ·{" "}
-                        {formatDateTime(draft.updatedAt)}
+                        {draft.authorName ?? "Unknown"} · {formatDateTime(draft.updatedAt)}
                       </div>
                     </div>
                   </Link>
