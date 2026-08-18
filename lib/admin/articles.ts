@@ -2,7 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 export { slugify } from "@/lib/admin/slugify";
 
-export type ArticleStatus = "draft" | "published";
+export type ArticleStatus = "draft" | "published" | "trash";
 
 export type ArticleRow = {
   id: string;
@@ -27,7 +27,12 @@ export async function listArticles(opts?: { status?: ArticleStatus; search?: str
   const supabase = await createClient();
   let query = supabase.from("articles").select("*").order("updated_at", { ascending: false });
 
-  if (opts?.status) query = query.eq("status", opts.status);
+  if (opts?.status) {
+    query = query.eq("status", opts.status);
+  } else {
+    // "All statuses" nyembunyiin yang udah di-trash, sama kayak tab "All" di WordPress
+    query = query.neq("status", "trash");
+  }
   if (opts?.search) query = query.ilike("title", `%${opts.search}%`);
 
   const { data, error } = await query;

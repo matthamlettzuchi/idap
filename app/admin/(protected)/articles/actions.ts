@@ -72,8 +72,6 @@ export async function saveArticle(
         .select("published_at")
         .eq("id", id)
         .single();
-      // only stamp published_at the first time it goes live, so re-saving
-      // an already-published article doesn't bump its publish date
       if (!existing?.published_at) {
         updates.published_at = new Date().toISOString();
       }
@@ -90,7 +88,28 @@ export async function saveArticle(
   revalidatePath("/blog");
 }
 
-export async function deleteArticle(id: string) {
+// Soft delete — moves the article into the "trash" status. Reversible via
+// restoreArticle, same as WordPress's trash behavior.
+export async function trashArticle(id: string) {
+  await requireCmsUser();
+  const supabase = await createClient();
+  const { error } = await supabase.from("articles").update({ status: "trash" }).eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/articles");
+  revalidatePath("/blog");
+}
+
+// Pulls an article out of trash back into draft, ready to be republished.
+export async function restoreArticle(id: string) {
+  await requireCmsUser();
+  const supabase = await createClient();
+  const { error } = await supabase.from("articles").update({ status: "draft" }).eq("id", id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/admin/articles");
+}
+
+// Actual, unrecoverable delete — only from inside the trash, admin only.
+export async function permanentlyDeleteArticle(id: string) {
   await requireCmsUser("admin");
   const supabase = await createClient();
   const { error } = await supabase.from("articles").delete().eq("id", id);

@@ -6,7 +6,7 @@ import { createArticle } from "./actions";
 export default async function ArticlesListPage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: "draft" | "published"; q?: string }>;
+  searchParams: Promise<{ status?: "draft" | "published" | "trash"; q?: string }>;
 }) {
   const { status, q } = await searchParams;
   const articles = await listArticles({ status, search: q });
@@ -38,6 +38,7 @@ export default async function ArticlesListPage({
           <option value="">All statuses</option>
           <option value="draft">Draft</option>
           <option value="published">Published</option>
+          <option value="trash">Trash</option>
         </select>
         <button className="rounded-lg border border-(--panel-border) px-4 py-2 text-[13px] text-ink-1 hover:text-ink-0">
           Filter
