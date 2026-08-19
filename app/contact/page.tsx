@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import { Nav } from "@/components/nav";
@@ -53,14 +53,66 @@ export default function ContactPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
+  const recaptchaRef = useRef<HTMLDivElement>(null);
+  const widgetIdRef = useRef<number | null>(null);
+
   useEffect(() => {
+    // Register global callbacks for reCAPTCHA
     (window as any).onRecaptchaVerify = (token: string) => {
       setCaptchaToken(token);
     };
     (window as any).onRecaptchaExpire = () => {
       setCaptchaToken(null);
     };
+
+    const renderRecaptcha = () => {
+      if (
+        typeof window !== "undefined" &&
+        (window as any).grecaptcha &&
+        (window as any).grecaptcha.render &&
+        recaptchaRef.current &&
+        recaptchaRef.current.innerHTML === ""
+      ) {
+        try {
+          widgetIdRef.current = (window as any).grecaptcha.render(
+            recaptchaRef.current,
+            {
+              sitekey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+              callback: "onRecaptchaVerify",
+              "expired-callback": "onRecaptchaExpire",
+            },
+          );
+        } catch (error) {
+          console.error("Failed to render reCAPTCHA:", error);
+        }
+      }
+    };
+
+    // If script was already loaded (SPA navigation back to contact page)
+    if ((window as any).grecaptcha?.render) {
+      renderRecaptcha();
+    } else {
+      // First load or hard refresh
+      (window as any).onRecaptchaLoad = () => {
+        renderRecaptcha();
+      };
+    }
   }, []);
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    if (
+      typeof window !== "undefined" &&
+      (window as any).grecaptcha &&
+      widgetIdRef.current !== null
+    ) {
+      try {
+        (window as any).grecaptcha.reset(widgetIdRef.current);
+      } catch (err) {
+        console.error("Error resetting captcha:", err);
+      }
+    }
+  };
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -95,16 +147,14 @@ export default function ContactPage() {
 
       setSubmitted(true);
       setForm(initialForm);
-      setCaptchaToken(null);
-      (window as any).grecaptcha?.reset();
+      resetCaptcha();
     } catch (err) {
       setErrorMessage(
         err instanceof Error
           ? err.message
           : "Something went wrong. Please try again.",
       );
-      (window as any).grecaptcha?.reset();
-      setCaptchaToken(null);
+      resetCaptcha();
     } finally {
       setIsSubmitting(false);
     }
@@ -262,11 +312,11 @@ export default function ContactPage() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Honeypot field — hidden from real users, catches simple bots */}
                     <Script
-                      src="https://www.google.com/recaptcha/api.js"
+                      src="https://www.google.com/recaptcha/api.js?render=explicit&onload=onRecaptchaLoad"
                       strategy="lazyOnload"
                     />
+                    {/* Honeypot field — hidden from real users, catches simple bots */}
                     <input
                       type="text"
                       name="company"
@@ -331,14 +381,7 @@ export default function ContactPage() {
                     </div>
 
                     <div className="flex justify-center">
-                      <div
-                        className="g-recaptcha"
-                        data-sitekey={
-                          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
-                        }
-                        data-callback="onRecaptchaVerify"
-                        data-expired-callback="onRecaptchaExpire"
-                      />
+                      <div ref={recaptchaRef} />
                     </div>
 
                     {errorMessage && (
