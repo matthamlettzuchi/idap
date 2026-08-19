@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { SuccessToast } from "@/components/admin/ui/success-toast";
+import { useToastStack, ToastStack } from "@/components/admin/ui/toast-stack";
 import {
   Search,
   PenTool,
@@ -251,8 +251,8 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const router = useRouter();
+  const { toasts, push, dismiss, dismissAll } = useToastStack();
 
   // Snapshot of the last-saved (or initially-loaded) page, used to detect
   // unsaved changes — Save stays disabled until something actually changes.
@@ -267,8 +267,17 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
     ),
   );
   const isDirty =
-    snapshot(content, coreValues, industries, journey, principles, processSteps) !==
-    baselineRef.current;
+    snapshot(
+      content,
+      coreValues,
+      industries,
+      journey,
+      principles,
+      processSteps,
+    ) !== baselineRef.current;
+  useEffect(() => {
+    if (isDirty) dismissAll();
+  }, [isDirty, dismissAll]);
 
   const overLimit = computeOverLimit(
     content,
@@ -308,7 +317,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           processSteps,
         );
         setSavedAt(new Date());
-        setToastMsg("About Us page saved successfully.")
+        push("About Us page saved successfully.");
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Gagal menyimpan.");
@@ -703,11 +712,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         </button>
       </div>
 
-      <SuccessToast
-        message={toastMsg ?? ""}
-        show={toastMsg !== null}
-        onClose={() => setToastMsg(null)}
-      />
+      <ToastStack toasts={toasts} onDismiss={dismiss} />
     </div>
   );
 }

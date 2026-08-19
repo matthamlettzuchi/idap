@@ -19,7 +19,7 @@ import type {
   AdminTestimonial,
   AdminSiteContact,
 } from "@/lib/admin/home";
-import { SuccessToast } from "../ui/success-toast";
+import { useToastStack, ToastStack } from "../ui/toast-stack";
 
 function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
@@ -293,7 +293,6 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
     initial.siteContact,
   );
   const setHeroThemeDefault = makeSetDefault(heroThemes, setHeroThemes);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const setSeasonalThemeDefault = makeSetDefault(
     seasonalThemes,
     setSeasonalThemes,
@@ -303,6 +302,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
+  const { toasts, push, dismiss, dismissAll } = useToastStack();
 
   // Snapshot of the last-saved (or initially-loaded) page — Save stays
   // disabled until the form actually diverges from this baseline.
@@ -369,7 +369,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
           siteContact,
         );
         setSavedAt(new Date());
-        setToastMsg("Home page saved successfully.")
+        push("Home page saved successfully.");
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Gagal menyimpan.");
@@ -1011,11 +1011,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         </button>
       </div>
 
-      <SuccessToast
-        message={toastMsg ?? ""}
-        show={toastMsg !== null}
-        onClose={() => setToastMsg(null)}
-      />
+      <ToastStack toasts={toasts} onDismiss={dismiss} />
     </div>
   );
 }

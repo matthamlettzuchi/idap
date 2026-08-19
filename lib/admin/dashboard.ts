@@ -54,6 +54,11 @@ type ActivityLogRow = {
   created_at: string;
 };
 
+// How many rows we pull for the "history" view behind "See more". The
+// dashboard cards themselves only ever render the first 5 of whatever
+// comes back (see RecentActivityCard / RecentDraftsCard).
+const HISTORY_LIMIT = 50;
+
 export async function getAdminDashboardData(userId: string): Promise<AdminDashboardData> {
   const supabase = await createClient();
 
@@ -69,18 +74,18 @@ export async function getAdminDashboardData(userId: string): Promise<AdminDashbo
       .select("id, slug, title, status, author_name, created_at, updated_at")
       .neq("status", "trash")
       .order("updated_at", { ascending: false })
-      .limit(8),
+      .limit(HISTORY_LIMIT),
     supabase
       .from("articles")
       .select("id, slug, title, updated_at, author_name")
       .eq("status", "draft")
       .order("updated_at", { ascending: false })
-      .limit(6),
+      .limit(HISTORY_LIMIT),
     supabase
       .from("admin_activity_log")
       .select("id, actor_name, entity_type, entity_label, action, created_at")
       .order("created_at", { ascending: false })
-      .limit(8),
+      .limit(HISTORY_LIMIT),
     supabase.from("articles").select("id", { count: "exact", head: true }).neq("status", "trash"),
     supabase
       .from("articles")
@@ -115,7 +120,7 @@ export async function getAdminDashboardData(userId: string): Promise<AdminDashbo
 
   const recentActivity = [...articleItems, ...pageItems]
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 8);
+    .slice(0, HISTORY_LIMIT);
 
   const recentDrafts: DraftItem[] = ((drafts as ArticleDraftRow[]) ?? []).map((row) => ({
     id: row.id,

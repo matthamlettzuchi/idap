@@ -45,7 +45,7 @@ import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
 import { LimitedInput } from "@/components/admin/ui/limited-input";
 import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
-import { SuccessToast } from "@/components/admin/ui/success-toast";
+import { useToastStack, ToastStack } from "../ui/toast-stack";
 import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { slugify } from "@/lib/admin/slugify";
 import {
@@ -261,14 +261,17 @@ export function ServiceEditor({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const router = useRouter();
+  const { toasts, push, dismiss, dismissAll } = useToastStack();
 
   // Snapshot of the last-saved (or initially-loaded) form, used to detect
   // unsaved changes — the Save button stays disabled until it diverges.
   const baselineRef = useRef(JSON.stringify(service ?? emptyService));
   const isDirty = JSON.stringify(form) !== baselineRef.current;
 
+  useEffect(() => {
+    if (isDirty) dismissAll();
+  }, [isDirty, dismissAll]);
   const overLimit = computeOverLimit(form);
 
   function set<K extends keyof AdminServiceRow>(
@@ -291,12 +294,12 @@ export function ServiceEditor({
         if (isNew) {
           if (!form.slug) throw new Error("Slug wajib diisi.");
           const { slug } = await createService(form);
-          setToastMsg("Service created successfully.");
+          push("Service created successfully.");
           baselineRef.current = JSON.stringify(form);
           router.push(`/admin/services/${slug}`);
         } else {
           await updateService(form.slug, form);
-          setToastMsg("Service saved successfully.");
+          push("Service saved successfully.");
           baselineRef.current = JSON.stringify(form);
           setSavedAt(new Date());
         }
@@ -784,11 +787,7 @@ export function ServiceEditor({
         </button>
       </div>
 
-      <SuccessToast
-        message={toastMsg ?? ""}
-        show={toastMsg !== null}
-        onClose={() => setToastMsg(null)}
-      />
+      <ToastStack toasts={toasts} onDismiss={dismiss} />
     </div>
   );
 }

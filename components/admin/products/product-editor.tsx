@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Building2,
@@ -27,7 +27,7 @@ import type {
   ProductFeature,
   ProductMetric,
 } from "@/lib/admin/products";
-import { SuccessToast } from "../ui/success-toast";
+import { useToastStack, ToastStack } from "../ui/toast-stack";
 
 const iconOptions: {
   value: AdminProductRow["icon"];
@@ -135,8 +135,6 @@ export function ProductEditor({
   product: AdminProductRow | null;
 }) {
   const isNew = product === null;
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
-
   // Single canonical source of truth for the initial shape — computed once
   // and reused for BOTH form state and the baseline snapshot, so they can
   // never diverge from having been derived independently.
@@ -154,12 +152,19 @@ export function ProductEditor({
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
+  const { toasts, push, dismiss, dismissAll } = useToastStack();
 
   // Snapshot of the last-saved (or initially-loaded, normalized) form,
   // used to detect unsaved changes. Updated after every successful save so
   // the Save button goes back to disabled until the form is touched again.
   const baselineRef = useRef(JSON.stringify(initialForm));
   const isDirty = JSON.stringify(form) !== baselineRef.current;
+
+  // If the user edits again after a save, clear out the old success
+  // toast(s) immediately rather than letting them linger for the full 10s.
+  useEffect(() => {
+    if (isDirty) dismissAll();
+  }, [isDirty, dismissAll]);
 
   const overLimit = computeOverLimit(form);
 
@@ -183,12 +188,12 @@ export function ProductEditor({
         if (isNew) {
           if (!form.slug) throw new Error("Slug wajib diisi.");
           const { slug } = await createProduct(form);
-          setToastMsg("Product created successfully.");
+          push("Product created successfully.");
           baselineRef.current = JSON.stringify(form);
           router.push(`/admin/products/${slug}`);
         } else {
           await updateProduct(form.slug, form);
-          setToastMsg("Product saved successfully.");
+          push("Product saved successfully.");
           baselineRef.current = JSON.stringify(form);
           setSavedAt(new Date());
         }
@@ -657,11 +662,7 @@ export function ProductEditor({
           {pending ? "Saving..." : isNew ? "Create Product" : "Save Changes"}
         </button>
       </div>
-      <SuccessToast
-        message={toastMsg ?? ""}
-        show={toastMsg !== null}
-        onClose={() => setToastMsg(null)}
-      />
+      <ToastStack toasts={toasts} onDismiss={dismiss} />
     </div>
   );
 }

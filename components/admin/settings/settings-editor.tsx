@@ -11,6 +11,8 @@ import {
 } from "@/app/admin/(protected)/settings/actions";
 import { useAdminTheme } from "@/lib/admin/theme-provider";
 import type { CmsUser } from "@/lib/admin/auth";
+import { FIELD_LIMITS } from "@/lib/admin/field-limits";
+import { useToastStack, ToastStack } from "@/components/admin/ui/toast-stack";
 
 function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
@@ -20,7 +22,9 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
   const { theme, setTheme } = useAdminTheme();
   const supabase = createClient();
 
-  const [displayName, setDisplayName] = useState(user.displayName ?? user.username);
+  const [displayName, setDisplayName] = useState(
+    user.displayName ?? user.username,
+  );
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -33,19 +37,26 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [pending, startTransition] = useTransition();
-  const [nameSaved, setNameSaved] = useState(false);
   const [avatarSaved, setAvatarSaved] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
-  const [passwordMessage, setPasswordMessage] = useState<
-    { type: "ok" | "error"; text: string } | null
-  >(null);
+  const [passwordMessage, setPasswordMessage] = useState<{
+    type: "error";
+    text: string;
+  } | null>(null);
+  const { toasts, push, dismiss, dismissAll } = useToastStack();
+
+  // Dirty tracking for the display name field — Save stays disabled until
+  // it actually diverges from what's saved, same pattern as the other
+  // page editors (product/service/about).
+  const nameBaselineRef = useRef(user.displayName ?? user.username);
+  const nameDirty = displayName !== nameBaselineRef.current;
+  const nameOverLimit = displayName.length > FIELD_LIMITS.name;
 
   function saveAvatar(url: string | null) {
     startTransition(async () => {
       try {
         await updateAvatar(url);
-        setAvatarSaved(true);
-        setTimeout(() => setAvatarSaved(false), 2000);
+        push("Profile picture updated.");
         router.refresh();
       } catch (err) {
         setUploadError(err instanceof Error ? err.message : "Failed to save.");
@@ -54,13 +65,15 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
   }
 
   function handleSaveName() {
+    if (!nameDirty || nameOverLimit) return;
     setNameError(null);
+    dismissAll();
     startTransition(async () => {
       try {
         await updateDisplayName(displayName);
-        setNameSaved(true);
+        nameBaselineRef.current = displayName;
+        push("Display name updated.");
         router.refresh();
-        setTimeout(() => setNameSaved(false), 2000);
       } catch (err) {
         setNameError(err instanceof Error ? err.message : "Failed to save.");
       }
@@ -86,7 +99,9 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
 
     // Get the public URL directly from Supabase instead of reconstructing
     // it manually — guarantees the URL actually matches the uploaded path.
-    const { data: urlData } = supabase.storage.from("images").getPublicUrl(path);
+    const { data: urlData } = supabase.storage
+      .from("images")
+      .getPublicUrl(path);
     setUploading(false);
     setAvatarUrl(urlData.publicUrl);
     saveAvatar(urlData.publicUrl);
@@ -128,11 +143,12 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
         await updatePassword(newPassword);
         setNewPassword("");
         setConfirmPassword("");
-        setPasswordMessage({ type: "ok", text: "Password updated successfully." });
+        push("Password updated successfully.");
       } catch (err) {
         setPasswordMessage({
           type: "error",
-          text: err instanceof Error ? err.message : "Failed to update password.",
+          text:
+            err instanceof Error ? err.message : "Failed to update password.",
         });
       }
     });
@@ -177,8 +193,9 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
                 Remove
               </button>
             )}
-            {uploadError && <p className="text-[11.5px] text-red-500">{uploadError}</p>}
-            {avatarSaved && <p className="text-[11.5px] text-signal-teal">Saved.</p>}
+            {uploadError && (
+              <p className="text-[11.5px] text-red-500">{uploadError}</p>
+            )}
           </div>
         </div>
 
@@ -211,7 +228,9 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
               Use URL
             </button>
           </div>
-          {urlError && <p className="mt-1.5 text-[11.5px] text-red-500">{urlError}</p>}
+          {urlError && (
+            <p className="mt-1.5 text-[11.5px] text-red-500">{urlError}</p>
+          )}
         </div>
       </section>
 
@@ -227,17 +246,22 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
           />
           <button
             onClick={handleSaveName}
-            disabled={pending}
+            disabled={pending || !nameDirty || nameOverLimit}
             className="shrink-0 rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           >
             Save
           </button>
         </div>
+        {nameOverLimit && (
+          <p className="text-[12px] font-medium text-red-500">
+            Display name must be {FIELD_LIMITS.name} characters or fewer.
+          </p>
+        )}
         {nameError && <p className="text-[12px] text-red-500">{nameError}</p>}
-        {nameSaved && <p className="text-[11.5px] text-signal-teal">Saved.</p>}
         <p className="text-[11.5px] text-ink-2">
-          Signed in as <span className="font-medium text-ink-0">@{user.username}</span> — your
-          login username can&apos;t be changed here.
+          Signed in as{" "}
+          <span className="font-medium text-ink-0">@{user.username}</span> —
+          your login username can&apos;t be changed here.
         </p>
       </section>
 
@@ -275,13 +299,7 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
             />
           </div>
           {passwordMessage && (
-            <p
-              className={`text-[12px] ${
-                passwordMessage.type === "ok" ? "text-signal-teal" : "text-red-500"
-              }`}
-            >
-              {passwordMessage.text}
-            </p>
+            <p className="text-[12px] text-red-500">{passwordMessage.text}</p>
           )}
           <button
             type="submit"
@@ -325,6 +343,7 @@ export function SettingsEditor({ user }: { user: CmsUser }) {
           </div>
         </div>
       </section>
+      <ToastStack toasts={toasts} onDismiss={dismiss} />
     </div>
   );
 }
