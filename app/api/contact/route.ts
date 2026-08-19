@@ -3,12 +3,34 @@ import { Resend } from "resend";
 
 export const runtime = "nodejs";
 
-const DESTINATION_EMAIL = "matthamlettzuchi@gmail.com";
+import { supabase } from "@/lib/supabase";
 
+const FALLBACK_DESTINATION_EMAIL = "matthamlettzuchi@gmail.com";
+const FALLBACK_SENDER_NAME = "Intidata Website";
 // Resend's shared testing domain — works immediately with no DNS setup.
-// Once someone verifies intidatasolution.com in the Resend dashboard,
-// swap this to something like "Intidata Website <noreply@intidatasolution.com>".
-const SENDER = "Intidata Website <onboarding@resend.dev>";
+// The domain half stays hardcoded (tied to whatever's verified in the
+// Resend dashboard); only the display name is editable from
+// /admin/contact-settings.
+const SENDER_DOMAIN = "onboarding@resend.dev";
+
+async function getContactFormSettings() {
+  const { data, error } = await supabase
+    .from("contact_form_settings")
+    .select("destination_email, sender_name")
+    .eq("id", true)
+    .maybeSingle();
+
+  if (error || !data) {
+    return {
+      destinationEmail: FALLBACK_DESTINATION_EMAIL,
+      senderName: FALLBACK_SENDER_NAME,
+    };
+  }
+  return {
+    destinationEmail: data.destination_email || FALLBACK_DESTINATION_EMAIL,
+    senderName: data.sender_name || FALLBACK_SENDER_NAME,
+  };
+}
 
 type ContactPayload = {
   fullName?: string;
@@ -114,6 +136,9 @@ export async function POST(request: Request) {
     );
   }
 
+  const { destinationEmail, senderName } = await getContactFormSettings();
+  const SENDER = `${senderName} <${SENDER_DOMAIN}>`;
+
   const resend = new Resend(apiKey);
 
   const safeName = escapeHtml(fullName);
@@ -124,7 +149,7 @@ export async function POST(request: Request) {
   try {
     const { error } = await resend.emails.send({
       from: SENDER,
-      to: DESTINATION_EMAIL,
+      to: destinationEmail,
       replyTo: email,
       subject: `New contact form submission from ${fullName}`,
       text: [

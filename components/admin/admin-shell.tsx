@@ -45,6 +45,11 @@ const navGroups: NavGroup[] = [
       { href: "/admin/users", label: "Users", roles: ["admin"] },
       { href: "/admin/site-content", label: "Site Content", roles: ["admin"] },
       {
+        href: "/admin/contact-settings",
+        label: "Contact Form",
+        roles: ["admin"],
+      },
+      {
         href: "/admin/settings",
         label: "Settings",
         roles: ["admin", "editor"],
@@ -83,11 +88,14 @@ function AdminShellInner({
 
   return (
     <div className="min-h-screen bg-void">
-      <aside className="fixed inset-y-0 left-0 z-40 hidden h-screen w-64 shrink-0 flex-col overflow-y-auto border-r border-(--panel-border) bg-panel p-5 sm:flex">
-        <div className="font-display text-[17px] font-semibold text-ink-0">
-          Intidata CMS
+      <aside className="fixed inset-y-0 left-0 z-40 hidden h-screen w-64 shrink-0 flex-col border-r border-(--panel-border) bg-panel sm:flex">
+        <div className="p-5 pb-0">
+          <div className="font-display text-[17px] font-semibold text-ink-0">
+            Intidata CMS
+          </div>
         </div>
-        <nav className="mt-8 flex flex-1 flex-col gap-6">
+
+        <nav className="mt-8 flex-1 space-y-6 overflow-y-auto px-5 pb-4">
           {navGroups.map((group) => {
             const visibleItems = group.items.filter((item) =>
               item.roles.includes(user.role),
@@ -144,8 +152,9 @@ function AdminShellInner({
             );
           })}
         </nav>
-        <div className="mt-auto">
-          <div className="flex items-center gap-3 border-t border-(--panel-border) pt-4">
+
+        <div className="shrink-0 border-t border-(--panel-border) p-5">
+          <div className="flex items-center gap-3">
             {user.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element -- Supabase storage-hosted path
               <img
