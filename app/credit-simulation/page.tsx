@@ -9,7 +9,6 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { FloatingActions } from "@/components/floating-actions";
 
-// Maximum Loan Limit: 100 Trillion (100,000,000,000,000)
 const MAX_AMOUNT = 100000000000000;
 
 export default function CreditSimulationPage() {
@@ -22,14 +21,12 @@ export default function CreditSimulationPage() {
   const [totalInterest, setTotalInterest] = useState<number>(0);
   const [totalPayment, setTotalPayment] = useState<number>(0);
 
-  // Number Formatter
   const formatNumber = (val: number): string => {
     return new Intl.NumberFormat("en-US", {
       maximumFractionDigits: 0,
     }).format(val);
   };
 
-  // Helper function to sanitize input string & enforce MAX_AMOUNT limit
   const parseAndClampNumber = (val: string): number => {
     const cleanStr = val.replace(/,/g, "").replace(/[^\d]/g, "");
     if (!cleanStr) return 0;
@@ -37,7 +34,6 @@ export default function CreditSimulationPage() {
     let parsed = parseFloat(cleanStr);
     if (isNaN(parsed)) return 0;
     
-    // Apply Maximum Limit of 100 Trillion
     if (parsed > MAX_AMOUNT) {
       parsed = MAX_AMOUNT;
     }

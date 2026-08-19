@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import { Nav } from "@/components/nav";
@@ -56,6 +56,29 @@ export default function ContactPage() {
   const recaptchaRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<number | null>(null);
 
+  const renderRecaptcha = useCallback(() => {
+    if (
+      typeof window !== "undefined" &&
+      (window as any).grecaptcha &&
+      (window as any).grecaptcha.render &&
+      recaptchaRef.current &&
+      recaptchaRef.current.innerHTML === ""
+    ) {
+      try {
+        widgetIdRef.current = (window as any).grecaptcha.render(
+          recaptchaRef.current,
+          {
+            sitekey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+            callback: "onRecaptchaVerify",
+            "expired-callback": "onRecaptchaExpire",
+          },
+        );
+      } catch (error) {
+        console.error("Failed to render reCAPTCHA:", error);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     // Register global callbacks for reCAPTCHA
     (window as any).onRecaptchaVerify = (token: string) => {
@@ -63,29 +86,6 @@ export default function ContactPage() {
     };
     (window as any).onRecaptchaExpire = () => {
       setCaptchaToken(null);
-    };
-
-    const renderRecaptcha = () => {
-      if (
-        typeof window !== "undefined" &&
-        (window as any).grecaptcha &&
-        (window as any).grecaptcha.render &&
-        recaptchaRef.current &&
-        recaptchaRef.current.innerHTML === ""
-      ) {
-        try {
-          widgetIdRef.current = (window as any).grecaptcha.render(
-            recaptchaRef.current,
-            {
-              sitekey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-              callback: "onRecaptchaVerify",
-              "expired-callback": "onRecaptchaExpire",
-            },
-          );
-        } catch (error) {
-          console.error("Failed to render reCAPTCHA:", error);
-        }
-      }
     };
 
     // If script was already loaded (SPA navigation back to contact page)
@@ -97,7 +97,20 @@ export default function ContactPage() {
         renderRecaptcha();
       };
     }
-  }, []);
+  }, [renderRecaptcha]);
+
+  // Re-render reCAPTCHA when user clicks "Send another message"
+  useEffect(() => {
+    if (!submitted) {
+      const timer = setTimeout(() => {
+        if ((window as any).grecaptcha?.render) {
+          renderRecaptcha();
+        }
+      }, 50);
+
+      return () => clearTimeout(timer);
+    }
+  }, [submitted, renderRecaptcha]);
 
   const resetCaptcha = () => {
     setCaptchaToken(null);
@@ -334,6 +347,7 @@ export default function ContactPage() {
                         type="text"
                         placeholder="Your full name"
                         value={form.fullName}
+                        maxLength={50}
                         onChange={(e) => update("fullName", e.target.value)}
                         className={inputClass}
                         required
@@ -346,9 +360,18 @@ export default function ContactPage() {
                         <FieldLabel>Phone Number</FieldLabel>
                         <input
                           type="tel"
+                          inputMode="numeric"
                           placeholder="Your phone number"
                           value={form.phone}
-                          onChange={(e) => update("phone", e.target.value)}
+                          maxLength={15}
+                          onChange={(e) => {
+                            // Hapus karakter apa pun yang bukan angka (0-9)
+                            const numericValue = e.target.value.replace(
+                              /[^0-9]/g,
+                              "",
+                            );
+                            update("phone", numericValue);
+                          }}
                           className={inputClass}
                           disabled={isSubmitting}
                         />
@@ -359,6 +382,7 @@ export default function ContactPage() {
                           type="email"
                           placeholder="Your email address"
                           value={form.email}
+                          maxLength={70}
                           onChange={(e) => update("email", e.target.value)}
                           className={inputClass}
                           required
@@ -372,6 +396,7 @@ export default function ContactPage() {
                       <textarea
                         placeholder="Write a message"
                         value={form.message}
+                        maxLength={500}
                         onChange={(e) => update("message", e.target.value)}
                         rows={4}
                         className={`${inputClass} resize-none`}
