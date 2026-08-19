@@ -57,6 +57,32 @@ html {
 }
 
 /* ---------- admin dashboard dark mode ---------- */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--void);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(17, 24, 39, 0.18);
+  border-radius: 99px;
+  border: 2px solid var(--void);
+}
+
+.admin-shell.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+}
+.admin-shell.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Firefox */
+.admin-shell.dark {
+  scrollbar-color: rgba(255, 255, 255, 0.18) var(--void);
+}
+
+
 .admin-shell.dark {
   --void: #0e1020;
   --surface: #171a2e;

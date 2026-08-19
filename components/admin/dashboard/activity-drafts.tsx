@@ -47,14 +47,19 @@ function Modal({
   children: React.ReactNode;
 }) {
   useLockBodyScroll(true);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  const [portalTarget, setPortalTarget] = useState<Element | null>(null);
+  useEffect(() => {
+    // Portal into ".admin-shell" (not document.body) so the modal stays
+    // inside the element AdminThemeProvider toggles the "dark" class on.
+    // Portaling straight to <body> escapes that scope, which is why the
+    // modal always rendered with light-mode CSS variables regardless of
+    // the user's Settings → Appearance choice. ".admin-shell" has no CSS
+    // transform, so "fixed" positioning still anchors to the real
+    // viewport exactly like portaling to <body> did.
+    setPortalTarget(document.querySelector(".admin-shell"));
+  }, []);
+  if (!portalTarget) return null;
 
-  // Rendered via portal straight into <body> — this is required so
-  // "fixed" actually anchors to the real viewport instead of whatever
-  // transformed ancestor (e.g. a Framer Motion parent) happens to sit
-  // above this component in the tree.
   return createPortal(
     <motion.div
       initial={{ opacity: 0 }}
@@ -81,7 +86,7 @@ function Modal({
         <div className="min-h-0 flex-1 overflow-y-auto p-6">{children}</div>
       </motion.div>
     </motion.div>,
-    document.body
+    portalTarget
   );
 }
 

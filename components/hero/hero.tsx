@@ -487,7 +487,7 @@ export function Hero() {
 
       {/* stats row */}
       <div className="container-x relative mt-16">
-        <div className="relative overflow-hidden left-5 rounded-2xl border border-[var(--panel-border)] bg-panel">
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--panel-border)] bg-panel">
           <div className="grid-texture pointer-events-none absolute inset-0 opacity-40" />
           <motion.div
             aria-hidden
