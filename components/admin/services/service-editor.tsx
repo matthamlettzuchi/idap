@@ -45,6 +45,7 @@ import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
 import { LimitedInput } from "@/components/admin/ui/limited-input";
 import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
+import { SuccessToast } from "@/components/admin/ui/success-toast";
 import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { slugify } from "@/lib/admin/slugify";
 import {
@@ -198,11 +199,15 @@ function fieldClass(extra = "") {
 // checked here. Any single field or list item over its limit blocks Save.
 function computeOverLimit(form: AdminServiceRow): boolean {
   const highlightsOver = (form.highlights ?? []).some(
-    (h) => h.title.length > FIELD_LIMITS.featureTitle || h.desc.length > FIELD_LIMITS.featureBody
+    (h) =>
+      h.title.length > FIELD_LIMITS.featureTitle ||
+      h.desc.length > FIELD_LIMITS.featureBody,
   );
 
   const gridItemsOver = (form.grid_section?.items ?? []).some(
-    (i) => i.title.length > FIELD_LIMITS.featureTitle || i.desc.length > FIELD_LIMITS.featureBody
+    (i) =>
+      i.title.length > FIELD_LIMITS.featureTitle ||
+      i.desc.length > FIELD_LIMITS.featureBody,
   );
   const gridSectionOver =
     !!form.grid_section &&
@@ -212,7 +217,7 @@ function computeOverLimit(form: AdminServiceRow): boolean {
       gridItemsOver);
 
   const techGroupsOver = (form.tech_stack?.groups ?? []).some(
-    (g) => g.label.length > FIELD_LIMITS.techGroupLabel
+    (g) => g.label.length > FIELD_LIMITS.techGroupLabel,
   );
   const techStackOver =
     !!form.tech_stack &&
@@ -224,7 +229,7 @@ function computeOverLimit(form: AdminServiceRow): boolean {
   const processOver = (form.process ?? []).some(
     (p) =>
       p.title.length > FIELD_LIMITS.processStepTitle ||
-      p.desc.length > FIELD_LIMITS.processStepBody
+      p.desc.length > FIELD_LIMITS.processStepBody,
   );
 
   return (
@@ -234,7 +239,9 @@ function computeOverLimit(form: AdminServiceRow): boolean {
     form.nav_desc.length > FIELD_LIMITS.navDesc ||
     form.hero_title.length > FIELD_LIMITS.heroTitle ||
     form.hero_desc.length > FIELD_LIMITS.heroDesc ||
-    (form.hero_float_icons ?? []).some((i) => i.length > FIELD_LIMITS.shortLabel) ||
+    (form.hero_float_icons ?? []).some(
+      (i) => i.length > FIELD_LIMITS.shortLabel,
+    ) ||
     highlightsOver ||
     gridSectionOver ||
     techStackOver ||
@@ -254,7 +261,13 @@ export function ServiceEditor({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const router = useRouter();
+
+  // Snapshot of the last-saved (or initially-loaded) form, used to detect
+  // unsaved changes — the Save button stays disabled until it diverges.
+  const baselineRef = useRef(JSON.stringify(service ?? emptyService));
+  const isDirty = JSON.stringify(form) !== baselineRef.current;
 
   const overLimit = computeOverLimit(form);
 
@@ -271,16 +284,20 @@ export function ServiceEditor({
   }
 
   function handleSave() {
-    if (overLimit) return;
+    if (overLimit || !isDirty) return;
     setError(null);
     startTransition(async () => {
       try {
         if (isNew) {
           if (!form.slug) throw new Error("Slug wajib diisi.");
           const { slug } = await createService(form);
+          setToastMsg("Service created successfully.");
+          baselineRef.current = JSON.stringify(form);
           router.push(`/admin/services/${slug}`);
         } else {
           await updateService(form.slug, form);
+          setToastMsg("Service saved successfully.");
+          baselineRef.current = JSON.stringify(form);
           setSavedAt(new Date());
         }
       } catch (err) {
@@ -330,7 +347,7 @@ export function ServiceEditor({
           )}
           <button
             onClick={handleSave}
-            disabled={pending || overLimit}
+            disabled={pending || overLimit || !isDirty}
             className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           >
             {pending ? "Saving..." : isNew ? "Create Service" : "Save"}
@@ -674,12 +691,16 @@ export function ServiceEditor({
                           ...item,
                           items: e.target.value
                             .split(",")
-                            .map((s) => s.trim().slice(0, FIELD_LIMITS.techItem))
+                            .map((s) =>
+                              s.trim().slice(0, FIELD_LIMITS.techItem),
+                            )
                             .filter(Boolean),
                         })
                       }
                       placeholder="React, Next.js, Tailwind (pisahkan koma)"
-                      className={fieldClass("bg-panel text-[12.5px] text-ink-1")}
+                      className={fieldClass(
+                        "bg-panel text-[12.5px] text-ink-1",
+                      )}
                     />
                     <p className="text-[10.5px] text-ink-3">
                       Each item is capped at {FIELD_LIMITS.techItem} characters.
@@ -756,12 +777,18 @@ export function ServiceEditor({
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : isNew ? "Create Service" : "Save Changes"}
         </button>
       </div>
+
+      <SuccessToast
+        message={toastMsg ?? ""}
+        show={toastMsg !== null}
+        onClose={() => setToastMsg(null)}
+      />
     </div>
   );
 }

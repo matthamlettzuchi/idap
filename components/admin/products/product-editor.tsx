@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Building2,
@@ -122,6 +122,12 @@ export function ProductEditor({
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
 
+  // Snapshot of the last-saved (or initially-loaded) form, used to detect
+  // unsaved changes. Updated after every successful save so the Save
+  // button goes back to disabled until the form is touched again.
+  const baselineRef = useRef(JSON.stringify(product ?? emptyProduct));
+  const isDirty = JSON.stringify(form) !== baselineRef.current;
+
   const overLimit = computeOverLimit(form);
 
   function set<K extends keyof AdminProductRow>(
@@ -137,7 +143,7 @@ export function ProductEditor({
   }
 
   function handleSave() {
-    if (overLimit) return;
+    if (overLimit || !isDirty) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -145,10 +151,12 @@ export function ProductEditor({
           if (!form.slug) throw new Error("Slug wajib diisi.");
           const { slug } = await createProduct(form);
           setToastMsg("Product created successfully.");
+          baselineRef.current = JSON.stringify(form);
           router.push(`/admin/products/${slug}`);
         } else {
           await updateProduct(form.slug, form);
           setToastMsg("Product saved successfully.");
+          baselineRef.current = JSON.stringify(form);
           setSavedAt(new Date());
         }
       } catch (err) {
@@ -196,7 +204,7 @@ export function ProductEditor({
           )}
           <button
             onClick={handleSave}
-            disabled={pending || overLimit}
+            disabled={pending || overLimit || !isDirty}
             className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
           >
             {pending ? "Saving..." : isNew ? "Create Product" : "Save"}
@@ -610,7 +618,7 @@ export function ProductEditor({
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : isNew ? "Create Product" : "Save Changes"}

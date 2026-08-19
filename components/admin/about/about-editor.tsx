@@ -209,6 +209,27 @@ function computeOverLimit(
   );
 }
 
+// Combines every editable slice of the page into one comparable snapshot,
+// so a single JSON.stringify diff against the last-saved snapshot tells us
+// whether ANYTHING on the page changed — used to enable/disable Save.
+function snapshot(
+  content: AdminAboutContentRow,
+  coreValues: AdminAboutCoreValue[],
+  industries: AdminAboutIndustry[],
+  journey: AdminAboutJourneyStep[],
+  principles: AdminAboutPrinciple[],
+  processSteps: AdminAboutProcessStep[],
+) {
+  return JSON.stringify({
+    content,
+    coreValues,
+    industries,
+    journey,
+    principles,
+    processSteps,
+  });
+}
+
 export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
   const [content, setContent] = useState<AdminAboutContentRow>(initial.content);
   const [coreValues, setCoreValues] = useState<AdminAboutCoreValue[]>(
@@ -233,6 +254,22 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const router = useRouter();
 
+  // Snapshot of the last-saved (or initially-loaded) page, used to detect
+  // unsaved changes — Save stays disabled until something actually changes.
+  const baselineRef = useRef(
+    snapshot(
+      initial.content,
+      initial.coreValues,
+      initial.industries,
+      initial.journey,
+      initial.principles,
+      initial.processSteps,
+    ),
+  );
+  const isDirty =
+    snapshot(content, coreValues, industries, journey, principles, processSteps) !==
+    baselineRef.current;
+
   const overLimit = computeOverLimit(
     content,
     coreValues,
@@ -250,7 +287,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
   }
 
   function handleSave() {
-    if (overLimit) return;
+    if (overLimit || !isDirty) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -262,6 +299,14 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           principles,
           processSteps,
         });
+        baselineRef.current = snapshot(
+          content,
+          coreValues,
+          industries,
+          journey,
+          principles,
+          processSteps,
+        );
         setSavedAt(new Date());
         setToastMsg("About Us page saved successfully.")
         router.refresh();
@@ -286,7 +331,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
         )}
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
@@ -651,7 +696,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
