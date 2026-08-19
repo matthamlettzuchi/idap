@@ -438,7 +438,7 @@ export function Hero() {
               ease: [0.22, 1, 0.36, 1],
               delay: 0.15,
             }}
-            className="absolute bottom-4 left-72 sm:left-85 md:left-113 z-0 h-[280px] w-[280px] -translate-x-[200px] rounded-full sm:h-[360px] sm:w-[360px] lg:left-[42%] lg:h-[420px] lg:w-[420px]"
+            className="absolute bottom-4 left-1/2 z-0 h-[280px] w-[280px] -translate-x-1/2 rounded-full sm:left-85 sm:h-[360px] sm:w-[360px] sm:-translate-x-[200px] md:left-113 lg:left-[42%] lg:h-[420px] lg:w-[420px]"
             style={{
               background:
                 activeTheme?.blobGradient ??
