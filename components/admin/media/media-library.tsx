@@ -42,6 +42,8 @@ const BUCKET_INFO: Record<
   },
 };
 
+const MAX_UPLOAD_BYTES = 1 * 1024 * 1024; // 1 MB
+
 const IMAGE_EXT = /\.(png|jpe?g|gif|webp|svg|avif)$/i;
 
 function formatBytes(bytes: number | null) {
@@ -136,21 +138,51 @@ export function MediaLibrary() {
     const fileList = e.target.files;
     if (!fileList || fileList.length === 0) return;
 
+    const files = Array.from(fileList);
+    const oversized = files.filter((f) => f.size > MAX_UPLOAD_BYTES);
+    const uploadable = files.filter((f) => f.size <= MAX_UPLOAD_BYTES);
+
+    if (oversized.length > 0) {
+      alert(
+        `${oversized.length} file${oversized.length > 1 ? "s" : ""} over the 1 MB limit ` +
+          `and ${oversized.length > 1 ? "were" : "was"} not uploaded:\n` +
+          oversized
+            .map((f) => `• ${f.name} (${formatBytes(f.size)})`)
+            .join("\n"),
+      );
+    }
+
+    if (uploadable.length === 0) {
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     setUploading(true);
     const folder = uploadFolder.trim().replace(/^\/+|\/+$/g, "");
 
-    for (const file of Array.from(fileList)) {
+    let successCount = 0;
+    for (const file of uploadable) {
       const cleanName = `${Date.now()}-${file.name.replace(/\s+/g, "-")}`;
       const path = folder ? `${folder}/${cleanName}` : cleanName;
       const { error } = await supabase.storage
         .from(activeBucket)
         .upload(path, file);
-      if (error) alert(`Failed to upload ${file.name}: ${error.message}`);
+      if (error) {
+        alert(`Failed to upload ${file.name}: ${error.message}`);
+      } else {
+        successCount += 1;
+      }
     }
 
     setUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
     await loadFiles(activeBucket);
+
+    if (successCount > 0) {
+      alert(
+        `${successCount} file${successCount > 1 ? "s" : ""} uploaded successfully to "${activeBucket}".`,
+      );
+    }
   }
 
   async function handleDelete(path: string) {
@@ -240,9 +272,10 @@ export function MediaLibrary() {
         <label
           className="flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-4 py-2 text-[13px] font-medium text-white"
           style={{ background: info.accent }}
+          title="Max file size: 1 MB"
         >
           <Upload size={14} />
-          {uploading ? "Uploading..." : "Upload"}
+          {uploading ? "Uploading..." : "Upload (max 1 MB)"}
           <input
             ref={fileInputRef}
             type="file"

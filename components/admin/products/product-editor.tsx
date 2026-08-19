@@ -2,7 +2,13 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, TrendingUp, Calculator, FileSpreadsheet, Sprout } from "lucide-react";
+import {
+  Building2,
+  TrendingUp,
+  Calculator,
+  FileSpreadsheet,
+  Sprout,
+} from "lucide-react";
 import { ImageField } from "@/components/admin/ui/image-field";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { ConfirmButton } from "@/components/admin/ui/confirm-dialog";
@@ -21,8 +27,12 @@ import type {
   ProductFeature,
   ProductMetric,
 } from "@/lib/admin/products";
+import { SuccessToast } from "../ui/success-toast";
 
-const iconOptions: { value: AdminProductRow["icon"]; Icon: typeof Building2 }[] = [
+const iconOptions: {
+  value: AdminProductRow["icon"];
+  Icon: typeof Building2;
+}[] = [
   { value: "Building2", Icon: Building2 },
   { value: "TrendingUp", Icon: TrendingUp },
   { value: "Calculator", Icon: Calculator },
@@ -76,26 +86,35 @@ function computeOverLimit(form: AdminProductRow): boolean {
     form.advantages.some(
       (a) =>
         a.title.length > FIELD_LIMITS.advantageTitle ||
-        (a.subtitle?.length ?? 0) > FIELD_LIMITS.advantageSubtitle
+        (a.subtitle?.length ?? 0) > FIELD_LIMITS.advantageSubtitle,
     ) ||
     (form.process_intro?.heading.length ?? 0) > FIELD_LIMITS.processStepTitle ||
     (form.process_intro?.body.length ?? 0) > FIELD_LIMITS.longText ||
     (form.features_intro?.length ?? 0) > FIELD_LIMITS.longText ||
     form.features.some(
-      (f) => f.title.length > FIELD_LIMITS.featureTitle || f.body.length > FIELD_LIMITS.featureBody
+      (f) =>
+        f.title.length > FIELD_LIMITS.featureTitle ||
+        f.body.length > FIELD_LIMITS.featureBody,
     ) ||
     (form.home_summary?.length ?? 0) > FIELD_LIMITS.mediumLabel ||
     (form.home_description?.length ?? 0) > FIELD_LIMITS.longText ||
     (form.home_metrics ?? []).some(
-      (m) => m.label.length > FIELD_LIMITS.shortLabel || m.value.length > FIELD_LIMITS.shortLabel
+      (m) =>
+        m.label.length > FIELD_LIMITS.shortLabel ||
+        m.value.length > FIELD_LIMITS.shortLabel,
     ) ||
     (form.home_modules ?? []).some((m) => m.length > FIELD_LIMITS.shortLabel);
 
   return over;
 }
 
-export function ProductEditor({ product }: { product: AdminProductRow | null }) {
+export function ProductEditor({
+  product,
+}: {
+  product: AdminProductRow | null;
+}) {
   const isNew = product === null;
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [form, setForm] = useState<AdminProductRow>(product ?? emptyProduct);
   const [slugTouched, setSlugTouched] = useState(!isNew);
   const [pending, startTransition] = useTransition();
@@ -105,7 +124,10 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
 
   const overLimit = computeOverLimit(form);
 
-  function set<K extends keyof AdminProductRow>(key: K, value: AdminProductRow[K]) {
+  function set<K extends keyof AdminProductRow>(
+    key: K,
+    value: AdminProductRow[K],
+  ) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -122,9 +144,11 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
         if (isNew) {
           if (!form.slug) throw new Error("Slug wajib diisi.");
           const { slug } = await createProduct(form);
+          setToastMsg("Product created successfully.");
           router.push(`/admin/products/${slug}`);
         } else {
           await updateProduct(form.slug, form);
+          setToastMsg("Product saved successfully.");
           setSavedAt(new Date());
         }
       } catch (err) {
@@ -147,11 +171,15 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           <h1 className="font-display text-[22px] font-semibold text-ink-0">
             {isNew ? "New Product" : form.name || form.slug}
           </h1>
-          {!isNew && <p className="mt-1 text-[12.5px] text-ink-2">/{form.slug}</p>}
+          {!isNew && (
+            <p className="mt-1 text-[12.5px] text-ink-2">/{form.slug}</p>
+          )}
         </div>
         <div className="flex items-center gap-3">
           {savedAt && (
-            <span className="text-[12px] text-ink-2">Saved {savedAt.toLocaleTimeString()}</span>
+            <span className="text-[12px] text-ink-2">
+              Saved {savedAt.toLocaleTimeString()}
+            </span>
           )}
           {overLimit && (
             <span className="text-[12px] font-medium text-red-500">
@@ -213,7 +241,9 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
             placeholder="FIS-MF"
           />
           <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Sort Order</label>
+            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
+              Sort Order
+            </label>
             <input
               type="number"
               value={form.sort_order}
@@ -248,10 +278,14 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
             </div>
           </div>
           <div>
-            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">Icon</label>
+            <label className="mb-1.5 block text-[12px] font-medium text-ink-2">
+              Icon
+            </label>
             <select
               value={form.icon}
-              onChange={(e) => set("icon", e.target.value as AdminProductRow["icon"])}
+              onChange={(e) =>
+                set("icon", e.target.value as AdminProductRow["icon"])
+              }
               className={fieldClass()}
             >
               {iconOptions.map((o) => (
@@ -289,7 +323,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
               onChange={(e) =>
                 set(
                   "person_image_scale",
-                  e.target.value === "" ? null : Number(e.target.value)
+                  e.target.value === "" ? null : Number(e.target.value),
                 )
               }
               className={fieldClass()}
@@ -305,7 +339,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
               onChange={(e) =>
                 set(
                   "person_image_offset_x",
-                  e.target.value === "" ? null : Number(e.target.value)
+                  e.target.value === "" ? null : Number(e.target.value),
                 )
               }
               className={fieldClass()}
@@ -321,7 +355,7 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
               onChange={(e) =>
                 set(
                   "person_image_offset_y",
-                  e.target.value === "" ? null : Number(e.target.value)
+                  e.target.value === "" ? null : Number(e.target.value),
                 )
               }
               className={fieldClass()}
@@ -411,7 +445,10 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
               type="checkbox"
               checked={form.process_intro !== null}
               onChange={(e) =>
-                set("process_intro", e.target.checked ? { heading: "", body: "" } : null)
+                set(
+                  "process_intro",
+                  e.target.checked ? { heading: "", body: "" } : null,
+                )
               }
             />
             Tampilkan section
@@ -423,7 +460,10 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
               maxLength={FIELD_LIMITS.processStepTitle}
               value={form.process_intro.heading}
               onChange={(e) =>
-                set("process_intro", { ...form.process_intro!, heading: e.target.value })
+                set("process_intro", {
+                  ...form.process_intro!,
+                  heading: e.target.value,
+                })
               }
               placeholder="Heading"
             />
@@ -431,7 +471,10 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
               maxLength={FIELD_LIMITS.longText}
               value={form.process_intro.body}
               onChange={(e) =>
-                set("process_intro", { ...form.process_intro!, body: e.target.value })
+                set("process_intro", {
+                  ...form.process_intro!,
+                  body: e.target.value,
+                })
               }
               rows={3}
               placeholder="Body"
@@ -494,8 +537,9 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
       <section className="space-y-4 rounded-xl border border-(--panel-border) bg-panel p-6">
         <div className="mono-label">Homepage Product Card</div>
         <p className="text-[12px] text-ink-2">
-          Bagian ini menentukan apakah produk muncul di kartu &quot;Products&quot; di homepage.
-          Kosongkan Summary/Description untuk menyembunyikannya dari homepage.
+          Bagian ini menentukan apakah produk muncul di kartu
+          &quot;Products&quot; di homepage. Kosongkan Summary/Description untuk
+          menyembunyikannya dari homepage.
         </p>
         <LimitedInput
           label="Home Summary"
@@ -511,7 +555,9 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           rows={3}
         />
         <div>
-          <div className="mb-2 text-[12px] font-medium text-ink-2">Home Metrics</div>
+          <div className="mb-2 text-[12px] font-medium text-ink-2">
+            Home Metrics
+          </div>
           <ListFieldEditor
             items={form.home_metrics ?? []}
             onChange={(v) => set("home_metrics", v)}
@@ -539,7 +585,9 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           />
         </div>
         <div>
-          <div className="mb-2 text-[12px] font-medium text-ink-2">Home Modules</div>
+          <div className="mb-2 text-[12px] font-medium text-ink-2">
+            Home Modules
+          </div>
           <ListFieldEditor
             items={form.home_modules ?? []}
             onChange={(v) => set("home_modules", v)}
@@ -568,6 +616,11 @@ export function ProductEditor({ product }: { product: AdminProductRow | null }) 
           {pending ? "Saving..." : isNew ? "Create Product" : "Save Changes"}
         </button>
       </div>
+      <SuccessToast
+        message={toastMsg ?? ""}
+        show={toastMsg !== null}
+        onClose={() => setToastMsg(null)}
+      />
     </div>
   );
 }

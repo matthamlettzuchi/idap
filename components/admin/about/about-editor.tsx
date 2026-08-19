@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { SuccessToast } from "@/components/admin/ui/success-toast";
 import {
   Search,
   PenTool,
@@ -45,10 +46,10 @@ const iconOptions: { value: AboutIconName; Icon: LucideIcon }[] = [
   { value: "Sprout", Icon: Sprout },
   { value: "Landmark", Icon: Landmark },
 ];
-const iconMap = Object.fromEntries(iconOptions.map((o) => [o.value, o.Icon])) as Record<
-  AboutIconName,
-  LucideIcon
->;
+
+const iconMap = Object.fromEntries(
+  iconOptions.map((o) => [o.value, o.Icon]),
+) as Record<AboutIconName, LucideIcon>;
 
 function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
@@ -70,7 +71,10 @@ function IconPicker({
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -153,13 +157,17 @@ function computeOverLimit(
   industries: AdminAboutIndustry[],
   journey: AdminAboutJourneyStep[],
   principles: AdminAboutPrinciple[],
-  processSteps: AdminAboutProcessStep[]
+  processSteps: AdminAboutProcessStep[],
 ): boolean {
   const heroStatsOver = content.hero_stats.some(
-    (s) => (s.suffix?.length ?? 0) > FIELD_LIMITS.statSuffix || s.label.length > FIELD_LIMITS.statLabel
+    (s) =>
+      (s.suffix?.length ?? 0) > FIELD_LIMITS.statSuffix ||
+      s.label.length > FIELD_LIMITS.statLabel,
   );
   const visionStatsOver = content.vision_stats.some(
-    (s) => (s.suffix?.length ?? 0) > FIELD_LIMITS.statSuffix || s.label.length > FIELD_LIMITS.statLabel
+    (s) =>
+      (s.suffix?.length ?? 0) > FIELD_LIMITS.statSuffix ||
+      s.label.length > FIELD_LIMITS.statLabel,
   );
 
   return (
@@ -176,42 +184,68 @@ function computeOverLimit(
       (j) =>
         j.era.length > FIELD_LIMITS.journeyEra ||
         j.title.length > FIELD_LIMITS.journeyTitle ||
-        j.body.length > FIELD_LIMITS.journeyBody
+        j.body.length > FIELD_LIMITS.journeyBody,
     ) ||
     coreValues.some(
-      (c) => c.title.length > FIELD_LIMITS.coreValueTitle || c.desc.length > FIELD_LIMITS.coreValueDesc
+      (c) =>
+        c.title.length > FIELD_LIMITS.coreValueTitle ||
+        c.desc.length > FIELD_LIMITS.coreValueDesc,
     ) ||
     industries.some(
-      (i) => i.title.length > FIELD_LIMITS.industryTitle || i.body.length > FIELD_LIMITS.industryBody
+      (i) =>
+        i.title.length > FIELD_LIMITS.industryTitle ||
+        i.body.length > FIELD_LIMITS.industryBody,
     ) ||
     principles.some(
-      (p) => p.label.length > FIELD_LIMITS.principleLabel || p.body.length > FIELD_LIMITS.principleBody
+      (p) =>
+        p.label.length > FIELD_LIMITS.principleLabel ||
+        p.body.length > FIELD_LIMITS.principleBody,
     ) ||
     processSteps.some(
       (p) =>
-        p.label.length > FIELD_LIMITS.processStepTitle || p.body.length > FIELD_LIMITS.processStepBody
+        p.label.length > FIELD_LIMITS.processStepTitle ||
+        p.body.length > FIELD_LIMITS.processStepBody,
     )
   );
 }
 
 export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
   const [content, setContent] = useState<AdminAboutContentRow>(initial.content);
-  const [coreValues, setCoreValues] = useState<AdminAboutCoreValue[]>(initial.coreValues);
-  const [industries, setIndustries] = useState<AdminAboutIndustry[]>(initial.industries);
-  const [journey, setJourney] = useState<AdminAboutJourneyStep[]>(initial.journey);
-  const [principles, setPrinciples] = useState<AdminAboutPrinciple[]>(initial.principles);
+  const [coreValues, setCoreValues] = useState<AdminAboutCoreValue[]>(
+    initial.coreValues,
+  );
+  const [industries, setIndustries] = useState<AdminAboutIndustry[]>(
+    initial.industries,
+  );
+  const [journey, setJourney] = useState<AdminAboutJourneyStep[]>(
+    initial.journey,
+  );
+  const [principles, setPrinciples] = useState<AdminAboutPrinciple[]>(
+    initial.principles,
+  );
   const [processSteps, setProcessSteps] = useState<AdminAboutProcessStep[]>(
-    initial.processSteps
+    initial.processSteps,
   );
 
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const router = useRouter();
 
-  const overLimit = computeOverLimit(content, coreValues, industries, journey, principles, processSteps);
+  const overLimit = computeOverLimit(
+    content,
+    coreValues,
+    industries,
+    journey,
+    principles,
+    processSteps,
+  );
 
-  function setC<K extends keyof AdminAboutContentRow>(key: K, value: AdminAboutContentRow[K]) {
+  function setC<K extends keyof AdminAboutContentRow>(
+    key: K,
+    value: AdminAboutContentRow[K],
+  ) {
     setContent((prev) => ({ ...prev, [key]: value }));
   }
 
@@ -229,6 +263,7 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           processSteps,
         });
         setSavedAt(new Date());
+        setToastMsg("About Us page saved successfully.")
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Gagal menyimpan.");
@@ -240,7 +275,9 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
     <div className="max-w-4xl space-y-8 pb-16">
       <div className="sticky top-0 z-30 -mx-6 flex items-center justify-end gap-3 border-b border-(--panel-border) bg-void/90 px-6 py-3 backdrop-blur-sm sm:-mx-10 sm:px-10">
         {savedAt && (
-          <span className="text-[12px] text-ink-2">Saved {savedAt.toLocaleTimeString()}</span>
+          <span className="text-[12px] text-ink-2">
+            Saved {savedAt.toLocaleTimeString()}
+          </span>
         )}
         {overLimit && (
           <span className="text-[12px] font-medium text-red-500">
@@ -305,14 +342,23 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
             items={content.hero_stats}
             onChange={(v) => setC("hero_stats", v)}
             maxItems={MAX_ITEMS.heroStats}
-            newItem={() => ({ value: 0, suffix: "+", label: "", color: "text-signal-teal" }) as AboutHeroStat}
+            newItem={() =>
+              ({
+                value: 0,
+                suffix: "+",
+                label: "",
+                color: "text-signal-teal",
+              }) as AboutHeroStat
+            }
             addLabel="Add hero stat"
             renderItem={(item, update) => (
               <div className="grid grid-cols-3 gap-2">
                 <input
                   type="number"
                   value={item.value}
-                  onChange={(e) => update({ ...item, value: Number(e.target.value) })}
+                  onChange={(e) =>
+                    update({ ...item, value: Number(e.target.value) })
+                  }
                   placeholder="30"
                   className={fieldClass("bg-panel")}
                 />
@@ -346,7 +392,9 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           rows={3}
         />
         <div>
-          <div className="mb-2 text-[12px] font-medium text-ink-2">Vision Stats</div>
+          <div className="mb-2 text-[12px] font-medium text-ink-2">
+            Vision Stats
+          </div>
           <ListFieldEditor
             items={content.vision_stats}
             onChange={(v) => setC("vision_stats", v)}
@@ -358,7 +406,9 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
                 <input
                   type="number"
                   value={item.value}
-                  onChange={(e) => update({ ...item, value: Number(e.target.value) })}
+                  onChange={(e) =>
+                    update({ ...item, value: Number(e.target.value) })
+                  }
                   placeholder="25"
                   className={fieldClass("bg-panel")}
                 />
@@ -381,7 +431,9 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           />
         </div>
         <div>
-          <div className="mb-2 text-[12px] font-medium text-ink-2">Mission Points</div>
+          <div className="mb-2 text-[12px] font-medium text-ink-2">
+            Mission Points
+          </div>
           <ListFieldEditor
             items={content.mission_points}
             onChange={(v) => setC("mission_points", v)}
@@ -423,12 +475,17 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
       </SectionCard>
 
       {/* JOURNEY */}
-      <SectionCard title="Our Journey" desc="Timeline vertikal di halaman About.">
+      <SectionCard
+        title="Our Journey"
+        desc="Timeline vertikal di halaman About."
+      >
         <ListFieldEditor
           items={journey}
           onChange={setJourney}
           maxItems={MAX_ITEMS.journeySteps}
-          newItem={() => ({ era: "", title: "", body: "" }) as AdminAboutJourneyStep}
+          newItem={() =>
+            ({ era: "", title: "", body: "" }) as AdminAboutJourneyStep
+          }
           addLabel="Add journey step"
           renderItem={(item, update) => (
             <div className="space-y-2">
@@ -495,11 +552,16 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           items={processSteps}
           onChange={setProcessSteps}
           maxItems={MAX_ITEMS.processSteps}
-          newItem={() => ({ icon: "Search", label: "", body: "" }) as AdminAboutProcessStep}
+          newItem={() =>
+            ({ icon: "Search", label: "", body: "" }) as AdminAboutProcessStep
+          }
           addLabel="Add process step"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <IconPicker value={item.icon} onChange={(icon) => update({ ...item, icon })} />
+              <IconPicker
+                value={item.icon}
+                onChange={(icon) => update({ ...item, icon })}
+              />
               <LimitedInput
                 maxLength={FIELD_LIMITS.processStepTitle}
                 value={item.label}
@@ -526,11 +588,16 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           items={industries}
           onChange={setIndustries}
           maxItems={MAX_ITEMS.industries}
-          newItem={() => ({ icon: "Building2", title: "", body: "" }) as AdminAboutIndustry}
+          newItem={() =>
+            ({ icon: "Building2", title: "", body: "" }) as AdminAboutIndustry
+          }
           addLabel="Add industry"
           renderItem={(item, update) => (
             <div className="space-y-2">
-              <IconPicker value={item.icon} onChange={(icon) => update({ ...item, icon })} />
+              <IconPicker
+                value={item.icon}
+                onChange={(icon) => update({ ...item, icon })}
+              />
               <LimitedInput
                 maxLength={FIELD_LIMITS.industryTitle}
                 value={item.title}
@@ -590,6 +657,12 @@ export function AboutEditor({ initial }: { initial: AdminAboutPage }) {
           {pending ? "Saving..." : "Save Changes"}
         </button>
       </div>
+
+      <SuccessToast
+        message={toastMsg ?? ""}
+        show={toastMsg !== null}
+        onClose={() => setToastMsg(null)}
+      />
     </div>
   );
 }

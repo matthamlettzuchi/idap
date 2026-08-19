@@ -19,6 +19,7 @@ import type {
   AdminTestimonial,
   AdminSiteContact,
 } from "@/lib/admin/home";
+import { SuccessToast } from "../ui/success-toast";
 
 function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
@@ -204,7 +205,9 @@ function computeOverLimit(
 ): boolean {
   return (
     heroStats.some(
-      (s) => s.suffix.length > FIELD_LIMITS.statSuffix || s.label.length > FIELD_LIMITS.statLabel
+      (s) =>
+        s.suffix.length > FIELD_LIMITS.statSuffix ||
+        s.label.length > FIELD_LIMITS.statLabel,
     ) ||
     heroThemes.some(
       (t) =>
@@ -213,14 +216,14 @@ function computeOverLimit(
         t.character_alt.length > FIELD_LIMITS.characterAlt ||
         t.blob_gradient.length > FIELD_LIMITS.cssGradient ||
         t.background_wash.length > FIELD_LIMITS.cssGradient ||
-        t.greeting.length > FIELD_LIMITS.greeting
+        t.greeting.length > FIELD_LIMITS.greeting,
     ) ||
     seasonalThemes.some(
       (t) =>
         t.id.length > FIELD_LIMITS.entityId ||
         t.label.length > FIELD_LIMITS.themeLabel ||
         t.envelope_title.length > FIELD_LIMITS.envelopeTitle ||
-        t.envelope_message.length > FIELD_LIMITS.envelopeMessage
+        t.envelope_message.length > FIELD_LIMITS.envelopeMessage,
     ) ||
     testimonials.some(
       (t) =>
@@ -231,11 +234,13 @@ function computeOverLimit(
         t.role.length > FIELD_LIMITS.testimonialRole ||
         t.company.length > FIELD_LIMITS.testimonialCompany ||
         t.initials.length > FIELD_LIMITS.testimonialInitials ||
-        t.video_id.length > FIELD_LIMITS.testimonialVideoId
+        t.video_id.length > FIELD_LIMITS.testimonialVideoId,
     ) ||
     clientLogos.some((c) => c.name.length > FIELD_LIMITS.clientLogoName) ||
     faqs.some(
-      (f) => f.question.length > FIELD_LIMITS.faqQuestion || f.answer.length > FIELD_LIMITS.faqAnswer
+      (f) =>
+        f.question.length > FIELD_LIMITS.faqQuestion ||
+        f.answer.length > FIELD_LIMITS.faqAnswer,
     ) ||
     siteContact.address.length > FIELD_LIMITS.address ||
     siteContact.email.length > FIELD_LIMITS.email ||
@@ -265,6 +270,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
     initial.siteContact,
   );
   const setHeroThemeDefault = makeSetDefault(heroThemes, setHeroThemes);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const setSeasonalThemeDefault = makeSetDefault(
     seasonalThemes,
     setSeasonalThemes,
@@ -307,6 +313,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
           siteContact,
         });
         setSavedAt(new Date());
+        setToastMsg("Home page saved successfully.")
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Gagal menyimpan.");
@@ -947,6 +954,12 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
           {pending ? "Saving..." : "Save Changes"}
         </button>
       </div>
+
+      <SuccessToast
+        message={toastMsg ?? ""}
+        show={toastMsg !== null}
+        onClose={() => setToastMsg(null)}
+      />
     </div>
   );
 }
