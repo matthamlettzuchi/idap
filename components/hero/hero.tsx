@@ -468,7 +468,7 @@ export function Hero() {
               scale: activeTheme?.scale ?? 1,
             }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.35 }}
-            className="relative lg:right-4 z-10 h-[340px] w-auto object-contain object-bottom sm:h-[440px] lg:h-[560px]"
+            className="relative -right-6 lg:right-4 z-10 h-[340px] w-auto object-contain object-bottom sm:h-[440px] lg:h-[560px]"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null;
