@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import { Nav } from "@/components/nav";
@@ -8,6 +8,7 @@ import { Footer } from "@/components/footer";
 import Image from "next/image";
 import { FloatingActions } from "@/components/floating-actions";
 import { storageUrl } from "@/lib/storage";
+import Script from "next/script";
 
 const ACCENT_BLUE = "#2f6fe0";
 
@@ -50,6 +51,16 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    (window as any).onRecaptchaVerify = (token: string) => {
+      setCaptchaToken(token);
+    };
+    (window as any).onRecaptchaExpire = () => {
+      setCaptchaToken(null);
+    };
+  }, []);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -59,6 +70,11 @@ export default function ContactPage() {
     e.preventDefault();
     if (isSubmitting) return;
 
+    if (!captchaToken) {
+      setErrorMessage("Please complete the verification before submitting.");
+      return;
+    }
+
     setErrorMessage(null);
     setIsSubmitting(true);
 
@@ -66,25 +82,29 @@ export default function ContactPage() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, captchaToken }),
       });
 
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok || !data.ok) {
         throw new Error(
-          data?.error ?? "Something went wrong. Please try again."
+          data?.error ?? "Something went wrong. Please try again.",
         );
       }
 
       setSubmitted(true);
       setForm(initialForm);
+      setCaptchaToken(null);
+      (window as any).grecaptcha?.reset();
     } catch (err) {
       setErrorMessage(
         err instanceof Error
           ? err.message
-          : "Something went wrong. Please try again."
+          : "Something went wrong. Please try again.",
       );
+      (window as any).grecaptcha?.reset();
+      setCaptchaToken(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -243,6 +263,10 @@ export default function ContactPage() {
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Honeypot field — hidden from real users, catches simple bots */}
+                    <Script
+                      src="https://www.google.com/recaptcha/api.js"
+                      strategy="lazyOnload"
+                    />
                     <input
                       type="text"
                       name="company"
@@ -306,6 +330,17 @@ export default function ContactPage() {
                       />
                     </div>
 
+                    <div className="flex justify-center">
+                      <div
+                        className="g-recaptcha"
+                        data-sitekey={
+                          process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+                        }
+                        data-callback="onRecaptchaVerify"
+                        data-expired-callback="onRecaptchaExpire"
+                      />
+                    </div>
+
                     {errorMessage && (
                       <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] leading-relaxed text-red-700">
                         <AlertCircle size={16} className="mt-0.5 shrink-0" />
@@ -315,7 +350,7 @@ export default function ContactPage() {
 
                     <button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !captchaToken}
                       className="flex w-full items-center justify-center gap-2 rounded-full py-4 text-[15px] font-bold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
                       style={{ background: ACCENT_BLUE }}
                     >

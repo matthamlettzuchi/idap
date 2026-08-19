@@ -16,7 +16,6 @@ export function FloatingActions() {
 
   return (
     <div className="fixed bottom-6 right-5 z-40 flex flex-col items-end gap-3 sm:bottom-8 sm:right-8">
-      {/* WhatsApp — selalu tampil, nggak tergantung scroll */}
       <motion.a
         href={contact.whatsapp}
         target="_blank"
@@ -31,7 +30,6 @@ export function FloatingActions() {
         <FaWhatsapp size={22} />
       </motion.a>
 
-      {/* Scroll to top — perilaku sama seperti sebelumnya, muncul setelah scroll */}
       <AnimatePresence>
         {scrollButtonVisible && (
           <motion.button

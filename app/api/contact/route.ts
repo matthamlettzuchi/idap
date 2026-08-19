@@ -15,6 +15,7 @@ type ContactPayload = {
   phone?: string;
   email?: string;
   message?: string;
+  captchaToken?: string;
   // honeypot field — real users never fill this in
   company?: string;
 };
@@ -28,6 +29,23 @@ function escapeHtml(value: string) {
     .replace(/'/g, "&#039;");
 }
 
+async function verifyRecaptcha(token: string): Promise<boolean> {
+  const secret = process.env.RECAPTCHA_SECRET_KEY;
+  if (!secret) {
+    console.error("Contact form: missing RECAPTCHA_SECRET_KEY");
+    return false;
+  }
+
+  const res = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ secret, response: token }),
+  });
+
+  const data = await res.json();
+  return data.success === true;
+}
+
 export async function POST(request: Request) {
   let body: ContactPayload;
 
@@ -36,7 +54,23 @@ export async function POST(request: Request) {
   } catch {
     return NextResponse.json(
       { ok: false, error: "Invalid request body." },
-      { status: 400 }
+      { status: 400 },
+    );
+  }
+
+  const captchaToken = (body as any).captchaToken as string | undefined;
+  if (!captchaToken) {
+    return NextResponse.json(
+      { ok: false, error: "Verification token missing." },
+      { status: 400 },
+    );
+  }
+
+  const isHuman = await verifyRecaptcha(captchaToken);
+  if (!isHuman) {
+    return NextResponse.json(
+      { ok: false, error: "Verification failed. Please try again." },
+      { status: 400 },
     );
   }
 
@@ -54,7 +88,7 @@ export async function POST(request: Request) {
   if (!fullName || !email || !message) {
     return NextResponse.json(
       { ok: false, error: "Full name, email, and message are required." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -62,7 +96,7 @@ export async function POST(request: Request) {
   if (!emailPattern.test(email)) {
     return NextResponse.json(
       { ok: false, error: "Please provide a valid email address." },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -76,7 +110,7 @@ export async function POST(request: Request) {
         error:
           "The mail service isn't configured yet. Please try again later or contact us directly.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -118,10 +152,9 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error:
-            "Something went wrong sending your message. Please try again.",
+          error: "Something went wrong sending your message. Please try again.",
         },
-        { status: 502 }
+        { status: 502 },
       );
     }
 
@@ -133,7 +166,7 @@ export async function POST(request: Request) {
         ok: false,
         error: "Something went wrong sending your message. Please try again.",
       },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }

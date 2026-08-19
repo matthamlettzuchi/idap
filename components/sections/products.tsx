@@ -883,7 +883,7 @@ export function Products() {
                         {active.description}
                       </p>
 
-                      <div className="mt-8 flex flex-wrap gap-8">
+                      <div className="mt-8 hidden md:flex md:flex-wrap gap-8">
                         {active.metrics.map((m) => (
                           <div key={m.label}>
                             <div className="font-display text-[19px] font-semibold text-signal-teal">
@@ -896,7 +896,7 @@ export function Products() {
                         ))}
                       </div>
 
-                      <div className="mt-9 flex flex-wrap gap-2.5">
+                      <div className="mt-9 hidden md:flex md:flex-wrap gap-2.5">
                         {active.modules.map((m) => (
                           <span
                             key={m}
