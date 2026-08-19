@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ImageField } from "@/components/admin/ui/image-field";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
@@ -249,6 +249,29 @@ function computeOverLimit(
   );
 }
 
+// Combines every editable slice of the page into one comparable snapshot —
+// same pattern as about-editor.tsx's snapshot() — so a single JSON diff
+// against the last-saved state tells us whether ANYTHING changed.
+function snapshot(
+  heroStats: AdminHeroStat[],
+  heroThemes: AdminHeroTheme[],
+  clientLogos: AdminClientLogo[],
+  faqs: AdminFaq[],
+  seasonalThemes: AdminSeasonalTheme[],
+  testimonials: AdminTestimonial[],
+  siteContact: AdminSiteContact,
+) {
+  return JSON.stringify({
+    heroStats,
+    heroThemes,
+    clientLogos,
+    faqs,
+    seasonalThemes,
+    testimonials,
+    siteContact,
+  });
+}
+
 export function HomeEditor({ initial }: { initial: AdminHomePage }) {
   const [heroStats, setHeroStats] = useState<AdminHeroStat[]>(
     initial.heroStats,
@@ -281,6 +304,30 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
 
+  // Snapshot of the last-saved (or initially-loaded) page — Save stays
+  // disabled until the form actually diverges from this baseline.
+  const baselineRef = useRef(
+    snapshot(
+      initial.heroStats,
+      initial.heroThemes,
+      initial.clientLogos,
+      initial.faqs,
+      initial.seasonalThemes,
+      initial.testimonials,
+      initial.siteContact,
+    ),
+  );
+  const isDirty =
+    snapshot(
+      heroStats,
+      heroThemes,
+      clientLogos,
+      faqs,
+      seasonalThemes,
+      testimonials,
+      siteContact,
+    ) !== baselineRef.current;
+
   const overLimit = computeOverLimit(
     heroStats,
     heroThemes,
@@ -299,7 +346,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
   }
 
   function handleSave() {
-    if (overLimit) return;
+    if (overLimit || !isDirty) return;
     setError(null);
     startTransition(async () => {
       try {
@@ -312,6 +359,15 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
           testimonials,
           siteContact,
         });
+        baselineRef.current = snapshot(
+          heroStats,
+          heroThemes,
+          clientLogos,
+          faqs,
+          seasonalThemes,
+          testimonials,
+          siteContact,
+        );
         setSavedAt(new Date());
         setToastMsg("Home page saved successfully.")
         router.refresh();
@@ -336,7 +392,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
         )}
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
@@ -948,7 +1004,7 @@ export function HomeEditor({ initial }: { initial: AdminHomePage }) {
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}

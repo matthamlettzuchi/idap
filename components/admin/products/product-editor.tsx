@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Building2,
@@ -66,6 +66,27 @@ const emptyProduct: AdminProductRow = {
   home_modules: [],
 };
 
+// Coalesces every nullable list/array field to its non-null equivalent
+// ONCE, up front. Without this, a DB row with e.g. home_metrics: null gets
+// silently rendered as [] via inline "?? []" in JSX, but the underlying
+// form state (and therefore isDirty's comparison) still holds the raw
+// null — the moment anything touches that field it flips null -> [] in
+// state permanently, while the baseline snapshot still says null, so the
+// two strings can never match again even after undoing the change. Doing
+// this coalescing once here means form state and baseline are always
+// built from the exact same normalized shape.
+function normalizeProduct(p: AdminProductRow): AdminProductRow {
+  return {
+    ...p,
+    quick_facts: p.quick_facts ?? [],
+    overview: p.overview ?? [],
+    advantages: p.advantages ?? [],
+    features: p.features ?? [],
+    home_metrics: p.home_metrics ?? [],
+    home_modules: p.home_modules ?? [],
+  };
+}
+
 function fieldClass(extra = "") {
   return `w-full rounded-lg border border-(--panel-border) bg-panel-2 px-3 py-2 text-[13.5px] text-ink-0 outline-none focus:border-signal-teal ${extra}`;
 }
@@ -115,17 +136,29 @@ export function ProductEditor({
 }) {
   const isNew = product === null;
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [form, setForm] = useState<AdminProductRow>(product ?? emptyProduct);
+
+  // Single canonical source of truth for the initial shape — computed once
+  // and reused for BOTH form state and the baseline snapshot, so they can
+  // never diverge from having been derived independently.
+  const initialForm = useMemo(
+    () => normalizeProduct(product ?? emptyProduct),
+    // product is stable for the lifetime of this mount (new prop only on
+    // navigation, which remounts this component entirely)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
+  const [form, setForm] = useState<AdminProductRow>(initialForm);
   const [slugTouched, setSlugTouched] = useState(!isNew);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const router = useRouter();
 
-  // Snapshot of the last-saved (or initially-loaded) form, used to detect
-  // unsaved changes. Updated after every successful save so the Save
-  // button goes back to disabled until the form is touched again.
-  const baselineRef = useRef(JSON.stringify(product ?? emptyProduct));
+  // Snapshot of the last-saved (or initially-loaded, normalized) form,
+  // used to detect unsaved changes. Updated after every successful save so
+  // the Save button goes back to disabled until the form is touched again.
+  const baselineRef = useRef(JSON.stringify(initialForm));
   const isDirty = JSON.stringify(form) !== baselineRef.current;
 
   const overLimit = computeOverLimit(form);

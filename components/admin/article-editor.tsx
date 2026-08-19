@@ -1,7 +1,7 @@
 // components/admin/article-editor.tsx
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import type { JSONContent } from "@tiptap/react";
 import { RichTextEditor } from "@/components/admin/rich-text-editor";
 import { MediaPicker } from "@/components/admin/media-picker";
@@ -12,6 +12,25 @@ import { slugify } from "@/lib/admin/slugify";
 import { FIELD_LIMITS } from "@/lib/admin/field-limits";
 import { LimitedInput } from "@/components/admin/ui/limited-input";
 import { LimitedTextArea } from "@/components/admin/ui/limited-textarea";
+import { SuccessToast } from "@/components/admin/ui/success-toast";
+
+// Combines every editable field into one comparable snapshot — same
+// pattern used by about-editor.tsx / home-editor.tsx — so a single JSON
+// diff against the last-saved state tells us whether ANYTHING changed.
+function snapshot(fields: {
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: JSONContent;
+  coverImage: string | null;
+  category: string;
+  tagsInput: string;
+  seoTitle: string;
+  seoDescription: string;
+  status: "draft" | "published";
+}) {
+  return JSON.stringify(fields);
+}
 
 export function ArticleEditor({
   article,
@@ -38,6 +57,7 @@ export function ArticleEditor({
   );
   const [mediaOpen, setMediaOpen] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const overLimit =
     title.length > FIELD_LIMITS.articleTitle ||
@@ -47,8 +67,38 @@ export function ArticleEditor({
     seoTitle.length > FIELD_LIMITS.seoTitle ||
     seoDescription.length > FIELD_LIMITS.seoDescription;
 
+  // Snapshot of the last-saved (or initially-loaded) article — Save stays
+  // disabled until something actually changes.
+  const baselineRef = useRef(
+    snapshot({
+      title: article.title,
+      slug: article.slug,
+      excerpt: article.excerpt ?? "",
+      content: article.content as JSONContent,
+      coverImage: article.cover_image,
+      category: article.category ?? "",
+      tagsInput: article.tags.join(", "),
+      seoTitle: article.seo_title ?? "",
+      seoDescription: article.seo_description ?? "",
+      status: article.status === "published" ? "published" : "draft",
+    }),
+  );
+  const isDirty =
+    snapshot({
+      title,
+      slug,
+      excerpt,
+      content,
+      coverImage,
+      category,
+      tagsInput,
+      seoTitle,
+      seoDescription,
+      status,
+    }) !== baselineRef.current;
+
   function handleSave() {
-    if (overLimit) return;
+    if (overLimit || !isDirty) return;
     startTransition(async () => {
       await saveArticle(article.id, {
         title,
@@ -65,7 +115,20 @@ export function ArticleEditor({
         seoDescription,
         status: canPublish ? status : "draft",
       });
+      baselineRef.current = snapshot({
+        title,
+        slug: slug || slugify(title),
+        excerpt,
+        content,
+        coverImage,
+        category,
+        tagsInput,
+        seoTitle,
+        seoDescription,
+        status,
+      });
       setSavedAt(new Date());
+      setToastMsg("Article saved successfully.");
     });
   }
 
@@ -99,7 +162,7 @@ export function ArticleEditor({
             )}
             <button
               onClick={handleSave}
-              disabled={pending || overLimit}
+              disabled={pending || overLimit || !isDirty}
               className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
             >
               {pending ? "Saving..." : "Save"}
@@ -208,6 +271,12 @@ export function ArticleEditor({
           onClose={() => setMediaOpen(false)}
         />
       )}
+
+      <SuccessToast
+        message={toastMsg ?? ""}
+        show={toastMsg !== null}
+        onClose={() => setToastMsg(null)}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ListFieldEditor } from "@/components/admin/ui/list-field-editor";
 import { LimitedInput } from "@/components/admin/ui/limited-input";
@@ -9,6 +9,7 @@ import { FIELD_LIMITS, MAX_ITEMS } from "@/lib/admin/field-limits";
 import { saveSiteContent } from "@/app/admin/(protected)/site-content/actions";
 import type { AdminSiteContent } from "@/lib/admin/site-content";
 import type { SiteNavLink, SiteButtons, SiteFooterContent } from "@/lib/site-content-defaults";
+import { SuccessToast } from "@/components/admin/ui/success-toast";
 
 function SectionCard({
   title,
@@ -55,6 +56,16 @@ function computeOverLimit(
   );
 }
 
+// Combines every editable slice into one comparable snapshot, same pattern
+// as about-editor.tsx / home-editor.tsx.
+function snapshot(
+  navLinks: SiteNavLink[],
+  buttons: SiteButtons,
+  footerContent: SiteFooterContent
+) {
+  return JSON.stringify({ navLinks, buttons, footerContent });
+}
+
 export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
   const [navLinks, setNavLinks] = useState<SiteNavLink[]>(initial.navLinks);
   const [buttons, setButtons] = useState<SiteButtons>(initial.buttons);
@@ -63,7 +74,16 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
   const router = useRouter();
+
+  // Snapshot of the last-saved (or initially-loaded) content — Save stays
+  // disabled until the form actually diverges from this baseline.
+  const baselineRef = useRef(
+    snapshot(initial.navLinks, initial.buttons, initial.footerContent)
+  );
+  const isDirty =
+    snapshot(navLinks, buttons, footerContent) !== baselineRef.current;
 
   const overLimit = computeOverLimit(navLinks, buttons, footerContent);
 
@@ -76,12 +96,14 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
   }
 
   function handleSave() {
-    if (overLimit) return;
+    if (overLimit || !isDirty) return;
     setError(null);
     startTransition(async () => {
       try {
         await saveSiteContent({ navLinks, buttons, footerContent });
+        baselineRef.current = snapshot(navLinks, buttons, footerContent);
         setSavedAt(new Date());
+        setToastMsg("Site content saved successfully.");
         router.refresh();
       } catch (err) {
         setError(err instanceof Error ? err.message : "Gagal menyimpan.");
@@ -102,7 +124,7 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
         )}
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-5 py-2.5 text-[13px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
@@ -251,12 +273,18 @@ export function SiteContentEditor({ initial }: { initial: AdminSiteContent }) {
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          disabled={pending || overLimit}
+          disabled={pending || overLimit || !isDirty}
           className="rounded-full bg-signal-blue px-6 py-2.5 text-[13.5px] font-medium text-white disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save Changes"}
         </button>
       </div>
+
+      <SuccessToast
+        message={toastMsg ?? ""}
+        show={toastMsg !== null}
+        onClose={() => setToastMsg(null)}
+      />
     </div>
   );
 }
