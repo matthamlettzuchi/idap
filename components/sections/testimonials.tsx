@@ -47,6 +47,22 @@ export function Testimonials() {
   const [direction, setDirection] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
 
+  const dotsContainerRef = useRef<HTMLDivElement>(null);
+  const dotRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    const container = dotsContainerRef.current;
+    const dot = dotRefs.current[index];
+    if (!container || !dot) return;
+
+    const targetScroll =
+      dot.offsetLeft - container.clientWidth / 2 + dot.clientWidth / 2;
+
+    container.scrollTo({
+      left: targetScroll,
+      behavior: "smooth",
+    });
+  }, [index]);
   useEffect(() => {
     let cancelled = false;
     async function loadTestimonials() {
@@ -258,28 +274,35 @@ export function Testimonials() {
                   <button
                     aria-label="Testimoni sebelumnya"
                     onClick={() => go(-1)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--panel-border)] text-ink-1 transition-colors hover:border-signal-blue hover:text-signal-blue"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--panel-border)] text-ink-1 transition-colors hover:border-signal-blue hover:text-signal-blue"
                   >
                     <ChevronLeft size={18} />
                   </button>
                   <button
                     aria-label="Testimoni selanjutnya"
                     onClick={() => go(1)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--panel-border)] text-ink-1 transition-colors hover:border-signal-blue hover:text-signal-blue"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--panel-border)] text-ink-1 transition-colors hover:border-signal-blue hover:text-signal-blue"
                   >
                     <ChevronRight size={18} />
                   </button>
 
-                  <div className="ml-2 flex items-center gap-1.5">
+                  <div
+                    ref={dotsContainerRef}
+                    className="ml-2 flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto [&::-webkit-scrollbar]:hidden"
+                    style={{ scrollbarWidth: "none" }}
+                  >
                     {testimonials.map((t, i) => (
                       <button
                         key={t.id}
+                        ref={(el) => {
+                          dotRefs.current[i] = el;
+                        }}
                         aria-label={`Ke testimoni ${i + 1}`}
                         onClick={() => {
                           setDirection(i > index ? 1 : -1);
                           setIndex(i);
                         }}
-                        className="relative h-1.5 w-6 overflow-hidden rounded-full bg-[var(--panel-border-strong)]"
+                        className="relative h-1.5 w-6 shrink-0 overflow-hidden rounded-full bg-[var(--panel-border-strong)]"
                       >
                         {i === index && (
                           <motion.span
